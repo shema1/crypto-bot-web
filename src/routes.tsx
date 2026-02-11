@@ -16,13 +16,13 @@ export interface RouteConfig {
 export const routes: RouteConfig[] = [
   {
     path: '/',
-    label: 'Historic Pairs Data',
+    label: 'nav.historicPairsData',
     icon: <DatabaseOutlined />,
     element: <HistoricPairsDataPage />,
   },
   {
     path: '/strategies',
-    label: 'Strategies',
+    label: 'nav.strategies',
     icon: <BarChartOutlined />,
     element: <StrategiesPage />,
   },

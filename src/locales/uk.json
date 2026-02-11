@@ -1,0 +1,37 @@
+{
+  "nav": {
+    "historicPairsData": "Історичні дані пар",
+    "strategies": "Стратегії"
+  },
+  "historicPairsData": {
+    "title": "Історичні дані пар",
+    "columns": {
+      "symbol": "Символ",
+      "interval": "Інтервал",
+      "candles": "Свічки",
+      "firstRecord": "Перший запис",
+      "lastRecord": "Останній запис",
+      "status": "Статус",
+      "actions": "Дії"
+    },
+    "actions": {
+      "edit": "Редагувати",
+      "update": "Оновити",
+      "delete": "Видалити"
+    },
+    "messages": {
+      "editInfo": "Редагувати: {{symbol}} / {{interval}}",
+      "updateInfo": "Оновити/синхронізувати: {{symbol}} / {{interval}}",
+      "rowDeleted": "Рядок видалено"
+    }
+  },
+  "pairStatus": {
+    "syncing": "Синхронізація",
+    "synced": "Синхронізовано",
+    "error": "Помилка"
+  },
+  "strategies": {
+    "title": "Стратегії"
+  },
+  "language": "Мова"
+}

@@ -1,0 +1,37 @@
+{
+  "nav": {
+    "historicPairsData": "Historic Pairs Data",
+    "strategies": "Strategies"
+  },
+  "historicPairsData": {
+    "title": "Historic Pairs Data",
+    "columns": {
+      "symbol": "Symbol",
+      "interval": "Interval",
+      "candles": "Candles",
+      "firstRecord": "First record",
+      "lastRecord": "Last record",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "actions": {
+      "edit": "Edit",
+      "update": "Update",
+      "delete": "Delete"
+    },
+    "messages": {
+      "editInfo": "Edit: {{symbol}} / {{interval}}",
+      "updateInfo": "Update/sync: {{symbol}} / {{interval}}",
+      "rowDeleted": "Row deleted"
+    }
+  },
+  "pairStatus": {
+    "syncing": "Syncing",
+    "synced": "Synced",
+    "error": "Error"
+  },
+  "strategies": {
+    "title": "Strategies"
+  },
+  "language": "Language"
+}

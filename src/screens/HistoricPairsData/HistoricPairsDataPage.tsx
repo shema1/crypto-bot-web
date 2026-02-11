@@ -1,4 +1,5 @@
 import { useState, type FC } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, message, Space, Table, Tag } from "antd";
 import {
     DeleteOutlined,
@@ -18,6 +19,7 @@ const pairStatusConfig: Record<PairStatus, { color: string }> = {
 };
 
 const HistoricPairsDataPage: FC = () => {
+    const { t } = useTranslation();
     const [historicPairsData, setHistoricPairsData] = useState<HistoricPairData[]>([
         {
             symbol: "BTCUSDT",
@@ -47,21 +49,21 @@ const HistoricPairsDataPage: FC = () => {
 
     const columns: ColumnsType<HistoricPairData> = [
         {
-            title: "Symbol",
+            title: t("historicPairsData.columns.symbol"),
             dataIndex: "symbol",
             key: "symbol",
             width: 120,
             sorter: (a, b) => (a.symbol ?? "").localeCompare(b.symbol ?? ""),
         },
         {
-            title: "Interval",
+            title: t("historicPairsData.columns.interval"),
             dataIndex: "interval",
             key: "interval",
             width: 80,
             sorter: (a, b) => (a.interval ?? "").localeCompare(b.interval ?? ""),
         },
         {
-            title: "Candles",
+            title: t("historicPairsData.columns.candles"),
             dataIndex: "candelsNumber",
             key: "candelsNumber",
             width: 100,
@@ -69,7 +71,7 @@ const HistoricPairsDataPage: FC = () => {
             sorter: (a, b) => (a.candelsNumber ?? 0) - (b.candelsNumber ?? 0),
         },
         {
-            title: "First record",
+            title: t("historicPairsData.columns.firstRecord"),
             dataIndex: "firstRecordDate",
             key: "firstRecordDate",
             width: 120,
@@ -77,7 +79,7 @@ const HistoricPairsDataPage: FC = () => {
                 (a.firstRecordDate ?? "").localeCompare(b.firstRecordDate ?? ""),
         },
         {
-            title: "Last record",
+            title: t("historicPairsData.columns.lastRecord"),
             dataIndex: "lastRecordDate",
             key: "lastRecordDate",
             width: 120,
@@ -85,19 +87,19 @@ const HistoricPairsDataPage: FC = () => {
                 (a.lastRecordDate ?? "").localeCompare(b.lastRecordDate ?? ""),
         },
         {
-            title: "Status",
+            title: t("historicPairsData.columns.status"),
             dataIndex: "pairStatus",
             key: "pairStatus",
             width: 100,
             sorter: (a, b) => (a.pairStatus ?? 0) - (b.pairStatus ?? 0),
             render: (status: PairStatus) => (
                 <Tag color={pairStatusConfig[status]?.color ?? "default"}>
-                    {getPairStatusLabel(status)}
+                    {t(`pairStatus.${getPairStatusLabel(status)}`)}
                 </Tag>
             ),
         },
         {
-            title: "Actions",
+            title: t("historicPairsData.columns.actions"),
             key: "actions",
             width: 160,
             fixed: "right",
@@ -109,7 +111,7 @@ const HistoricPairsDataPage: FC = () => {
                         icon={<EditOutlined />}
                         onClick={() => handleEdit(record)}
                     >
-                        Edit
+                        {t("historicPairsData.actions.edit")}
                     </Button>
                     <Button
                         type="link"
@@ -117,7 +119,7 @@ const HistoricPairsDataPage: FC = () => {
                         icon={<SyncOutlined />}
                         onClick={() => handleUpdate(record)}
                     >
-                        Update
+                        {t("historicPairsData.actions.update")}
                     </Button>
                     <Button
                         type="link"
@@ -126,7 +128,7 @@ const HistoricPairsDataPage: FC = () => {
                         icon={<DeleteOutlined />}
                         onClick={() => handleDelete(record)}
                     >
-                        Delete
+                        {t("historicPairsData.actions.delete")}
                     </Button>
                 </Space>
             ),
@@ -134,12 +136,12 @@ const HistoricPairsDataPage: FC = () => {
     ];
 
     const handleEdit = (record: HistoricPairData) => {
-        message.info(`Edit: ${record.symbol} / ${record.interval}`);
+        message.info(t("historicPairsData.messages.editInfo", { symbol: record.symbol, interval: record.interval }));
         // TODO: open edit modal or navigate to edit form
     };
 
     const handleUpdate = (record: HistoricPairData) => {
-        message.info(`Update/sync: ${record.symbol} / ${record.interval}`);
+        message.info(t("historicPairsData.messages.updateInfo", { symbol: record.symbol, interval: record.interval }));
         // TODO: trigger sync/refresh for this pair
     };
 
@@ -150,14 +152,14 @@ const HistoricPairsDataPage: FC = () => {
                     !(row.symbol === record.symbol && row.interval === record.interval)
             )
         );
-        message.success("Row deleted");
+        message.success(t("historicPairsData.messages.rowDeleted"));
     };
 
     return (
         <AppContainer>
             <div className="historic-pairs-data-page">
                 <h1 className="historic-pairs-data-page__title">
-                    Historic Pairs Data
+                    {t("historicPairsData.title")}
                 </h1>
                 <Table<HistoricPairData>
                     columns={columns}

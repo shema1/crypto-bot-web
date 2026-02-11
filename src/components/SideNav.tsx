@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Menu } from 'antd';
 import type { MenuProps } from 'antd';
 import type { RouteConfig } from '../routes';
@@ -11,11 +12,12 @@ interface SideNavProps {
 const SideNav = ({ routes }: SideNavProps) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const menuItems: MenuProps['items'] = routes.map(({ path, label, icon }) => ({
     key: path,
     icon,
-    label,
+    label: typeof label === 'string' ? t(label) : label,
   }));
 
   return (
