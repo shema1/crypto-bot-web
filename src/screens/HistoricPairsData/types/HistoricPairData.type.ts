@@ -3,7 +3,7 @@ export type PairStatus = 0 | 1 | 2;
 
 export type PairStatusLabel = 'syncing' | 'synced' | 'error';
 
-export interface HistoricPairData {
+export interface HistoricPairDataItem {
     symbol: string;
     interval: string;
     candelsNumber: number;

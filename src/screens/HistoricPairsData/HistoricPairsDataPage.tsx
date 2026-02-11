@@ -5,15 +5,15 @@ import {
     DeleteOutlined,
     EditOutlined,
     PlusOutlined,
-    SyncOutlined,
 } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import AppContainer from "../../components/layout/AppContainer";
 import "./HistoricPairsDataPage.css";
-import type { HistoricPairData, PairStatus } from "./types";
+import type { HistoricPairDataItem, NewHistoricPair, PairStatus } from "./types";
 import { getPairStatusLabel } from "./utils";
 import AppHeaderContainer from "../../components/layout/AppHeaderContainer";
 import AddNewPairsModal from "./components/AddNewPairsModal";
+import EditPairDateRangeModal from "./components/EditPairDateRangeModal";
 
 const pairStatusConfig: Record<PairStatus, { color: string }> = {
     0: { color: "blue" },
@@ -25,7 +25,8 @@ const HistoricPairsDataPage: FC = () => {
     const { t } = useTranslation();
 
     const [openAddNewPairsModal, setOpenAddNewPairsModal] = useState(false);
-    const [historicPairsData, setHistoricPairsData] = useState<HistoricPairData[]>([
+    const [selectedPairData, setSelectedPairData] = useState<NewHistoricPair | null>(null);
+    const [historicPairsData, setHistoricPairsData] = useState<HistoricPairDataItem[]>([
         {
             symbol: "BTCUSDT",
             interval: "1h",
@@ -52,7 +53,7 @@ const HistoricPairsDataPage: FC = () => {
         },
     ]);
 
-    const columns: ColumnsType<HistoricPairData> = [
+    const columns: ColumnsType<HistoricPairDataItem> = [
         {
             title: t("historicPairsData.columns.symbol"),
             dataIndex: "symbol",
@@ -106,7 +107,7 @@ const HistoricPairsDataPage: FC = () => {
         {
             title: t("historicPairsData.columns.actions"),
             key: "actions",
-            width: 160,
+            width: 50,
             fixed: "right",
             render: (_, record) => (
                 <Space size="small">
@@ -115,42 +116,41 @@ const HistoricPairsDataPage: FC = () => {
                         size="small"
                         icon={<EditOutlined />}
                         onClick={() => handleEdit(record)}
-                    >
-                        {t("historicPairsData.actions.edit")}
-                    </Button>
-                    <Button
+                    />
+                    {/* <Button
                         type="link"
                         size="small"
+                        color="green"
                         icon={<SyncOutlined />}
                         onClick={() => handleUpdate(record)}
-                    >
-                        {t("historicPairsData.actions.update")}
-                    </Button>
+                    /> */}
                     <Button
                         type="link"
                         size="small"
                         danger
                         icon={<DeleteOutlined />}
                         onClick={() => handleDelete(record)}
-                    >
-                        {t("historicPairsData.actions.delete")}
-                    </Button>
+                    />
                 </Space>
             ),
         },
     ];
 
-    const handleEdit = (record: HistoricPairData) => {
-        message.info(t("historicPairsData.messages.editInfo", { symbol: record.symbol, interval: record.interval }));
-        // TODO: open edit modal or navigate to edit form
+    const handleEdit = (record: HistoricPairDataItem) => {
+        setSelectedPairData({
+            symbol: record.symbol,
+            interval: record.interval,
+            startDateTime: record.firstRecordDate,
+            endDateTime: record.lastRecordDate,
+        });
     };
 
-    const handleUpdate = (record: HistoricPairData) => {
+    const handleUpdate = (record: HistoricPairDataItem) => {
         message.info(t("historicPairsData.messages.updateInfo", { symbol: record.symbol, interval: record.interval }));
         // TODO: trigger sync/refresh for this pair
     };
 
-    const handleDelete = (record: HistoricPairData) => {
+    const handleDelete = (record: HistoricPairDataItem) => {
         setHistoricPairsData((prev) =>
             prev.filter(
                 (row) =>
@@ -172,7 +172,7 @@ const HistoricPairsDataPage: FC = () => {
             </AppHeaderContainer>
             <AppContainer>
                 <div className="historic-pairs-data-page">
-                    <Table<HistoricPairData>
+                    <Table<HistoricPairDataItem>
                         columns={columns}
                         dataSource={historicPairsData}
                         rowKey={(row) => `${row.symbol}-${row.interval}`}
@@ -182,6 +182,7 @@ const HistoricPairsDataPage: FC = () => {
                 </div>
             </AppContainer>
             <AddNewPairsModal open={openAddNewPairsModal} onClose={() => setOpenAddNewPairsModal(false)} />
+            <EditPairDateRangeModal open={!!selectedPairData} onClose={() => setSelectedPairData(null)} pairData={selectedPairData} />
         </>
     );
 };
