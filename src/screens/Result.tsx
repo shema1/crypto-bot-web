@@ -1,9 +1,3 @@
-
-
-
-
-
-
 import { Table, Tag, Typography, Space, Statistic } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import resultsData from './results.json';
