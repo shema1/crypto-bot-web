@@ -13,6 +13,7 @@ import "./HistoricPairsDataPage.css";
 import type { HistoricPairData, PairStatus } from "./types";
 import { getPairStatusLabel } from "./utils";
 import AppHeaderContainer from "../../components/layout/AppHeaderContainer";
+import AddNewPairsModal from "./components/AddNewPairsModal";
 
 const pairStatusConfig: Record<PairStatus, { color: string }> = {
     0: { color: "blue" },
@@ -22,6 +23,8 @@ const pairStatusConfig: Record<PairStatus, { color: string }> = {
 
 const HistoricPairsDataPage: FC = () => {
     const { t } = useTranslation();
+
+    const [openAddNewPairsModal, setOpenAddNewPairsModal] = useState(false);
     const [historicPairsData, setHistoricPairsData] = useState<HistoricPairData[]>([
         {
             symbol: "BTCUSDT",
@@ -164,7 +167,7 @@ const HistoricPairsDataPage: FC = () => {
                     <h1 className="historic-pairs-data-page__title">
                         {t("historicPairsData.title")}
                     </h1>
-                    <Button type="primary" icon={<PlusOutlined />}>{t("historicPairsData.actions.add")}</Button>
+                    <Button type="primary" icon={<PlusOutlined />} onClick={() => setOpenAddNewPairsModal(true)}>{t("historicPairsData.actions.add")}</Button>
                 </div>
             </AppHeaderContainer>
             <AppContainer>
@@ -178,6 +181,7 @@ const HistoricPairsDataPage: FC = () => {
                     />
                 </div>
             </AppContainer>
+            <AddNewPairsModal open={openAddNewPairsModal} onClose={() => setOpenAddNewPairsModal(false)} />
         </>
     );
 };

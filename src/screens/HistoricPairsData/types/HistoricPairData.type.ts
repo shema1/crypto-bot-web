@@ -12,3 +12,10 @@ export interface HistoricPairData {
     pairStatus: PairStatus;
 }
 
+
+export interface NewHistoricPair  {
+    symbol: string;
+    interval: string;
+    startDateTime: string;
+    endDateTime: string;
+}
