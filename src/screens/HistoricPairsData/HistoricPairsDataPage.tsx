@@ -4,6 +4,7 @@ import { Button, message, Space, Table, Tag } from "antd";
 import {
     DeleteOutlined,
     EditOutlined,
+    PlusOutlined,
     SyncOutlined,
 } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
@@ -11,6 +12,7 @@ import AppContainer from "../../components/layout/AppContainer";
 import "./HistoricPairsDataPage.css";
 import type { HistoricPairData, PairStatus } from "./types";
 import { getPairStatusLabel } from "./utils";
+import AppHeaderContainer from "../../components/layout/AppHeaderContainer";
 
 const pairStatusConfig: Record<PairStatus, { color: string }> = {
     0: { color: "blue" },
@@ -156,20 +158,27 @@ const HistoricPairsDataPage: FC = () => {
     };
 
     return (
-        <AppContainer>
-            <div className="historic-pairs-data-page">
-                <h1 className="historic-pairs-data-page__title">
-                    {t("historicPairsData.title")}
-                </h1>
-                <Table<HistoricPairData>
-                    columns={columns}
-                    dataSource={historicPairsData}
-                    rowKey={(row) => `${row.symbol}-${row.interval}`}
-                    pagination={{ pageSize: 10 }}
-                    size="middle"
-                />
-            </div>
-        </AppContainer>
+        <>
+            <AppHeaderContainer>
+                <div className="historic-header-container">
+                    <h1 className="historic-pairs-data-page__title">
+                        {t("historicPairsData.title")}
+                    </h1>
+                    <Button type="primary" icon={<PlusOutlined />}>{t("historicPairsData.actions.add")}</Button>
+                </div>
+            </AppHeaderContainer>
+            <AppContainer>
+                <div className="historic-pairs-data-page">
+                    <Table<HistoricPairData>
+                        columns={columns}
+                        dataSource={historicPairsData}
+                        rowKey={(row) => `${row.symbol}-${row.interval}`}
+                        pagination={{ pageSize: 10 }}
+                        size="middle"
+                    />
+                </div>
+            </AppContainer>
+        </>
     );
 };
 

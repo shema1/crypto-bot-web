@@ -17,7 +17,8 @@
     "actions": {
       "edit": "Edit",
       "update": "Update",
-      "delete": "Delete"
+      "delete": "Delete",
+      "add": "Add"
     },
     "messages": {
       "editInfo": "Edit: {{symbol}} / {{interval}}",

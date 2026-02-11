@@ -17,7 +17,8 @@
     "actions": {
       "edit": "Редагувати",
       "update": "Оновити",
-      "delete": "Видалити"
+      "delete": "Видалити",
+      "add": "Додати"
     },
     "messages": {
       "editInfo": "Редагувати: {{symbol}} / {{interval}}",
