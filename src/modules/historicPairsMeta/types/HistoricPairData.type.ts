@@ -53,9 +53,3 @@ export interface UpdateMetaRequest {
   firstRecordDate: string;
   lastRecordDate: string;
 }
-
-/** @deprecated Use HistoricPairMetaItem */
-export type HistoricPairDataItem = HistoricPairMetaItem;
-
-/** @deprecated Use AddHistoricPairDataItem */
-export type NewHistoricPair = AddHistoricPairDataItem;

@@ -1,6 +1,6 @@
 import { useState, type FC } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, message, Space, Table, Tag } from "antd";
+import { Alert, Button, message, Space, Table, Tag } from "antd";
 import {
     DeleteOutlined,
     EditOutlined,
@@ -12,54 +12,39 @@ import "./HistoricPairsDataPage.css";
 import AppHeaderContainer from "../../components/layout/AppHeaderContainer";
 import AddNewPairsModal from "./components/AddNewPairsModal";
 import EditPairDateRangeModal from "./components/EditPairDateRangeModal";
-import type { HistoricPairDataItem, NewHistoricPair, PairStatus } from "../../modules/historicPairsMeta/types";
+import type { HistoricPairMetaItem, AddHistoricPairDataItem, PairStatus } from "../../modules/historicPairsMeta/types";
 import { getPairStatusLabel } from "../../modules/historicPairsMeta/utils";
+import { useGetMetaQuery, useDeleteMetaMutation } from "../../modules/historicPairsMeta/apis";
 
 const pairStatusConfig: Record<PairStatus, { color: string }> = {
-    0: { color: "blue" },
-    1: { color: "green" },
-    2: { color: "red" },
+    syncing: { color: "blue" },
+    synced: { color: "green" },
+    error: { color: "red" },
 };
+
+const pairStatusOrder: Record<PairStatus, number> = {
+    syncing: 0,
+    synced: 1,
+    error: 2,
+};
+
+const DEFAULT_PAGE_SIZE = 10;
 
 const HistoricPairsDataPage: FC = () => {
     const { t } = useTranslation();
-
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(DEFAULT_PAGE_SIZE);
     const [openAddNewPairsModal, setOpenAddNewPairsModal] = useState(false);
-    const [selectedPairData, setSelectedPairData] = useState<NewHistoricPair | null>(null);
-    const [historicPairsData, setHistoricPairsData] = useState<HistoricPairDataItem[]>([
-        {
-            id: "1",
-            symbol: "BTCUSDT",
-            interval: "1h",
-            totalCandles: 100,
-            firstRecordDate: "2021-01-01",
-            lastRecordDate: "2021-01-01",
-            pairStatus: 0,
-            provider: "bybit",
-        },
-        {
-            id: "2",
-            symbol: "ETHUSDT",
-            interval: "1h",
-            totalCandles: 100,
-            firstRecordDate: "2021-01-01",
-            lastRecordDate: "2021-01-01",
-            pairStatus: 1,
-            provider: "bybit",
-        },
-        {
-            id: "3",
-            symbol: "ETHUSDT",
-            interval: "30m",
-            totalCandles: 100,
-            firstRecordDate: "2022-01-01",
-            lastRecordDate: "2022-01-01",
-            pairStatus: 2,
-            provider: "bybit",
-        },
-    ]);
+    const [selectedPairData, setSelectedPairData] = useState<AddHistoricPairDataItem | null>(null);
 
-    const columns: ColumnsType<HistoricPairDataItem> = [
+    const { data, isLoading, isError, error } = useGetMetaQuery({ page, limit });
+    const errorMessage = isError && error && "message" in error ? String(error.message) : null;
+    const [deleteMeta, { isLoading: isDeleting }] = useDeleteMetaMutation();
+
+    const historicPairsData = data?.items ?? [];
+    const total = data?.total ?? 0;
+
+    const columns: ColumnsType<HistoricPairMetaItem> = [
         {
             title: t("historicPairsData.columns.symbol"),
             dataIndex: "symbol",
@@ -103,7 +88,7 @@ const HistoricPairsDataPage: FC = () => {
             dataIndex: "pairStatus",
             key: "pairStatus",
             width: 100,
-            sorter: (a, b) => (a.pairStatus ?? 0) - (b.pairStatus ?? 0),
+            sorter: (a, b) => (pairStatusOrder[a.pairStatus] ?? 0) - (pairStatusOrder[b.pairStatus] ?? 0),
             render: (status: PairStatus) => (
                 <Tag color={pairStatusConfig[status]?.color ?? "default"}>
                     {t(`pairStatus.${getPairStatusLabel(status)}`)}
@@ -123,13 +108,6 @@ const HistoricPairsDataPage: FC = () => {
                         icon={<EditOutlined />}
                         onClick={() => handleEdit(record)}
                     />
-                    {/* <Button
-                        type="link"
-                        size="small"
-                        color="green"
-                        icon={<SyncOutlined />}
-                        onClick={() => handleUpdate(record)}
-                    /> */}
                     <Button
                         type="link"
                         size="small"
@@ -142,7 +120,7 @@ const HistoricPairsDataPage: FC = () => {
         },
     ];
 
-    const handleEdit = (record: HistoricPairDataItem) => {
+    const handleEdit = (record: HistoricPairMetaItem) => {
         setSelectedPairData({
             symbol: record.symbol,
             interval: record.interval,
@@ -152,19 +130,21 @@ const HistoricPairsDataPage: FC = () => {
         });
     };
 
-    const handleUpdate = (record: HistoricPairDataItem) => {
-        message.info(t("historicPairsData.messages.updateInfo", { symbol: record.symbol, interval: record.interval }));
-        // TODO: trigger sync/refresh for this pair
+    const handleDelete = async (record: HistoricPairMetaItem) => {
+        try {
+            await deleteMeta(record.id).unwrap();
+            message.success(t("historicPairsData.messages.rowDeleted"));
+        } catch {
+            message.error(t("historicPairsData.messages.deleteError"));
+        }
     };
 
-    const handleDelete = (record: HistoricPairDataItem) => {
-        setHistoricPairsData((prev) =>
-            prev.filter(
-                (row) =>
-                    !(row.symbol === record.symbol && row.interval === record.interval)
-            )
-        );
-        message.success(t("historicPairsData.messages.rowDeleted"));
+    const handleTableChange = (newPage: number, newLimit: number) => {
+        setPage(newPage);
+        if (newLimit !== limit) {
+            setLimit(newLimit);
+            setPage(1);
+        }
     };
 
     return (
@@ -179,11 +159,22 @@ const HistoricPairsDataPage: FC = () => {
             </AppHeaderContainer>
             <AppContainer>
                 <div className="historic-pairs-data-page">
-                    <Table<HistoricPairDataItem>
+                    {errorMessage && (
+                        <Alert type="error" message={errorMessage} showIcon className="historic-pairs-data-page__error" />
+                    )}
+                    <Table<HistoricPairMetaItem>
                         columns={columns}
                         dataSource={historicPairsData}
-                        rowKey={(row) => `${row.symbol}-${row.interval}`}
-                        pagination={{ pageSize: 10 }}
+                        rowKey="id"
+                        loading={isLoading || isDeleting}
+                        pagination={{
+                            current: page,
+                            pageSize: limit,
+                            total,
+                            showSizeChanger: true,
+                            showTotal: (totalCount) => t("common.paginationTotal", { total: totalCount }),
+                            onChange: handleTableChange,
+                        }}
                         size="middle"
                     />
                 </div>

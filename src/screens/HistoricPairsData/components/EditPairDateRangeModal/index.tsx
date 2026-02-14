@@ -3,17 +3,17 @@ import { DatePicker, Modal } from "../../../../components/core";
 import { addDays } from "date-fns";
 import { Button, Space } from "antd";
 import dayjs from "dayjs";
-import type { NewHistoricPair } from "../../../../modules/historicPairsMeta/types";
+import type { AddHistoricPairDataItem } from "../../../../modules/historicPairsMeta/types";
 
 interface EditPairDateRangeModalProps {
     open: boolean;
     onClose: () => void;
-    pairData: NewHistoricPair | null;
+    pairData: AddHistoricPairDataItem | null;
 }
 
 const EditPairDateRangeModal: FC<EditPairDateRangeModalProps> = ({ open, onClose, pairData }) => {
 
-    const [pair, setPair] = useState<NewHistoricPair | null>(pairData);
+    const [pair, setPair] = useState<AddHistoricPairDataItem | null>(pairData);
 
     const updatePair = useCallback((startDateTime: string, endDateTime: string) => {
         if (pair) {

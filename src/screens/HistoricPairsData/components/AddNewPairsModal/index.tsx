@@ -4,7 +4,7 @@ import { addDays } from "date-fns";
 import { Button, Space } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import type { NewHistoricPair } from "../../../../modules/historicPairsMeta/types";
+import type { AddHistoricPairDataItem } from "../../../../modules/historicPairsMeta/types";
 
 const PAIRS = ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'SOLUSDT', 'DOGEUSDT', 'ADAUSDT', 'DOTUSDT', 'LINKUSDT', 'UNIUSDT', 'XLMUSDT'];
 const INTERVALS = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
@@ -15,7 +15,7 @@ interface AddNewPairsModalProps {
 }
 
 const AddNewPairsModal: FC<AddNewPairsModalProps> = ({ open, onClose }) => {
-    const [newPairs, setNewPairs] = useState<NewHistoricPair[]>([{
+    const [newPairs, setNewPairs] = useState<AddHistoricPairDataItem[]>([{
         symbol: 'BTCUSDT',
         interval: '1h',
         startDateTime: new Date().toISOString(),
@@ -62,7 +62,7 @@ const AddNewPairsModal: FC<AddNewPairsModalProps> = ({ open, onClose }) => {
         return INTERVALS.find((interval) => !usedInOtherRows.has(interval)) ?? INTERVALS[0];
     }, [newPairs]);
 
-    const updatePair = useCallback((index: number, updates: Partial<NewHistoricPair>) => {
+    const updatePair = useCallback((index: number, updates: Partial<AddHistoricPairDataItem>) => {
         setNewPairs((prev) => {
             const next = [...prev];
             next[index] = { ...next[index], ...updates };

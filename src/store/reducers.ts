@@ -1,10 +1,9 @@
-import { historicPairsMetaApi } from '../modules/historicPairsMeta/apis';
 
 // APIs
+import { historicPairsMetaApi } from '../modules/historicPairsMeta/apis';
 
 // slices
 
-const initialStateMap: Record<string, any> = {};
 
 // ---- REDUCER ----
 const rootReducer = {
