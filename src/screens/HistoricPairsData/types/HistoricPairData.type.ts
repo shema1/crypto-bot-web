@@ -3,13 +3,17 @@ export type PairStatus = 0 | 1 | 2;
 
 export type PairStatusLabel = 'syncing' | 'synced' | 'error';
 
+export type Provider = "bybit" | "binance";
+
 export interface HistoricPairDataItem {
+    id: string;
     symbol: string;
     interval: string;
-    candelsNumber: number;
+    totalCandles: number;
     firstRecordDate: string;
     lastRecordDate: string;
     pairStatus: PairStatus;
+    provider: Provider
 }
 
 
@@ -18,4 +22,5 @@ export interface NewHistoricPair  {
     interval: string;
     startDateTime: string;
     endDateTime: string;
+    provider: Provider
 }

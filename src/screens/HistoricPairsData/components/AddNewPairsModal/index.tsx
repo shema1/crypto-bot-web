@@ -20,6 +20,7 @@ const AddNewPairsModal: FC<AddNewPairsModalProps> = ({ open, onClose }) => {
         interval: '1h',
         startDateTime: new Date().toISOString(),
         endDateTime: addDays(new Date(), 1).toISOString(),
+        provider: "bybit",
     }]);
 
     const usedIntervalsBySymbol = useMemo(() => {
@@ -123,6 +124,7 @@ const AddNewPairsModal: FC<AddNewPairsModalProps> = ({ open, onClose }) => {
                 interval,
                 startDateTime: new Date().toISOString(),
                 endDateTime: addDays(new Date(), 1).toISOString(),
+                provider: "bybit",
             },
         ]);
     };

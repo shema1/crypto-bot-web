@@ -28,28 +28,34 @@ const HistoricPairsDataPage: FC = () => {
     const [selectedPairData, setSelectedPairData] = useState<NewHistoricPair | null>(null);
     const [historicPairsData, setHistoricPairsData] = useState<HistoricPairDataItem[]>([
         {
+            id: "1",
             symbol: "BTCUSDT",
             interval: "1h",
-            candelsNumber: 100,
+            totalCandles: 100,
             firstRecordDate: "2021-01-01",
             lastRecordDate: "2021-01-01",
             pairStatus: 0,
+            provider: "bybit",
         },
         {
+            id: "2",
             symbol: "ETHUSDT",
             interval: "1h",
-            candelsNumber: 100,
+            totalCandles: 100,
             firstRecordDate: "2021-01-01",
             lastRecordDate: "2021-01-01",
             pairStatus: 1,
+            provider: "bybit",
         },
         {
+            id: "3",
             symbol: "ETHUSDT",
             interval: "30m",
-            candelsNumber: 100,
+            totalCandles: 100,
             firstRecordDate: "2022-01-01",
             lastRecordDate: "2022-01-01",
             pairStatus: 2,
+            provider: "bybit",
         },
     ]);
 
@@ -70,11 +76,11 @@ const HistoricPairsDataPage: FC = () => {
         },
         {
             title: t("historicPairsData.columns.candles"),
-            dataIndex: "candelsNumber",
-            key: "candelsNumber",
+            dataIndex: "totalCandles",
+            key: "totalCandles",
             width: 100,
             align: "right",
-            sorter: (a, b) => (a.candelsNumber ?? 0) - (b.candelsNumber ?? 0),
+            sorter: (a, b) => (a.totalCandles ?? 0) - (b.totalCandles ?? 0),
         },
         {
             title: t("historicPairsData.columns.firstRecord"),
@@ -142,6 +148,7 @@ const HistoricPairsDataPage: FC = () => {
             interval: record.interval,
             startDateTime: record.firstRecordDate,
             endDateTime: record.lastRecordDate,
+            provider: record.provider,
         });
     };
 
