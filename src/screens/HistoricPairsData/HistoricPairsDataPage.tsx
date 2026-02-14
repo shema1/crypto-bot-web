@@ -9,11 +9,11 @@ import {
 import type { ColumnsType } from "antd/es/table";
 import AppContainer from "../../components/layout/AppContainer";
 import "./HistoricPairsDataPage.css";
-import type { HistoricPairDataItem, NewHistoricPair, PairStatus } from "./types";
-import { getPairStatusLabel } from "./utils";
 import AppHeaderContainer from "../../components/layout/AppHeaderContainer";
 import AddNewPairsModal from "./components/AddNewPairsModal";
 import EditPairDateRangeModal from "./components/EditPairDateRangeModal";
+import type { HistoricPairDataItem, NewHistoricPair, PairStatus } from "../../modules/historicPairsMeta/types";
+import { getPairStatusLabel } from "../../modules/historicPairsMeta/utils";
 
 const pairStatusConfig: Record<PairStatus, { color: string }> = {
     0: { color: "blue" },

@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState, type FC } from "react";
 import { DatePicker, Modal, Select } from "../../../../components/core";
-import type { NewHistoricPair } from "../../types";
 import { addDays } from "date-fns";
 import { Button, Space } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
+import type { NewHistoricPair } from "../../../../modules/historicPairsMeta/types";
 
 const PAIRS = ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'SOLUSDT', 'DOGEUSDT', 'ADAUSDT', 'DOTUSDT', 'LINKUSDT', 'UNIUSDT', 'XLMUSDT'];
 const INTERVALS = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];

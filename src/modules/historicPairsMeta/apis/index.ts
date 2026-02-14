@@ -1,0 +1,70 @@
+import { createApi } from '@reduxjs/toolkit/query/react';
+import createMainBaseQuery from '../../core/baseQueries/mainBaseQuery';
+import type {
+  GetMetaQueryParams,
+  GetMetaResponse,
+  AddHistoricPairDataRequest,
+  AddHistoricPairDataResponse,
+  UpdateMetaRequest,
+} from '../types';
+import { historicPairsMetaUrls } from './historicPairsMeta.api';
+
+export const historicPairsMetaApi = createApi({
+  reducerPath: 'historicPairsMetaApi',
+  baseQuery: createMainBaseQuery(),
+  tagTypes: ['HistoricPairsMeta'],
+  endpoints: (builder) => ({
+    getMeta: builder.query<GetMetaResponse, GetMetaQueryParams | void>({
+      query: (params) => {
+        const p = params ?? {};
+        return {
+          url: historicPairsMetaUrls.meta,
+          params: { page: p.page ?? 1, limit: p.limit ?? 20 },
+        };
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.items.map(({ id }) => ({ type: 'HistoricPairsMeta' as const, id })),
+              { type: 'HistoricPairsMeta', id: 'LIST' },
+            ]
+          : [{ type: 'HistoricPairsMeta', id: 'LIST' }],
+    }),
+    addHistoricPairData: builder.mutation<AddHistoricPairDataResponse, AddHistoricPairDataRequest>({
+      query: (body) => ({
+        url: historicPairsMetaUrls.meta,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: [{ type: 'HistoricPairsMeta', id: 'LIST' }],
+    }),
+    deleteMeta: builder.mutation<void, string>({
+      query: (id) => ({
+        url: historicPairsMetaUrls.metaById(id),
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_result, _error, id) => [
+        { type: 'HistoricPairsMeta', id },
+        { type: 'HistoricPairsMeta', id: 'LIST' },
+      ],
+    }),
+    updateMeta: builder.mutation<void, { id: string; body: UpdateMetaRequest }>({
+      query: ({ id, body }) => ({
+        url: historicPairsMetaUrls.metaById(id),
+        method: 'PATCH',
+        body,
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'HistoricPairsMeta', id },
+        { type: 'HistoricPairsMeta', id: 'LIST' },
+      ],
+    }),
+  }),
+});
+
+export const {
+  useGetMetaQuery,
+  useAddHistoricPairDataMutation,
+  useDeleteMetaMutation,
+  useUpdateMetaMutation,
+} = historicPairsMetaApi;

@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState, type FC } from "react";
 import { DatePicker, Modal } from "../../../../components/core";
-import type { NewHistoricPair } from "../../types";
 import { addDays } from "date-fns";
 import { Button, Space } from "antd";
 import dayjs from "dayjs";
+import type { NewHistoricPair } from "../../../../modules/historicPairsMeta/types";
 
 interface EditPairDateRangeModalProps {
     open: boolean;
