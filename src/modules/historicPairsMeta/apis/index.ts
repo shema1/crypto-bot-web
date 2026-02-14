@@ -6,6 +6,7 @@ import type {
   AddHistoricPairDataRequest,
   AddHistoricPairDataResponse,
   UpdateMetaRequest,
+  UpdateMetaResponse,
 } from '../types';
 import { historicPairsMetaUrls } from './historicPairsMeta.api';
 
@@ -48,7 +49,7 @@ export const historicPairsMetaApi = createApi({
         { type: 'HistoricPairsMeta', id: 'LIST' },
       ],
     }),
-    updateMeta: builder.mutation<void, { id: string; body: UpdateMetaRequest }>({
+    updateMeta: builder.mutation<UpdateMetaResponse, { id: string; body: UpdateMetaRequest }>({
       query: ({ id, body }) => ({
         url: historicPairsMetaUrls.metaById(id),
         method: 'PATCH',

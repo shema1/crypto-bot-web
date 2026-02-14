@@ -15,6 +15,7 @@ import EditPairDateRangeModal from "./components/EditPairDateRangeModal";
 import type { HistoricPairMetaItem, AddHistoricPairDataItem, PairStatus } from "../../modules/historicPairsMeta/types";
 import { getPairStatusLabel } from "../../modules/historicPairsMeta/utils";
 import { useGetMetaQuery, useDeleteMetaMutation } from "../../modules/historicPairsMeta/apis";
+import { format } from "date-fns";
 
 const pairStatusConfig: Record<PairStatus, { color: string }> = {
     syncing: { color: "blue" },
@@ -30,12 +31,15 @@ const pairStatusOrder: Record<PairStatus, number> = {
 
 const DEFAULT_PAGE_SIZE = 10;
 
+/** Options for "items per page" dropdown in table pagination */
+const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
+
 const HistoricPairsDataPage: FC = () => {
     const { t } = useTranslation();
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(DEFAULT_PAGE_SIZE);
     const [openAddNewPairsModal, setOpenAddNewPairsModal] = useState(false);
-    const [selectedPairData, setSelectedPairData] = useState<AddHistoricPairDataItem | null>(null);
+    const [selectedPairForEdit, setSelectedPairForEdit] = useState<{ id: string; data: AddHistoricPairDataItem } | null>(null);
 
     const { data, isLoading, isError, error } = useGetMetaQuery({ page, limit });
     const errorMessage = isError && error && "message" in error ? String(error.message) : null;
@@ -72,6 +76,7 @@ const HistoricPairsDataPage: FC = () => {
             dataIndex: "firstRecordDate",
             key: "firstRecordDate",
             width: 120,
+            render: (value: string) => value ? format(new Date(value), "dd/MM/yyyy HH:mm:ss") : "-",
             sorter: (a, b) =>
                 (a.firstRecordDate ?? "").localeCompare(b.firstRecordDate ?? ""),
         },
@@ -80,6 +85,7 @@ const HistoricPairsDataPage: FC = () => {
             dataIndex: "lastRecordDate",
             key: "lastRecordDate",
             width: 120,
+            render: (value: string) => value ? format(new Date(value), "dd/MM/yyyy HH:mm:ss") : "-",
             sorter: (a, b) =>
                 (a.lastRecordDate ?? "").localeCompare(b.lastRecordDate ?? ""),
         },
@@ -121,12 +127,15 @@ const HistoricPairsDataPage: FC = () => {
     ];
 
     const handleEdit = (record: HistoricPairMetaItem) => {
-        setSelectedPairData({
-            symbol: record.symbol,
-            interval: record.interval,
-            startDateTime: record.firstRecordDate,
-            endDateTime: record.lastRecordDate,
-            provider: record.provider,
+        setSelectedPairForEdit({
+            id: record.id,
+            data: {
+                symbol: record.symbol,
+                interval: record.interval,
+                startDateTime: record.firstRecordDate,
+                endDateTime: record.lastRecordDate,
+                provider: record.provider,
+            },
         });
     };
 
@@ -172,6 +181,7 @@ const HistoricPairsDataPage: FC = () => {
                             pageSize: limit,
                             total,
                             showSizeChanger: true,
+                            pageSizeOptions: PAGE_SIZE_OPTIONS,
                             showTotal: (totalCount) => t("common.paginationTotal", { total: totalCount }),
                             onChange: handleTableChange,
                         }}
@@ -180,7 +190,7 @@ const HistoricPairsDataPage: FC = () => {
                 </div>
             </AppContainer>
             <AddNewPairsModal open={openAddNewPairsModal} onClose={() => setOpenAddNewPairsModal(false)} />
-            <EditPairDateRangeModal open={!!selectedPairData} onClose={() => setSelectedPairData(null)} pairData={selectedPairData} />
+            <EditPairDateRangeModal open={!!selectedPairForEdit} onClose={() => setSelectedPairForEdit(null)} metaId={selectedPairForEdit?.id ?? ""} pairData={selectedPairForEdit?.data ?? null} />
         </>
     );
 };

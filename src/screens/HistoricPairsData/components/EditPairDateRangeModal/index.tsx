@@ -1,43 +1,53 @@
 import { useCallback, useEffect, useState, type FC } from "react";
 import { DatePicker, Modal } from "../../../../components/core";
 import { addDays } from "date-fns";
-import { Button, Space } from "antd";
+import { Button, message, Space } from "antd";
 import dayjs from "dayjs";
 import type { AddHistoricPairDataItem } from "../../../../modules/historicPairsMeta/types";
+import { useUpdateMetaMutation } from "../../../../modules/historicPairsMeta/apis";
 
 interface EditPairDateRangeModalProps {
     open: boolean;
     onClose: () => void;
+    metaId: string;
     pairData: AddHistoricPairDataItem | null;
 }
 
-const EditPairDateRangeModal: FC<EditPairDateRangeModalProps> = ({ open, onClose, pairData }) => {
-
+const EditPairDateRangeModal: FC<EditPairDateRangeModalProps> = ({ open, onClose, metaId, pairData }) => {
     const [pair, setPair] = useState<AddHistoricPairDataItem | null>(pairData);
-
-    const updatePair = useCallback((startDateTime: string, endDateTime: string) => {
-        if (pair) {
-            setPair({
-                ...pair,
-                startDateTime,
-                endDateTime,
-            });
-        }
-    }, [pair]);
-
-    const onSave = () => {
-        console.log('pair:', pair);
-        onClose();
-    }
+    const [updateMeta, { isLoading: isSubmitting }] = useUpdateMetaMutation();
 
     useEffect(() => {
-
-        if (!pair && pairData) {
+        if (open && pairData) {
             setPair(pairData);
         }
-    }, [pairData, pair])
+    }, [open, pairData]);
+
+    const updatePair = useCallback((startDateTime: string, endDateTime: string) => {
+        setPair((prev) => (prev ? { ...prev, startDateTime, endDateTime } : null));
+    }, []);
+
+    const onSave = async () => {
+        if (!pair || !metaId) return;
+        try {
+            await updateMeta({
+                id: metaId,
+                body: {
+                    firstRecordDate: pair.startDateTime,
+                    lastRecordDate: pair.endDateTime,
+                },
+            }).unwrap();
+            message.success("Date range updated");
+            onClose();
+        } catch {
+            message.error("Failed to update date range");
+        }
+    };
 
     if (!pair) return null;
+
+    const startDate = dayjs(pair.startDateTime);
+    const endDate = dayjs(pair.endDateTime);
 
     return (
         <Modal
@@ -45,30 +55,41 @@ const EditPairDateRangeModal: FC<EditPairDateRangeModalProps> = ({ open, onClose
             onClose={onClose}
             title="Edit Pair Date Range"
             footer={
-                <div style={{ color: 'red', display: 'flex', justifyContent: 'flex-end', marginTop: 16, marginBottom: 16 }}>
-                    <Button type="primary" onClick={onSave}>Save</Button>
+                <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 16, marginBottom: 16 }}>
+                    <Button onClick={onClose}>Cancel</Button>
+                    <Button type="primary" loading={isSubmitting} onClick={onSave}>
+                        Save
+                    </Button>
                 </div>
             }
         >
             <div style={{ width: 400, maxHeight: 500 }}>
                 <Space>
-                    <div style={{color: '#000', marginBottom: 16}}>{pair.symbol} {pair.interval} </div>
+                    <div style={{ color: "#000", marginBottom: 16 }}>
+                        {pair.symbol} {pair.interval}
+                    </div>
                 </Space>
                 <Space>
-
                     <DatePicker
-                        value={dayjs(pair.startDateTime)}
-                        onChange={(value) => {
-                            // console.log('value:', value);
-                            updatePair(value?.toISOString(), pair.endDateTime)
-                        }}
+                        value={startDate.isValid() ? startDate : dayjs()}
+                        onChange={(value) =>
+                            updatePair(
+                                value ? value.toDate().toISOString() : new Date().toISOString(),
+                                pair.endDateTime
+                            )
+                        }
                         showTime
                         style={{ width: 180 }}
                         allowClear={false}
                     />
                     <DatePicker
-                        value={dayjs(pair.endDateTime)}
-                        onChange={(value) => updatePair(pair.startDateTime, value?.toISOString() ?? addDays(new Date(), 1).toISOString())}
+                        value={endDate.isValid() ? endDate : dayjs()}
+                        onChange={(value) =>
+                            updatePair(
+                                pair.startDateTime,
+                                value ? value.toDate().toISOString() : addDays(new Date(), 1).toISOString()
+                            )
+                        }
                         showTime
                         style={{ width: 180 }}
                         allowClear={false}

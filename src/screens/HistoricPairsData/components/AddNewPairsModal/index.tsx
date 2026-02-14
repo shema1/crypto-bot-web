@@ -1,27 +1,37 @@
 import { useCallback, useEffect, useMemo, useState, type FC } from "react";
 import { DatePicker, Modal, Select } from "../../../../components/core";
-import { addDays } from "date-fns";
-import { Button, Space } from "antd";
+import { addDays, subMonths } from "date-fns";
+import { Button, message, Space } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import type { AddHistoricPairDataItem } from "../../../../modules/historicPairsMeta/types";
+import { useAddHistoricPairDataMutation } from "../../../../modules/historicPairsMeta/apis";
 
 const PAIRS = ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'SOLUSDT', 'DOGEUSDT', 'ADAUSDT', 'DOTUSDT', 'LINKUSDT', 'UNIUSDT', 'XLMUSDT'];
-const INTERVALS = ['1m', '5m', '15m', '30m', '1h', '4h', '1d'];
+const INTERVALS = ['1', '3', '5', '15', '30', '60', '120', '240', '360', '720', 'D', 'W', 'M'];
 
 interface AddNewPairsModalProps {
     open: boolean;
     onClose: () => void;
 }
 
+const getInitialPair = (): AddHistoricPairDataItem => ({
+    symbol: "BTCUSDT",
+    interval: "1h",
+    startDateTime: subMonths(new Date(), 1).toISOString(),
+    endDateTime: new Date().toISOString(),
+    provider: "bybit",
+});
+
 const AddNewPairsModal: FC<AddNewPairsModalProps> = ({ open, onClose }) => {
-    const [newPairs, setNewPairs] = useState<AddHistoricPairDataItem[]>([{
-        symbol: 'BTCUSDT',
-        interval: '1h',
-        startDateTime: new Date().toISOString(),
-        endDateTime: addDays(new Date(), 1).toISOString(),
-        provider: "bybit",
-    }]);
+    const [newPairs, setNewPairs] = useState<AddHistoricPairDataItem[]>(() => [getInitialPair()]);
+    const [addHistoricPairData, { isLoading: isSubmitting }] = useAddHistoricPairDataMutation();
+
+    useEffect(() => {
+        if (open) {
+            setNewPairs([getInitialPair()]);
+        }
+    }, [open]);
 
     const usedIntervalsBySymbol = useMemo(() => {
         const map: Record<string, Set<string>> = {};
@@ -122,8 +132,8 @@ const AddNewPairsModal: FC<AddNewPairsModalProps> = ({ open, onClose }) => {
             {
                 symbol,
                 interval,
-                startDateTime: new Date().toISOString(),
-                endDateTime: addDays(new Date(), 1).toISOString(),
+                startDateTime: subMonths(new Date(), 1).toISOString(),
+                endDateTime: new Date().toISOString(),
                 provider: "bybit",
             },
         ]);
@@ -133,14 +143,26 @@ const AddNewPairsModal: FC<AddNewPairsModalProps> = ({ open, onClose }) => {
         setNewPairs((prev) => prev.filter((_, i) => i !== index));
     };
 
-    const savePairs = () => {
-        console.log('newPairs:', newPairs);
-        onClose();
+    const savePairs = async () => {
+        if (newPairs.length === 0) return;
+        try {
+            const result = await addHistoricPairData({ data: newPairs }).unwrap();
+            if (result.accepted) {
+                message.success(result.message ?? "Pairs added");
+                onClose();
+            } else {
+                message.warning(result.message ?? "Request was not accepted");
+            }
+        } catch {
+            message.error("Failed to add pairs");
+        }
     };
 
     const renderOptions = () => {
         return newPairs.map((pair, index) => {
             const intervalsOptions = getIntervalsOptionsForRow(pair.symbol, index);
+            const startDate = dayjs(pair.startDateTime);
+            const endDate = dayjs(pair.endDateTime);
 
             return (
                 <div key={index} style={{ marginBottom: 16 }}>
@@ -162,16 +184,26 @@ const AddNewPairsModal: FC<AddNewPairsModalProps> = ({ open, onClose }) => {
                             style={{ width: 80 }}
                         />
                         <DatePicker
-                            value={dayjs(pair.startDateTime)}
-                            onChange={(value) => updatePair(index, { startDateTime: value?.toISOString() ?? new Date().toISOString() })}
+                            value={startDate.isValid() ? startDate : dayjs()}
+                            onChange={(value) =>
+                                updatePair(index, {
+                                    startDateTime: value ? value.toDate().toISOString() : new Date().toISOString(),
+                                })
+                            }
                             showTime
                             style={{ width: 180 }}
+                            allowClear={false}
                         />
                         <DatePicker
-                            value={dayjs(pair.endDateTime)}
-                            onChange={(value) => updatePair(index, { endDateTime: value?.toISOString() ?? addDays(new Date(), 1).toISOString() })}
+                            value={endDate.isValid() ? endDate : dayjs()}
+                            onChange={(value) =>
+                                updatePair(index, {
+                                    endDateTime: value ? value.toDate().toISOString() : addDays(new Date(), 1).toISOString(),
+                                })
+                            }
                             showTime
                             style={{ width: 180 }}
+                            allowClear={false}
                         />
                         {index > 0 ? <Button type="link" danger icon={<DeleteOutlined />} onClick={() => removePair(index)} /> : null}
                     </Space>
@@ -187,15 +219,18 @@ const AddNewPairsModal: FC<AddNewPairsModalProps> = ({ open, onClose }) => {
             onClose={onClose}
             title="Add New Pairs"
             footer={
-                <div style={{ color: 'red', display: 'flex', justifyContent: 'flex-end', marginTop: 16, marginBottom: 16 }}>
-                    <Button type="primary" onClick={savePairs}>Save</Button>
+                <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+                    <Button onClick={onClose}>Cancel</Button>
+                    <Button type="primary" loading={isSubmitting} onClick={savePairs}>
+                        Save
+                    </Button>
                 </div>
             }
         >
             <div style={{ width: 670, maxHeight: 500 }}>
                 {renderOptions()}
-                <div style={{ color: 'red', display: 'flex', justifyContent: 'flex-end', marginTop: 16, marginBottom: 16 }}>
-                    <Button type="primary" shape='circle' onClick={addNewPair} icon={<PlusOutlined />} />
+                <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 16, marginBottom: 16 }}>
+                    <Button type="primary" shape="circle" onClick={addNewPair} icon={<PlusOutlined />} />
                 </div>
             </div>
         </Modal>

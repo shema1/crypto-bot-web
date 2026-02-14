@@ -53,3 +53,8 @@ export interface UpdateMetaRequest {
   firstRecordDate: string;
   lastRecordDate: string;
 }
+
+export interface UpdateMetaResponse {
+  accepted: boolean;
+  message: string;
+}
