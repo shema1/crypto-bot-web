@@ -1,5 +1,6 @@
 
 // APIs
+import { bybitApi } from '../modules/bybit/apis';
 import { historicPairsMetaApi } from '../modules/historicPairsMeta/apis';
 
 // slices
@@ -7,6 +8,7 @@ import { historicPairsMetaApi } from '../modules/historicPairsMeta/apis';
 
 // ---- REDUCER ----
 const rootReducer = {
+  [bybitApi.reducerPath]: bybitApi.reducer,
   [historicPairsMetaApi.reducerPath]: historicPairsMetaApi.reducer,
 };
 

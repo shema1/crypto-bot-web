@@ -6,32 +6,44 @@ import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import type { AddHistoricPairDataItem } from "../../../../modules/historicPairsMeta/types";
 import { useAddHistoricPairDataMutation } from "../../../../modules/historicPairsMeta/apis";
+import { useGetInstrumentsQuery } from "../../../../modules/bybit/apis";
+import { KLINE_INTERVALS } from "../../../../modules/bybit/types";
 
-const PAIRS = ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'SOLUSDT', 'DOGEUSDT', 'ADAUSDT', 'DOTUSDT', 'LINKUSDT', 'UNIUSDT', 'XLMUSDT'];
-const INTERVALS = ['1', '3', '5', '15', '30', '60', '120', '240', '360', '720', 'D', 'W', 'M'];
+const INTERVALS = [...KLINE_INTERVALS];
 
 interface AddNewPairsModalProps {
     open: boolean;
     onClose: () => void;
 }
 
-const getInitialPair = (): AddHistoricPairDataItem => ({
-    symbol: "BTCUSDT",
-    interval: "1h",
+const getInitialPair = (defaultSymbol: string): AddHistoricPairDataItem => ({
+    symbol: defaultSymbol,
+    interval: INTERVALS[0],
     startDateTime: subMonths(new Date(), 1).toISOString(),
     endDateTime: new Date().toISOString(),
     provider: "bybit",
 });
 
+const DEFAULT_SYMBOL = "BTCUSDT";
+
 const AddNewPairsModal: FC<AddNewPairsModalProps> = ({ open, onClose }) => {
-    const [newPairs, setNewPairs] = useState<AddHistoricPairDataItem[]>(() => [getInitialPair()]);
+    const { data: instruments = [] } = useGetInstrumentsQuery(
+        { category: "linear" },
+        { skip: !open }
+    );
+    const pairSymbols = useMemo(() => instruments.map((i) => i.symbol), [instruments]);
+    const defaultSymbol = pairSymbols[0] ?? DEFAULT_SYMBOL;
+
+    const [newPairs, setNewPairs] = useState<AddHistoricPairDataItem[]>(() => [
+        getInitialPair(DEFAULT_SYMBOL),
+    ]);
     const [addHistoricPairData, { isLoading: isSubmitting }] = useAddHistoricPairDataMutation();
 
     useEffect(() => {
         if (open) {
-            setNewPairs([getInitialPair()]);
+            setNewPairs([getInitialPair(defaultSymbol)]);
         }
-    }, [open]);
+    }, [open, defaultSymbol]);
 
     const usedIntervalsBySymbol = useMemo(() => {
         const map: Record<string, Set<string>> = {};
@@ -43,15 +55,15 @@ const AddNewPairsModal: FC<AddNewPairsModalProps> = ({ open, onClose }) => {
     }, [newPairs]);
 
     const pairsOptions = useMemo(() => {
-        return PAIRS.map((pair) => {
-            const usedCount = usedIntervalsBySymbol[pair]?.size ?? 0;
+        return pairSymbols.map((symbol) => {
+            const usedCount = usedIntervalsBySymbol[symbol]?.size ?? 0;
             return {
-                value: pair,
-                label: pair,
+                value: symbol,
+                label: symbol,
                 disabled: usedCount >= INTERVALS.length,
             };
         });
-    }, [usedIntervalsBySymbol]);
+    }, [pairSymbols, usedIntervalsBySymbol]);
 
     const getIntervalsOptionsForRow = useCallback((symbol: string, excludeIndex: number) => {
         const usedInOtherRows = new Set(
@@ -99,15 +111,15 @@ const AddNewPairsModal: FC<AddNewPairsModalProps> = ({ open, onClose }) => {
 
     const getNextAvailablePair = useCallback((): { symbol: string; interval: string } => {
         const used = new Set(newPairs.map((p) => `${p.symbol}-${p.interval}`));
-        for (const symbol of PAIRS) {
+        for (const symbol of pairSymbols) {
             for (const interval of INTERVALS) {
                 if (!used.has(`${symbol}-${interval}`)) {
                     return { symbol, interval };
                 }
             }
         }
-        return { symbol: PAIRS[0], interval: INTERVALS[0] };
-    }, [newPairs]);
+        return { symbol: defaultSymbol, interval: INTERVALS[0] };
+    }, [newPairs, pairSymbols, defaultSymbol]);
 
     useEffect(() => {
         setNewPairs((prev) => {
