@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Layout, theme, Select } from 'antd';
 import SideNav from './components/SideNav';
-import { routes } from './routes';
+import { getFlatRoutes, routes } from './routes';
 import { supportedLngs, type SupportedLocale } from './i18n';
 import './App.css';
 
@@ -38,7 +38,7 @@ function AppLayout() {
       </Sider>
       <Content style={{ backgroundColor: colorBgContainer, }}>
         <Routes>
-          {routes.map(({ path, element }) => (
+          {getFlatRoutes(routes).map(({ path, element }) => (
             <Route key={path} path={path} element={element} />
           ))}
         </Routes>

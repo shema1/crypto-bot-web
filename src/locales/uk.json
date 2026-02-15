@@ -1,7 +1,9 @@
 {
   "nav": {
     "historicPairsData": "Історичні дані пар",
-    "strategies": "Стратегії"
+    "strategies": "Стратегії",
+    "trendFollowing": "Тренд-фолловінг",
+    "meanReversion": "Mean Reversion"
   },
   "historicPairsData": {
     "title": "Історичні дані пар",

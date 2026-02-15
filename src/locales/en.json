@@ -1,7 +1,9 @@
 {
   "nav": {
     "historicPairsData": "Historic Pairs Data",
-    "strategies": "Strategies"
+    "strategies": "Strategies",
+    "trendFollowing": "Trend Following",
+    "meanReversion": "Mean Reversion"
   },
   "historicPairsData": {
     "title": "Historic Pairs Data",
