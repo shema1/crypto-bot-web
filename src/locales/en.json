@@ -34,7 +34,30 @@
     "error": "Error"
   },
   "strategies": {
-    "title": "Strategies"
+    "title": "Strategies",
+    "trendFollowing": {
+      "title": "Trend Following",
+      "columns": {
+        "name": "Name",
+        "timeframe": "Timeframe",
+        "maType": "MA type",
+        "shortMa": "Short MA",
+        "longMa": "Long MA",
+        "adxPeriod": "ADX period",
+        "adxThreshold": "ADX threshold",
+        "stopLoss": "Stop loss",
+        "takeProfit": "Take profit",
+        "leverage": "Leverage",
+        "actions": "Actions"
+      },
+      "messages": {
+        "rowDeleted": "Row deleted",
+        "deleteError": "Failed to delete"
+      }
+    }
+  },
+  "common": {
+    "paginationTotal": "Total {{total}} items"
   },
   "language": "Language"
 }

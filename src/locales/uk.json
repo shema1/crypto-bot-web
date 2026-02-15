@@ -34,7 +34,30 @@
     "error": "Помилка"
   },
   "strategies": {
-    "title": "Стратегії"
+    "title": "Стратегії",
+    "trendFollowing": {
+      "title": "Тренд-фолловінг",
+      "columns": {
+        "name": "Назва",
+        "timeframe": "Таймфрейм",
+        "maType": "Тип MA",
+        "shortMa": "Коротка MA",
+        "longMa": "Довга MA",
+        "adxPeriod": "Період ADX",
+        "adxThreshold": "Поріг ADX",
+        "stopLoss": "Стоп-лосс",
+        "takeProfit": "Тейк-профіт",
+        "leverage": "Кредитне плече",
+        "actions": "Дії"
+      },
+      "messages": {
+        "rowDeleted": "Рядок видалено",
+        "deleteError": "Помилка видалення"
+      }
+    }
+  },
+  "common": {
+    "paginationTotal": "Всього {{total}}"
   },
   "language": "Мова"
 }

@@ -4,11 +4,16 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import rootReducer from './reducers';
 import { bybitApi } from '../modules/bybit/apis';
 import { historicPairsMetaApi } from '../modules/historicPairsMeta/apis';
+import { trendFollowingStrategyApi } from '../modules/strategies/trendFollowingStrategy/apis';
 
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(bybitApi.middleware, historicPairsMetaApi.middleware),
+    getDefaultMiddleware().concat(
+      bybitApi.middleware,
+      historicPairsMetaApi.middleware,
+      trendFollowingStrategyApi.middleware,
+    ),
 });
 
 setupListeners(store.dispatch);
