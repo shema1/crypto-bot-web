@@ -18,25 +18,10 @@ import AppHeaderContainer from '../../components/layout/AppHeaderContainer';
 import {
   useGetRunByIdQuery,
   useGetOrdersForResultQuery,
+  type BacktestResultSummary,
+  type BacktestRunError,
+  type BacktestOrderRecord,
 } from '../../modules/backtest';
-
-/** Result summary shape from API (matches backend BacktestResultSummary). */
-interface ResultSummary {
-  params?: { name?: string; pair?: string; timeframe?: string };
-  total_orders?: number;
-  winning_orders?: number;
-  losing_orders?: number;
-  net_result?: number;
-  win_rate?: number;
-  roi_on_margin_pct?: number | null;
-  orders_count?: number;
-}
-
-/** Error item shape from API. */
-interface ErrorItem {
-  name?: string;
-  error?: string;
-}
 
 const BacktestRunDetailPage: FC = () => {
   const { t } = useTranslation();
@@ -56,10 +41,10 @@ const BacktestRunDetailPage: FC = () => {
 
   const errorMessage =
     isError && error && 'message' in error ? String(error.message) : null;
-  const results = (run?.results ?? []) as ResultSummary[];
-  const errors = (run?.errors ?? []) as ErrorItem[];
+  const results = run?.results ?? [];
+  const errors = run?.errors ?? [];
 
-  const resultColumns: ColumnsType<ResultSummary> = [
+  const resultColumns: ColumnsType<BacktestResultSummary> = [
     {
       title: '#',
       key: 'index',
@@ -71,16 +56,16 @@ const BacktestRunDetailPage: FC = () => {
       key: 'name',
       width: 140,
       ellipsis: true,
-      sorter: (a, b) => (a.params?.name ?? '').localeCompare(b.params?.name ?? ''),
+      sorter: (a, b) => (a.params.name ?? '').localeCompare(b.params.name ?? ''),
       sortDirections: ['ascend', 'descend'],
-      render: (_, r) => r.params?.name ?? '—',
+      render: (_, r) => r.params.name ?? '—',
     },
     {
       title: t('backtest.detail.pair'),
       dataIndex: ['params', 'pair'],
       key: 'pair',
       width: 100,
-      sorter: (a, b) => (a.params?.pair ?? '').localeCompare(b.params?.pair ?? ''),
+      sorter: (a, b) => (a.params.pair ?? '').localeCompare(b.params.pair ?? ''),
       sortDirections: ['ascend', 'descend'],
     },
     {
@@ -88,7 +73,7 @@ const BacktestRunDetailPage: FC = () => {
       dataIndex: ['params', 'timeframe'],
       key: 'timeframe',
       width: 90,
-      sorter: (a, b) => (a.params?.timeframe ?? '').localeCompare(b.params?.timeframe ?? ''),
+      sorter: (a, b) => (a.params.timeframe ?? '').localeCompare(b.params.timeframe ?? ''),
       sortDirections: ['ascend', 'descend'],
     },
     {
@@ -183,7 +168,7 @@ const BacktestRunDetailPage: FC = () => {
     },
   ];
 
-  const orderColumns: ColumnsType<Record<string, unknown>> = [
+  const orderColumns: ColumnsType<BacktestOrderRecord> = [
     {
       title: t('backtest.detail.orders.openTime'),
       dataIndex: 'open_time_utc',
@@ -332,7 +317,7 @@ const BacktestRunDetailPage: FC = () => {
               <Typography.Title level={5} style={{ marginTop: 24 }}>
                 {t('backtest.detail.resultsSection')} ({results.length})
               </Typography.Title>
-              <Table<ResultSummary>
+              <Table<BacktestResultSummary>
                 columns={resultColumns}
                 dataSource={results}
                 rowKey={(_, i) => String(i)}
@@ -348,12 +333,12 @@ const BacktestRunDetailPage: FC = () => {
                     {t('backtest.detail.errorsSection')} ({errors.length})
                   </Typography.Title>
                   <Space direction="vertical" size="small">
-                    {errors.map((err, i) => (
+                    {errors.map((err: BacktestRunError, i: number) => (
                       <Alert
                         key={i}
                         type="error"
                         showIcon
-                        message={err.name ?? 'Error'}
+                        message={err.name}
                         description={err.error}
                       />
                     ))}
@@ -374,9 +359,9 @@ const BacktestRunDetailPage: FC = () => {
         footer={null}
         width={960}
       >
-        <Table
+        <Table<BacktestOrderRecord>
           columns={orderColumns}
-          dataSource={(orders ?? []) as Record<string, unknown>[]}
+          dataSource={orders ?? []}
           rowKey={(_, i) => String(i)}
           loading={ordersLoading}
           pagination={{ pageSize: 10, size: 'small' }}

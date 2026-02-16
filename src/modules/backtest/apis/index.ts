@@ -8,12 +8,15 @@ import type {
   GetRunsResponse,
   BacktestRunDetail,
   BacktestResultOrders,
+  CreateBacktestTaskRequest,
+  UpdateBacktestTaskRequest,
+  BacktestTask,
 } from '../types';
 
 export const backtestApi = createApi({
   reducerPath: 'backtestApi',
   baseQuery: createMainBaseQuery(),
-  tagTypes: ['BacktestRun'],
+  tagTypes: ['BacktestRun', 'BacktestTask'],
   endpoints: (builder) => ({
     runBacktest: builder.mutation<BacktestRunAcceptedResponse, BacktestRunRequest>({
       query: (body) => ({
@@ -57,6 +60,25 @@ export const backtestApi = createApi({
         { type: 'BacktestRun', id: `${runId}-${resultIndex}` },
       ],
     }),
+    createTask: builder.mutation<BacktestTask, CreateBacktestTaskRequest>({
+      query: (body) => ({
+        url: backtestUrls.tasks,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: [{ type: 'BacktestTask', id: 'LIST' }],
+    }),
+    updateTask: builder.mutation<BacktestTask, { taskId: string; body: UpdateBacktestTaskRequest }>({
+      query: ({ taskId, body }) => ({
+        url: backtestUrls.taskById(taskId),
+        method: 'PATCH',
+        body,
+      }),
+      invalidatesTags: (_result, _error, { taskId }) => [
+        { type: 'BacktestTask', id: taskId },
+        { type: 'BacktestTask', id: 'LIST' },
+      ],
+    }),
   }),
 });
 
@@ -65,4 +87,6 @@ export const {
   useGetRunsQuery,
   useGetRunByIdQuery,
   useGetOrdersForResultQuery,
+  useCreateTaskMutation,
+  useUpdateTaskMutation,
 } = backtestApi;
