@@ -1,75 +1,3 @@
-/**
- * Types aligned with crypto-bot-helper backtest module and crypto-analysis-bot schemas.
- */
-
-/** Single order record (matches backend BacktestOrderRecord). */
-export interface BacktestOrderRecord {
-  open_time: number;
-  open_time_utc: string;
-  open_price: number;
-  target_price: number;
-  lost_price: number;
-  liquidation_price: number;
-  close_time: number;
-  close_time_utc: string;
-  close_price: number;
-  size: number;
-  margin_used: number;
-  is_liquidated: boolean;
-  pnl: number;
-  type: 'long' | 'short';
-}
-
-/** Params echoed in backtest result (request that was run). */
-export interface BacktestResponseParams {
-  name: string;
-  strategy: 'TrendFollowing';
-  pair: string;
-  timeframe: string;
-  short_ma: number;
-  long_ma: number;
-  adx_period: number;
-  adx_threshold: number;
-  stop_loss: string;
-  take_profit: string;
-  leverage: number;
-  ma_type: 'EMA' | 'SMA';
-}
-
-/** Result summary stored in run (no orders_history; orders via GET .../orders). */
-export interface BacktestResultSummary {
-  params: BacktestResponseParams;
-  total_orders: number;
-  winning_orders: number;
-  losing_orders: number;
-  total_profit: number;
-  total_loss: number;
-  net_result: number;
-  max_margin_used: number;
-  roi_on_margin_pct: number | null;
-  max_drawdown: number;
-  average_pnl: number;
-  win_rate: number;
-  orders_count: number;
-}
-
-/** Error detail from analysis-bot (e.g. validation). */
-export interface BacktestErrorDetail {
-  type: string;
-  loc: string[];
-  msg: string;
-  input?: Record<string, unknown>;
-  ctx?: Record<string, unknown>;
-}
-
-/** Single error entry in run (failed backtest request). */
-export interface BacktestRunError {
-  name: string;
-  error: string;
-  detail?: BacktestErrorDetail[];
-  input?: Record<string, unknown>;
-}
-
 /** Single strategy item for backtest run request. */
 export interface BacktestStrategyItem {
   pair: string;
@@ -77,7 +5,7 @@ export interface BacktestStrategyItem {
   strategy: 'TrendFollowing';
 }
 
-/** Request body for POST /backtest (run). */
+/** Request body for POST /backtest. */
 export interface BacktestRunRequest {
   strategies: BacktestStrategyItem[];
 }
@@ -111,41 +39,42 @@ export interface GetRunsResponse {
   limit: number;
 }
 
-/** Full run detail (result summaries and errors). */
+/** Full run detail (results summaries and errors). */
 export interface BacktestRunDetail {
   id: string;
   createdAt: string;
   updatedAt: string;
-  results: BacktestResultSummary[];
-  errors: BacktestRunError[];
+  results: unknown[];
+  errors: unknown[];
 }
 
 /** Orders for one result (GET runs/:runId/results/:resultIndex/orders). */
-export type BacktestResultOrders = BacktestOrderRecord[];
+export type BacktestResultOrders = unknown[];
 
-/** Request body for POST /backtest/tasks (create task). */
-export interface CreateBacktestTaskRequest {
-  name: string;
-}
+/** Sort field for GET /backtest/tasks. */
+export type GetTasksSortField = 'createdAt' | 'updatedAt' | 'name' | 'status';
 
-/** Request body for PATCH /backtest/tasks/:taskId (update task). */
-export interface UpdateBacktestTaskRequest {
-  name?: string;
-  candlesMeta?: string[];
-  trendFollowingStrategies?: string[];
-  selectedStrategies?: Record<string, string[]>;
-  stopLoss?: number;
-  takeProfit?: number;
-  stopLossTakeProfitStep?: number;
+/** Sort order for GET /backtest/tasks. */
+export type GetTasksSortOrder = 'asc' | 'desc';
+
+/** Query params for GET /backtest/tasks. */
+export interface GetTasksQuery {
+  search?: string;
+  sortBy?: GetTasksSortField;
+  sortOrder?: GetTasksSortOrder;
+  page?: number;
+  limit?: number;
 }
 
 /** Task status (matches backend BacktestTaskStatus). */
-export enum BacktestTaskStatus {
-  CREATED = 'created',
-  RUNNING = 'running',
-  COMPLETED = 'completed',
-  FAILED = 'failed',
-}
+export const BacktestTaskStatus = {
+  CREATED: 'created',
+  RUNNING: 'running',
+  COMPLETED: 'completed',
+  FAILED: 'failed',
+} as const;
+
+export type BacktestTaskStatus = (typeof BacktestTaskStatus)[keyof typeof BacktestTaskStatus];
 
 /** Backtest task (matches backend BacktestTask schema). */
 export interface BacktestTask {
@@ -163,4 +92,28 @@ export interface BacktestTask {
   stopLossTakeProfitStep: number;
   createdAt?: string;
   updatedAt?: string;
+}
+
+/** Paginated list of backtest tasks. */
+export interface GetTasksResponse {
+  items: BacktestTask[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+/** Request body for POST /backtest/tasks. */
+export interface CreateBacktestTaskRequest {
+  name: string;
+}
+
+/** Request body for PATCH /backtest/tasks/:taskId. */
+export interface UpdateBacktestTaskRequest {
+  name?: string;
+  candlesMeta?: string[];
+  trendFollowingStrategies?: string[];
+  selectedStrategies?: Record<string, string[]>;
+  stopLoss?: number;
+  takeProfit?: number;
+  stopLossTakeProfitStep?: number;
 }

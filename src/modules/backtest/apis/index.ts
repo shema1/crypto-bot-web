@@ -8,6 +8,8 @@ import type {
   GetRunsResponse,
   BacktestRunDetail,
   BacktestResultOrders,
+  GetTasksQuery,
+  GetTasksResponse,
   CreateBacktestTaskRequest,
   UpdateBacktestTaskRequest,
   BacktestTask,
@@ -60,6 +62,32 @@ export const backtestApi = createApi({
         { type: 'BacktestRun', id: `${runId}-${resultIndex}` },
       ],
     }),
+    getTasks: builder.query<GetTasksResponse, GetTasksQuery | void>({
+      query: (params) => {
+        const p = params ?? {};
+        return {
+          url: backtestUrls.tasks,
+          params: {
+            search: p.search,
+            sortBy: p.sortBy ?? 'createdAt',
+            sortOrder: p.sortOrder ?? 'desc',
+            page: p.page ?? 1,
+            limit: p.limit ?? 20,
+          },
+        };
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.items.map((task) => ({ type: 'BacktestTask' as const, id: task._id })),
+              { type: 'BacktestTask', id: 'LIST' },
+            ]
+          : [{ type: 'BacktestTask', id: 'LIST' }],
+    }),
+    getTaskById: builder.query<BacktestTask, string>({
+      query: (taskId) => ({ url: backtestUrls.taskById(taskId) }),
+      providesTags: (_result, _error, taskId) => [{ type: 'BacktestTask', id: taskId }],
+    }),
     createTask: builder.mutation<BacktestTask, CreateBacktestTaskRequest>({
       query: (body) => ({
         url: backtestUrls.tasks,
@@ -87,6 +115,8 @@ export const {
   useGetRunsQuery,
   useGetRunByIdQuery,
   useGetOrdersForResultQuery,
+  useGetTasksQuery,
+  useGetTaskByIdQuery,
   useCreateTaskMutation,
   useUpdateTaskMutation,
 } = backtestApi;
