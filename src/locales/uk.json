@@ -66,6 +66,15 @@
       "resultsCount": "Результати",
       "errorsCount": "Помилки"
     },
+    "actions": {
+      "add": "Додати запуск"
+    },
+    "addModal": {
+      "title": "Новий запуск бектесту",
+      "namePlaceholder": "Назва",
+      "save": "Зберегти",
+      "cancel": "Скасувати"
+    },
     "detail": {
       "title": "Запуск",
       "backToList": "До списку",

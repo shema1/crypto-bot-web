@@ -66,6 +66,15 @@
       "resultsCount": "Results",
       "errorsCount": "Errors"
     },
+    "actions": {
+      "add": "Add run"
+    },
+    "addModal": {
+      "title": "Add backtest run",
+      "namePlaceholder": "Name",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
     "detail": {
       "title": "Run",
       "backToList": "Back to list",

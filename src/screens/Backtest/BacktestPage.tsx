@@ -1,12 +1,13 @@
 import { useState, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Alert, Table } from 'antd';
-import { RightOutlined } from '@ant-design/icons';
+import { Alert, Button, Table } from 'antd';
+import { PlusOutlined, RightOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { format } from 'date-fns';
 import AppContainer from '../../components/layout/AppContainer';
 import AppHeaderContainer from '../../components/layout/AppHeaderContainer';
+import { AddBacktestModal } from './components';
 import { useGetRunsQuery } from '../../modules/backtest';
 import type { BacktestRunListItem } from '../../modules/backtest';
 
@@ -18,6 +19,7 @@ const BacktestPage: FC = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(DEFAULT_PAGE_SIZE);
+  const [addModalOpen, setAddModalOpen] = useState(false);
 
   const { data, isLoading, isError, error } = useGetRunsQuery({ page, limit });
   const errorMessage = isError && error && 'message' in error ? String(error.message) : null;
@@ -90,7 +92,11 @@ const BacktestPage: FC = () => {
   return (
     <>
       <AppHeaderContainer>
-        <h1 className="backtest-page__title">{t('backtest.title')}</h1>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h1 className="backtest-page__title">{t('backtest.title')}</h1>
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => setAddModalOpen(true)}>{t('backtest.actions.add')}</Button>
+        </div>
+
       </AppHeaderContainer>
       <AppContainer>
         <div className="backtest-page">
@@ -121,6 +127,14 @@ const BacktestPage: FC = () => {
           />
         </div>
       </AppContainer>
+      <AddBacktestModal
+        open={addModalOpen}
+        onClose={() => setAddModalOpen(false)}
+        onSave={(_name) => {
+          // TODO: use _name when creating backtest run (e.g. pass to API or navigate)
+          setAddModalOpen(false);
+        }}
+      />
     </>
   );
 };
