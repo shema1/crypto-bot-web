@@ -3,7 +3,8 @@
     "historicPairsData": "Історичні дані пар",
     "strategies": "Стратегії",
     "trendFollowing": "Тренд-фолловінг",
-    "meanReversion": "Mean Reversion"
+    "meanReversion": "Mean Reversion",
+    "backtest": "Бектест"
   },
   "historicPairsData": {
     "title": "Історичні дані пар",
@@ -53,6 +54,48 @@
       "messages": {
         "rowDeleted": "Рядок видалено",
         "deleteError": "Помилка видалення"
+      }
+    }
+  },
+  "backtest": {
+    "title": "Запуски бектесту",
+    "columns": {
+      "id": "ID запуску",
+      "createdAt": "Створено",
+      "updatedAt": "Оновлено",
+      "resultsCount": "Результати",
+      "errorsCount": "Помилки"
+    },
+    "detail": {
+      "title": "Запуск",
+      "backToList": "До списку",
+      "resultsSection": "Результати",
+      "errorsSection": "Помилки",
+      "resultName": "Назва",
+      "pair": "Пара",
+      "timeframe": "ТФ",
+      "totalOrders": "Всього ордерів",
+      "winningOrders": "В прибутку",
+      "losingOrders": "В мінусі",
+      "winLoseRatio": "В/П співв.",
+      "netResult": "Чистий результат",
+      "winRate": "Винрейт",
+      "actions": "Дії",
+      "viewOrders": "Ордери",
+      "ordersModalTitle": "Ордери (результат #{{index}})",
+      "orders": {
+        "openTime": "Час відкриття",
+        "closeTime": "Час закриття",
+        "type": "Тип",
+        "openPrice": "Ціна відкриття",
+        "closePrice": "Ціна закриття",
+        "targetPrice": "Ціль (TP)",
+        "lostPrice": "Стоп (SL)",
+        "size": "Розмір",
+        "marginUsed": "Маржа",
+        "pnl": "P&L",
+        "liquidated": "Ліквідовано",
+        "yes": "Так"
       }
     }
   },

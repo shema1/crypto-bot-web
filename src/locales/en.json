@@ -3,7 +3,8 @@
     "historicPairsData": "Historic Pairs Data",
     "strategies": "Strategies",
     "trendFollowing": "Trend Following",
-    "meanReversion": "Mean Reversion"
+    "meanReversion": "Mean Reversion",
+    "backtest": "Backtest"
   },
   "historicPairsData": {
     "title": "Historic Pairs Data",
@@ -53,6 +54,48 @@
       "messages": {
         "rowDeleted": "Row deleted",
         "deleteError": "Failed to delete"
+      }
+    }
+  },
+  "backtest": {
+    "title": "Backtest runs",
+    "columns": {
+      "id": "Run ID",
+      "createdAt": "Created",
+      "updatedAt": "Updated",
+      "resultsCount": "Results",
+      "errorsCount": "Errors"
+    },
+    "detail": {
+      "title": "Run",
+      "backToList": "Back to list",
+      "resultsSection": "Results",
+      "errorsSection": "Errors",
+      "resultName": "Name",
+      "pair": "Pair",
+      "timeframe": "TF",
+      "totalOrders": "Total orders",
+      "winningOrders": "Winning",
+      "losingOrders": "Losing",
+      "winLoseRatio": "W/L ratio",
+      "netResult": "Net result",
+      "winRate": "Win rate",
+      "actions": "Actions",
+      "viewOrders": "Orders",
+      "ordersModalTitle": "Orders (result #{{index}})",
+      "orders": {
+        "openTime": "Open time",
+        "closeTime": "Close time",
+        "type": "Type",
+        "openPrice": "Open price",
+        "closePrice": "Close price",
+        "targetPrice": "Target (TP)",
+        "lostPrice": "Stop (SL)",
+        "size": "Size",
+        "marginUsed": "Margin used",
+        "pnl": "PNL",
+        "liquidated": "Liquidated",
+        "yes": "Yes"
       }
     }
   },

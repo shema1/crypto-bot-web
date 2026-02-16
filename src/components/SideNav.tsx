@@ -31,13 +31,20 @@ const SideNav = ({ routes }: SideNavProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const menuItems: MenuProps['items'] = routes.map((r) => routeToMenuItem(r, t));
+  // Hide param routes (e.g. /backtest/:runId) from nav
+  const navRoutes = routes.filter((r) => !r.path.includes(':'));
+  const menuItems: MenuProps['items'] = navRoutes.map((r) => routeToMenuItem(r, t));
+
+  const parentRoute = navRoutes.find(
+    (r) => r.path !== location.pathname && location.pathname.startsWith(r.path + '/')
+  );
+  const selectedKey = parentRoute ? parentRoute.path : location.pathname;
 
   return (
     <Menu
       theme="dark"
       mode="inline"
-      selectedKeys={[location.pathname]}
+      selectedKeys={[selectedKey]}
       defaultOpenKeys={routes.filter((r) => r.children?.length).map((r) => r.path)}
       defaultSelectedKeys={[routes[0]?.path ?? '/']}
       items={menuItems}
