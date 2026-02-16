@@ -1,0 +1,10 @@
+.overview-tab__meta {
+  max-width: 480px;
+}
+
+.overview-tab__errors-title {
+  margin-top: 24px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}

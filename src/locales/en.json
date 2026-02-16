@@ -122,7 +122,30 @@
       "winRate": "Win rate",
       "actions": "Actions",
       "viewOrders": "Orders",
-      "ordersModalTitle": "Orders (result #{{index}})"
+      "ordersModalTitle": "Orders (result #{{index}})",
+      "orders": {
+        "openTime": "Open time",
+        "closeTime": "Close time",
+        "type": "Type",
+        "openPrice": "Open price",
+        "closePrice": "Close price",
+        "targetPrice": "Target (TP)",
+        "lostPrice": "Stop (SL)",
+        "size": "Size",
+        "marginUsed": "Margin used",
+        "pnl": "PNL",
+        "liquidated": "Liquidated",
+        "yes": "Yes"
+      },
+      "tabs": {
+        "overview": "Overview",
+        "futuresPairs": "Futures pairs",
+        "strategies": "Strategies",
+        "results": "Results"
+      },
+      "pairsCount": "Results count",
+      "metricsTotalResults": "Total results",
+      "metricsTotalErrors": "Total errors"
     }
   },
   "common": {

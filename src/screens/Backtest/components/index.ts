@@ -1,1 +1,7 @@
 export { default as AddBacktestModal } from './AddBacktestModal';
+export { default as OverviewTab } from './OverviewTab';
+export { default as FuturesPairsTab } from './FuturesPairsTab';
+export { default as StrategiesTab } from './StrategiesTab';
+export { default as ResultsTab } from './ResultsTab';
+export { default as OrdersModal } from './OrdersModal';
+export type { ResultSummary, BacktestErrorItem, BacktestRunDetailRun, PairTimeframeCount } from './types';

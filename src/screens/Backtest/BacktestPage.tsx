@@ -1,5 +1,6 @@
 import { useState, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Alert, Button, Input, message, Table, Tag } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
@@ -26,6 +27,7 @@ const taskStatusConfig: Record<BacktestTaskStatus, { color: string }> = {
 
 const BacktestPage: FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(DEFAULT_PAGE_SIZE);
   const [searchInput, setSearchInput] = useState('');
@@ -174,6 +176,10 @@ const BacktestPage: FC = () => {
             dataSource={items}
             rowKey="_id"
             loading={isLoading || isCreating}
+            onRow={(record) => ({
+              onClick: () => navigate(`/backtest/${record._id}`),
+              style: { cursor: 'pointer' },
+            })}
             pagination={{
               current: page,
               pageSize: limit,

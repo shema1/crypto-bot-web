@@ -122,7 +122,30 @@
       "winRate": "Винрейт",
       "actions": "Дії",
       "viewOrders": "Ордери",
-      "ordersModalTitle": "Ордери (результат #{{index}})"
+      "ordersModalTitle": "Ордери (результат #{{index}})",
+      "orders": {
+        "openTime": "Час відкриття",
+        "closeTime": "Час закриття",
+        "type": "Тип",
+        "openPrice": "Ціна відкриття",
+        "closePrice": "Ціна закриття",
+        "targetPrice": "Ціль (TP)",
+        "lostPrice": "Стоп (SL)",
+        "size": "Розмір",
+        "marginUsed": "Маржа",
+        "pnl": "P&L",
+        "liquidated": "Ліквідовано",
+        "yes": "Так"
+      },
+      "tabs": {
+        "overview": "Огляд",
+        "futuresPairs": "Фючерсні пари",
+        "strategies": "Стратегії",
+        "results": "Результати"
+      },
+      "pairsCount": "Кількість результатів",
+      "metricsTotalResults": "Всього результатів",
+      "metricsTotalErrors": "Всього помилок"
     }
   },
   "common": {
