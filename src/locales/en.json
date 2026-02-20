@@ -8,6 +8,7 @@
   },
   "historicPairsData": {
     "title": "Historic Pairs Data",
+    "searchPlaceholder": "Search by symbol, interval or provider",
     "columns": {
       "symbol": "Symbol",
       "interval": "Interval",
@@ -21,7 +22,8 @@
       "edit": "Edit",
       "update": "Update",
       "delete": "Delete",
-      "add": "Add"
+      "add": "Add",
+      "clearSort": "Clear sort"
     },
     "messages": {
       "editInfo": "Edit: {{symbol}} / {{interval}}",

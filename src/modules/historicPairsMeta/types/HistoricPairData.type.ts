@@ -18,10 +18,29 @@ export interface HistoricPairMetaItem {
   updatedAt: string;
 }
 
-/** Query params for GET meta (pagination) */
+/** Sort field for GET meta (matches backend META_SORT_FIELDS) */
+export const META_SORT_FIELDS = [
+  'symbol',
+  'interval',
+  'provider',
+  'oldestRecordDate',
+  'newestRecordDate',
+  'totalCandles',
+  'pairStatus',
+  'updatedAt',
+] as const;
+export type MetaSortField = (typeof META_SORT_FIELDS)[number];
+
+export const SORT_ORDER_VALUES = ['asc', 'desc'] as const;
+export type SortOrder = (typeof SORT_ORDER_VALUES)[number];
+
+/** Query params for GET meta (pagination, search, sort) */
 export interface GetMetaQueryParams {
   page?: number;
   limit?: number;
+  search?: string;
+  sortBy?: MetaSortField;
+  sortOrder?: SortOrder;
 }
 
 export interface GetMetaResponse {

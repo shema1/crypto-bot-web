@@ -18,9 +18,16 @@ export const historicPairsMetaApi = createApi({
     getMeta: builder.query<GetMetaResponse, GetMetaQueryParams | void>({
       query: (params) => {
         const p = params ?? {};
+        const queryParams: Record<string, string | number | undefined> = {
+          page: p.page ?? 1,
+          limit: p.limit ?? 20,
+        };
+        if (p.search?.trim()) queryParams.search = p.search.trim();
+        if (p.sortBy) queryParams.sortBy = p.sortBy;
+        if (p.sortOrder) queryParams.sortOrder = p.sortOrder;
         return {
           url: historicPairsMetaUrls.meta,
-          params: { page: p.page ?? 1, limit: p.limit ?? 20 },
+          params: queryParams,
         };
       },
       providesTags: (result) =>

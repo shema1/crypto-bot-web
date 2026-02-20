@@ -8,6 +8,7 @@
   },
   "historicPairsData": {
     "title": "Історичні дані пар",
+    "searchPlaceholder": "Пошук за символом, інтервалом або провайдером",
     "columns": {
       "symbol": "Символ",
       "interval": "Інтервал",
@@ -21,7 +22,8 @@
       "edit": "Редагувати",
       "update": "Оновити",
       "delete": "Видалити",
-      "add": "Додати"
+      "add": "Додати",
+      "clearSort": "Скинути сортування"
     },
     "messages": {
       "editInfo": "Редагувати: {{symbol}} / {{interval}}",
