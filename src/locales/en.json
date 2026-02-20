@@ -109,6 +109,8 @@
     "detail": {
       "title": "Run",
       "backToList": "Back to list",
+      "notAvailable": "Run details are not available. The backend does not expose this endpoint.",
+      "failedIterationsLabel": "Failed iterations",
       "resultsSection": "Results",
       "errorsSection": "Errors",
       "resultName": "Name",

@@ -109,6 +109,8 @@
     "detail": {
       "title": "Запуск",
       "backToList": "До списку",
+      "notAvailable": "Деталі запуску недоступні. Бекенд не надає цей ендпоінт.",
+      "failedIterationsLabel": "Невдалі ітерації",
       "resultsSection": "Результати",
       "errorsSection": "Помилки",
       "resultName": "Назва",

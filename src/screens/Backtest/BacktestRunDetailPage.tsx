@@ -13,7 +13,7 @@ import {
   OrdersModal,
 } from './components';
 import type { BacktestErrorItem, PairTimeframeCount, ResultSummary } from './components';
-import { useGetRunByIdQuery, useGetOrdersForResultQuery } from '../../modules/backtest';
+import { useGetTaskByIdQuery } from '../../modules/backtest';
 
 const BacktestRunDetailPage: FC = () => {
   const { t } = useTranslation();
@@ -21,37 +21,100 @@ const BacktestRunDetailPage: FC = () => {
   const navigate = useNavigate();
   const [ordersModalResultIndex, setOrdersModalResultIndex] = useState<number | null>(null);
 
-  const { data: run, isLoading, isError, error } = useGetRunByIdQuery(runId!, {
+  const { data: task, isLoading, isError, error } = useGetTaskByIdQuery(runId!, {
     skip: !runId,
   });
-  const { data: orders, isLoading: ordersLoading } = useGetOrdersForResultQuery(
-    { runId: runId!, resultIndex: ordersModalResultIndex! },
-    { skip: !runId || ordersModalResultIndex === null }
-  );
 
   const errorMessage =
     isError && error && 'message' in error ? String(error.message) : null;
-  const results = (run?.results ?? []) as ResultSummary[];
-  const errors = (run?.errors ?? []) as BacktestErrorItem[];
+
+  const runForOverview = useMemo(() => {
+    if (!task) return null;
+    return {
+      id: task._id,
+      createdAt: task.createdAt,
+      updatedAt: task.updatedAt,
+    };
+  }, [task]);
+
+  const resultsCount = task?.completedIterations ?? 0;
+  const errorsFromTask: BacktestErrorItem[] = useMemo(() => {
+    if (!task || task.failedIterations <= 0) return [];
+    return [
+      {
+        name: t('backtest.detail.failedIterationsLabel'),
+        error: String(task.failedIterations),
+      },
+    ];
+  }, [task, t]);
 
   const pairTimeframeCounts = useMemo<PairTimeframeCount[]>(() => {
+    if (!task?.candlesMeta?.length) return [];
     const map = new Map<string, PairTimeframeCount>();
-    for (const r of results) {
-      const pair = r.params?.pair ?? '—';
-      const tf = r.params?.timeframe ?? '—';
-      const key = `${pair}|${tf}`;
+    for (const meta of task.candlesMeta) {
+      const parts = meta.split('|');
+      const pair = parts[0]?.trim() || meta;
+      const timeframe = parts[1]?.trim() || '—';
+      const key = `${pair}|${timeframe}`;
       const existing = map.get(key);
       if (existing) {
         existing.count += 1;
       } else {
-        map.set(key, { pair, timeframe: tf, count: 1 });
+        map.set(key, { pair, timeframe, count: 1 });
       }
     }
     return Array.from(map.values());
-  }, [results]);
+  }, [task?.candlesMeta]);
+
+  const resultsFromTask: ResultSummary[] = useMemo(() => {
+    if (!task?.trendFollowingStrategies?.length) return [];
+    return task.trendFollowingStrategies.map((strategyId) => ({
+      params: {
+        name: strategyId,
+        pair: '—',
+        timeframe: '—',
+      },
+      total_orders: 0,
+      winning_orders: 0,
+      losing_orders: 0,
+      net_result: 0,
+      win_rate: 0,
+    }));
+  }, [task?.trendFollowingStrategies]);
 
   if (!runId) {
     return null;
+  }
+
+  if (!task && !isLoading) {
+    return (
+      <>
+        <AppHeaderContainer>
+          <div className="backtest-detail-page__header">
+            <Button
+              type="text"
+              icon={<ArrowLeftOutlined />}
+              onClick={() => navigate('/backtest')}
+            >
+              {t('backtest.detail.backToList')}
+            </Button>
+            <h1 className="backtest-detail-page__title">
+              {t('backtest.detail.title')} {runId}
+            </h1>
+          </div>
+        </AppHeaderContainer>
+        <AppContainer>
+          <div className="backtest-detail-page">
+            <Alert
+              type="info"
+              message={t('backtest.detail.notAvailable')}
+              showIcon
+              className="backtest-detail-page__info"
+            />
+          </div>
+        </AppContainer>
+      </>
+    );
   }
 
   return (
@@ -66,7 +129,7 @@ const BacktestRunDetailPage: FC = () => {
             {t('backtest.detail.backToList')}
           </Button>
           <h1 className="backtest-detail-page__title">
-            {t('backtest.detail.title')} {runId}
+            {t('backtest.detail.title')} {task?.name ?? runId}
           </h1>
         </div>
       </AppHeaderContainer>
@@ -80,7 +143,7 @@ const BacktestRunDetailPage: FC = () => {
               className="backtest-detail-page__error"
             />
           )}
-          {run && (
+          {runForOverview && (
             <Tabs
               defaultActiveKey="overview"
               items={[
@@ -89,9 +152,9 @@ const BacktestRunDetailPage: FC = () => {
                   label: t('backtest.detail.tabs.overview'),
                   children: (
                     <OverviewTab
-                      run={run}
-                      resultsCount={results.length}
-                      errors={errors}
+                      run={runForOverview}
+                      resultsCount={resultsCount}
+                      errors={errorsFromTask}
                     />
                   ),
                 },
@@ -109,7 +172,10 @@ const BacktestRunDetailPage: FC = () => {
                   key: 'strategies',
                   label: t('backtest.detail.tabs.strategies'),
                   children: (
-                    <StrategiesTab results={results} loading={isLoading} />
+                    <StrategiesTab
+                      results={resultsFromTask}
+                      loading={isLoading}
+                    />
                   ),
                 },
                 {
@@ -117,7 +183,7 @@ const BacktestRunDetailPage: FC = () => {
                   label: t('backtest.detail.tabs.results'),
                   children: (
                     <ResultsTab
-                      results={results}
+                      results={resultsFromTask}
                       loading={isLoading}
                       onViewOrders={setOrdersModalResultIndex}
                     />
@@ -132,8 +198,8 @@ const BacktestRunDetailPage: FC = () => {
       <OrdersModal
         open={ordersModalResultIndex !== null}
         resultIndex={ordersModalResultIndex}
-        orders={(orders ?? []) as Record<string, unknown>[]}
-        loading={ordersLoading}
+        orders={[]}
+        loading={false}
         onClose={() => setOrdersModalResultIndex(null)}
       />
     </>
