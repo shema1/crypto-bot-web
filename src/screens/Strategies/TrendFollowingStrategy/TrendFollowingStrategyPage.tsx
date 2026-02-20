@@ -1,11 +1,13 @@
 import { useState, useCallback, useMemo, useEffect, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Button, Input, message, Space, Table } from 'antd';
-import { ClearOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
-import type { ColumnsType } from 'antd/es/table';
-import type { SorterResult } from 'antd/es/table/interface';
+import { Alert, message } from 'antd';
 import AppContainer from '../../../components/layout/AppContainer';
 import AppHeaderContainer from '../../../components/layout/AppHeaderContainer';
+import { TrendFollowingTable } from '../../../components/core';
+import type {
+  TrendFollowingTableSortField,
+  TrendFollowingTableSortOrder,
+} from '../../../components/core';
 import './TrendFollowingStrategyPage.css';
 import {
   useGetTrendFollowingStrategiesQuery,
@@ -55,105 +57,31 @@ const TrendFollowingStrategyPage: FC = () => {
   const items = data?.items ?? [];
   const total = data?.total ?? 0;
 
-  const getColumnSortOrder = useCallback(
-    (columnKey: string): 'ascend' | 'descend' | undefined => {
-      if (sortBy == null || sortBy !== columnKey) return undefined;
-      return sortOrder === 'asc' ? 'ascend' : 'descend';
-    },
-    [sortBy, sortOrder],
+  const columnTitles = useMemo(
+    () => ({
+      name: t('strategies.trendFollowing.columns.name'),
+      ma_type: t('strategies.trendFollowing.columns.maType'),
+      short_ma: t('strategies.trendFollowing.columns.shortMa'),
+      long_ma: t('strategies.trendFollowing.columns.longMa'),
+      adx_period: t('strategies.trendFollowing.columns.adxPeriod'),
+      adx_threshold: t('strategies.trendFollowing.columns.adxThreshold'),
+      leverage: t('strategies.trendFollowing.columns.leverage'),
+      actions: t('strategies.trendFollowing.columns.actions'),
+    }),
+    [t],
   );
 
-  const columns: ColumnsType<TrendFollowingStrategyItem> = [
-    {
-      title: t('strategies.trendFollowing.columns.name'),
-      dataIndex: 'name',
-      key: 'name',
-      width: 140,
-      ellipsis: true,
-      sorter: true,
-      sortOrder: getColumnSortOrder('name'),
+  const handleDelete = useCallback(
+    async (record: TrendFollowingStrategyItem) => {
+      try {
+        await deleteStrategy(record.id).unwrap();
+        message.success(t('strategies.trendFollowing.messages.rowDeleted'));
+      } catch {
+        message.error(t('strategies.trendFollowing.messages.deleteError'));
+      }
     },
-
-    {
-      title: t('strategies.trendFollowing.columns.maType'),
-      dataIndex: 'ma_type',
-      key: 'ma_type',
-      width: 90,
-      sorter: true,
-      sortOrder: getColumnSortOrder('ma_type'),
-    },
-    {
-      title: t('strategies.trendFollowing.columns.shortMa'),
-      dataIndex: 'short_ma',
-      key: 'short_ma',
-      width: 100,
-      align: 'right',
-      sorter: true,
-      sortOrder: getColumnSortOrder('short_ma'),
-    },
-    {
-      title: t('strategies.trendFollowing.columns.longMa'),
-      dataIndex: 'long_ma',
-      key: 'long_ma',
-      width: 100,
-      align: 'right',
-      sorter: true,
-      sortOrder: getColumnSortOrder('long_ma'),
-    },
-    {
-      title: t('strategies.trendFollowing.columns.adxPeriod'),
-      dataIndex: 'adx_period',
-      key: 'adx_period',
-      width: 110,
-      align: 'right',
-      sorter: true,
-      sortOrder: getColumnSortOrder('adx_period'),
-    },
-    {
-      title: t('strategies.trendFollowing.columns.adxThreshold'),
-      dataIndex: 'adx_threshold',
-      key: 'adx_threshold',
-      width: 120,
-      align: 'right',
-      sorter: true,
-      sortOrder: getColumnSortOrder('adx_threshold'),
-    },
-    {
-      title: t('strategies.trendFollowing.columns.leverage'),
-      dataIndex: 'leverage',
-      key: 'leverage',
-      width: 90,
-      align: 'right',
-      sorter: true,
-      sortOrder: getColumnSortOrder('leverage'),
-    },
-    {
-      title: t('strategies.trendFollowing.columns.actions'),
-      key: 'actions',
-      width: 80,
-      fixed: 'right',
-      render: (_, record) => (
-        <Space size="small">
-          <Button
-            type="link"
-            size="small"
-            danger
-            icon={<DeleteOutlined />}
-            onClick={() => handleDelete(record)}
-          />
-        </Space>
-      ),
-    },
-  ];
-
-  const handleDelete = async (record: TrendFollowingStrategyItem) => {
-    try {
-      await deleteStrategy(record.id).unwrap();
-      message.success(t('strategies.trendFollowing.messages.rowDeleted'));
-    } catch {
-      message.error(t('strategies.trendFollowing.messages.deleteError'));
-    }
-  };
+    [deleteStrategy, t],
+  );
 
   const handlePaginationChange = useCallback((newPage: number, newPageSize: number) => {
     setPage(newPage);
@@ -163,27 +91,19 @@ const TrendFollowingStrategyPage: FC = () => {
     }
   }, [limit]);
 
-  const handleTableChange = useCallback(
-    (
-      _pagination: { current?: number; pageSize?: number },
-      _filters: unknown,
-      sorter: SorterResult<TrendFollowingStrategyItem> | SorterResult<TrendFollowingStrategyItem>[],
-    ) => {
-      const single = Array.isArray(sorter) ? sorter[0] : sorter;
-      if (!single?.columnKey) return;
-      const order = single.order;
-      if (order === 'ascend' || order === 'descend') {
-        const field = single.columnKey as TrendFollowingStrategySortField;
-        if (['name', 'ma_type', 'short_ma', 'long_ma', 'adx_period', 'adx_threshold', 'leverage'].includes(field)) {
-          setSortBy(field);
-          setSortOrder(order === 'ascend' ? 'asc' : 'desc');
-          setPage(1);
-        }
-      } else {
+  const tableSortOrder: TrendFollowingTableSortOrder | undefined =
+    sortBy == null ? undefined : sortOrder === 'asc' ? 'ascend' : 'descend';
+
+  const handleSortChange = useCallback(
+    (newSortBy: TrendFollowingTableSortField | undefined, newSortOrder: TrendFollowingTableSortOrder | undefined) => {
+      if (newSortBy == null || newSortOrder == null) {
         setSortBy(undefined);
         setSortOrder('asc');
-        setPage(1);
+      } else {
+        setSortBy(newSortBy as TrendFollowingStrategySortField);
+        setSortOrder(newSortOrder === 'ascend' ? 'asc' : 'desc');
       }
+      setPage(1);
     },
     [],
   );
@@ -193,8 +113,6 @@ const TrendFollowingStrategyPage: FC = () => {
     setSortOrder('asc');
     setPage(1);
   }, []);
-
-  const isSortedByColumn = sortBy != null;
 
   return (
     <>
@@ -213,39 +131,34 @@ const TrendFollowingStrategyPage: FC = () => {
               className="trend-following-strategy-page__error"
             />
           )}
-          <div style={{ marginBottom: 16, display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-            <Input
-              prefix={<SearchOutlined />}
-              placeholder={t('strategies.trendFollowing.searchPlaceholder')}
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              allowClear
-              className="trend-following-strategy-page__search"
-              style={{ maxWidth: 400 }}
-            />
-            {isSortedByColumn && (
-              <Button icon={<ClearOutlined />} onClick={handleClearSort}>
-                {t('strategies.trendFollowing.actions.clearSort')}
-              </Button>
-            )}
-          </div>
-          <Table<TrendFollowingStrategyItem>
-            columns={columns}
+          <TrendFollowingTable
             dataSource={items}
-            rowKey="id"
             loading={isLoading || isDeleting}
-            onChange={handleTableChange}
+            columnTitles={columnTitles}
             pagination={{
               current: page,
               pageSize: limit,
               total,
-              showSizeChanger: true,
+              onChange: handlePaginationChange,
               pageSizeOptions: PAGE_SIZE_OPTIONS,
               showTotal: (totalCount) => t('common.paginationTotal', { total: totalCount }),
-              onChange: handlePaginationChange,
             }}
-            size="middle"
-            scroll={{ x: 'max-content' }}
+            sort={{
+              sortBy: sortBy ?? undefined,
+              sortOrder: tableSortOrder,
+              onChange: handleSortChange,
+            }}
+            search={{
+              value: searchInput,
+              onChange: setSearchInput,
+              placeholder: t('strategies.trendFollowing.searchPlaceholder'),
+            }}
+            toolbar={{
+              clearSortLabel: t('strategies.trendFollowing.actions.clearSort'),
+              onClearSort: handleClearSort,
+            }}
+            onDelete={(record) => handleDelete(record as TrendFollowingStrategyItem)}
+            hiddenColumns={['timeframe']}
           />
         </div>
       </AppContainer>
