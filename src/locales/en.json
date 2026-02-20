@@ -40,6 +40,10 @@
     "title": "Strategies",
     "trendFollowing": {
       "title": "Trend Following",
+      "searchPlaceholder": "Search by name",
+      "actions": {
+        "clearSort": "Clear sort"
+      },
       "columns": {
         "name": "Name",
         "timeframe": "Timeframe",

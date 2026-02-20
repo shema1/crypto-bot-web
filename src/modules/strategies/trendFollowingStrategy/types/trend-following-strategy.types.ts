@@ -16,10 +16,28 @@ export interface TrendFollowingStrategyItem {
   leverage: number;
 }
 
-/** Query params for GET list (pagination) */
+/** Sort field for list (matches backend SORT_FIELDS) */
+export const TREND_FOLLOWING_SORT_FIELDS = [
+  'name',
+  'ma_type',
+  'short_ma',
+  'long_ma',
+  'adx_period',
+  'adx_threshold',
+  'leverage',
+] as const;
+export type TrendFollowingStrategySortField = (typeof TREND_FOLLOWING_SORT_FIELDS)[number];
+
+export const TREND_FOLLOWING_SORT_ORDERS = ['asc', 'desc'] as const;
+export type TrendFollowingStrategySortOrder = (typeof TREND_FOLLOWING_SORT_ORDERS)[number];
+
+/** Query params for GET list (pagination, search, sort) */
 export interface TrendFollowingStrategyListQuery {
   page?: number;
   limit?: number;
+  search?: string;
+  sortBy?: TrendFollowingStrategySortField;
+  sortOrder?: TrendFollowingStrategySortOrder;
 }
 
 export const TREND_FOLLOWING_STRATEGY_LIST_DEFAULTS = {

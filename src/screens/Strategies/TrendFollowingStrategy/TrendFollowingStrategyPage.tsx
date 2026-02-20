@@ -1,8 +1,9 @@
-import { useState, type FC } from 'react';
+import { useState, useCallback, useMemo, useEffect, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Button, message, Space, Table } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
+import { Alert, Button, Input, message, Space, Table } from 'antd';
+import { ClearOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
+import type { SorterResult } from 'antd/es/table/interface';
 import AppContainer from '../../../components/layout/AppContainer';
 import AppHeaderContainer from '../../../components/layout/AppHeaderContainer';
 import './TrendFollowingStrategyPage.css';
@@ -10,23 +11,57 @@ import {
   useGetTrendFollowingStrategiesQuery,
   useDeleteTrendFollowingStrategyMutation,
 } from '../../../modules/strategies/trendFollowingStrategy';
-import type { TrendFollowingStrategyItem } from '../../../modules/strategies/trendFollowingStrategy';
+import type {
+  TrendFollowingStrategyItem,
+  TrendFollowingStrategySortField,
+  TrendFollowingStrategySortOrder,
+} from '../../../modules/strategies/trendFollowingStrategy';
 import { TREND_FOLLOWING_STRATEGY_LIST_DEFAULTS } from '../../../modules/strategies/trendFollowingStrategy';
 
 const DEFAULT_PAGE_SIZE = TREND_FOLLOWING_STRATEGY_LIST_DEFAULTS.limit;
+const SEARCH_DEBOUNCE_MS = 300;
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 
 const TrendFollowingStrategyPage: FC = () => {
   const { t } = useTranslation();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState<number>(DEFAULT_PAGE_SIZE);
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState('');
+  const [sortBy, setSortBy] = useState<TrendFollowingStrategySortField | undefined>(undefined);
+  const [sortOrder, setSortOrder] = useState<TrendFollowingStrategySortOrder>('asc');
 
-  const { data, isLoading, isError, error } = useGetTrendFollowingStrategiesQuery({ page, limit });
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearch(searchInput);
+      setPage(1);
+    }, SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
+  const queryParams = useMemo(
+    () => ({
+      page,
+      limit,
+      ...(search.trim() && { search: search.trim() }),
+      ...(sortBy != null && { sortBy, sortOrder }),
+    }),
+    [page, limit, search, sortBy, sortOrder],
+  );
+  const { data, isLoading, isError, error } = useGetTrendFollowingStrategiesQuery(queryParams);
   const errorMessage = isError && error && 'message' in error ? String(error.message) : null;
   const [deleteStrategy, { isLoading: isDeleting }] = useDeleteTrendFollowingStrategyMutation();
 
   const items = data?.items ?? [];
   const total = data?.total ?? 0;
+
+  const getColumnSortOrder = useCallback(
+    (columnKey: string): 'ascend' | 'descend' | undefined => {
+      if (sortBy == null || sortBy !== columnKey) return undefined;
+      return sortOrder === 'asc' ? 'ascend' : 'descend';
+    },
+    [sortBy, sortOrder],
+  );
 
   const columns: ColumnsType<TrendFollowingStrategyItem> = [
     {
@@ -35,21 +70,17 @@ const TrendFollowingStrategyPage: FC = () => {
       key: 'name',
       width: 140,
       ellipsis: true,
-      sorter: (a, b) => (a.name ?? '').localeCompare(b.name ?? ''),
+      sorter: true,
+      sortOrder: getColumnSortOrder('name'),
     },
-    {
-      title: t('strategies.trendFollowing.columns.timeframe'),
-      dataIndex: 'timeframe',
-      key: 'timeframe',
-      width: 100,
-      sorter: (a, b) => (a.timeframe ?? '').localeCompare(b.timeframe ?? ''),
-    },
+
     {
       title: t('strategies.trendFollowing.columns.maType'),
       dataIndex: 'ma_type',
       key: 'ma_type',
       width: 90,
-      sorter: (a, b) => (a.ma_type ?? '').localeCompare(b.ma_type ?? ''),
+      sorter: true,
+      sortOrder: getColumnSortOrder('ma_type'),
     },
     {
       title: t('strategies.trendFollowing.columns.shortMa'),
@@ -57,7 +88,8 @@ const TrendFollowingStrategyPage: FC = () => {
       key: 'short_ma',
       width: 100,
       align: 'right',
-      sorter: (a, b) => (a.short_ma ?? 0) - (b.short_ma ?? 0),
+      sorter: true,
+      sortOrder: getColumnSortOrder('short_ma'),
     },
     {
       title: t('strategies.trendFollowing.columns.longMa'),
@@ -65,7 +97,8 @@ const TrendFollowingStrategyPage: FC = () => {
       key: 'long_ma',
       width: 100,
       align: 'right',
-      sorter: (a, b) => (a.long_ma ?? 0) - (b.long_ma ?? 0),
+      sorter: true,
+      sortOrder: getColumnSortOrder('long_ma'),
     },
     {
       title: t('strategies.trendFollowing.columns.adxPeriod'),
@@ -73,7 +106,8 @@ const TrendFollowingStrategyPage: FC = () => {
       key: 'adx_period',
       width: 110,
       align: 'right',
-      sorter: (a, b) => (a.adx_period ?? 0) - (b.adx_period ?? 0),
+      sorter: true,
+      sortOrder: getColumnSortOrder('adx_period'),
     },
     {
       title: t('strategies.trendFollowing.columns.adxThreshold'),
@@ -81,23 +115,8 @@ const TrendFollowingStrategyPage: FC = () => {
       key: 'adx_threshold',
       width: 120,
       align: 'right',
-      sorter: (a, b) => (a.adx_threshold ?? 0) - (b.adx_threshold ?? 0),
-    },
-    {
-      title: t('strategies.trendFollowing.columns.stopLoss'),
-      dataIndex: 'stop_loss',
-      key: 'stop_loss',
-      width: 100,
-      align: 'right',
-      sorter: (a, b) => (a.stop_loss ?? 0) - (b.stop_loss ?? 0),
-    },
-    {
-      title: t('strategies.trendFollowing.columns.takeProfit'),
-      dataIndex: 'take_profit',
-      key: 'take_profit',
-      width: 110,
-      align: 'right',
-      sorter: (a, b) => (a.take_profit ?? 0) - (b.take_profit ?? 0),
+      sorter: true,
+      sortOrder: getColumnSortOrder('adx_threshold'),
     },
     {
       title: t('strategies.trendFollowing.columns.leverage'),
@@ -105,7 +124,8 @@ const TrendFollowingStrategyPage: FC = () => {
       key: 'leverage',
       width: 90,
       align: 'right',
-      sorter: (a, b) => (a.leverage ?? 0) - (b.leverage ?? 0),
+      sorter: true,
+      sortOrder: getColumnSortOrder('leverage'),
     },
     {
       title: t('strategies.trendFollowing.columns.actions'),
@@ -135,13 +155,46 @@ const TrendFollowingStrategyPage: FC = () => {
     }
   };
 
-  const handleTableChange = (newPage: number, newPageSize: number) => {
+  const handlePaginationChange = useCallback((newPage: number, newPageSize: number) => {
     setPage(newPage);
     if (newPageSize !== limit) {
       setLimit(newPageSize);
       setPage(1);
     }
-  };
+  }, [limit]);
+
+  const handleTableChange = useCallback(
+    (
+      _pagination: { current?: number; pageSize?: number },
+      _filters: unknown,
+      sorter: SorterResult<TrendFollowingStrategyItem> | SorterResult<TrendFollowingStrategyItem>[],
+    ) => {
+      const single = Array.isArray(sorter) ? sorter[0] : sorter;
+      if (!single?.columnKey) return;
+      const order = single.order;
+      if (order === 'ascend' || order === 'descend') {
+        const field = single.columnKey as TrendFollowingStrategySortField;
+        if (['name', 'ma_type', 'short_ma', 'long_ma', 'adx_period', 'adx_threshold', 'leverage'].includes(field)) {
+          setSortBy(field);
+          setSortOrder(order === 'ascend' ? 'asc' : 'desc');
+          setPage(1);
+        }
+      } else {
+        setSortBy(undefined);
+        setSortOrder('asc');
+        setPage(1);
+      }
+    },
+    [],
+  );
+
+  const handleClearSort = useCallback(() => {
+    setSortBy(undefined);
+    setSortOrder('asc');
+    setPage(1);
+  }, []);
+
+  const isSortedByColumn = sortBy != null;
 
   return (
     <>
@@ -160,11 +213,28 @@ const TrendFollowingStrategyPage: FC = () => {
               className="trend-following-strategy-page__error"
             />
           )}
+          <div style={{ marginBottom: 16, display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+            <Input
+              prefix={<SearchOutlined />}
+              placeholder={t('strategies.trendFollowing.searchPlaceholder')}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              allowClear
+              className="trend-following-strategy-page__search"
+              style={{ maxWidth: 400 }}
+            />
+            {isSortedByColumn && (
+              <Button icon={<ClearOutlined />} onClick={handleClearSort}>
+                {t('strategies.trendFollowing.actions.clearSort')}
+              </Button>
+            )}
+          </div>
           <Table<TrendFollowingStrategyItem>
             columns={columns}
             dataSource={items}
             rowKey="id"
             loading={isLoading || isDeleting}
+            onChange={handleTableChange}
             pagination={{
               current: page,
               pageSize: limit,
@@ -172,7 +242,7 @@ const TrendFollowingStrategyPage: FC = () => {
               showSizeChanger: true,
               pageSizeOptions: PAGE_SIZE_OPTIONS,
               showTotal: (totalCount) => t('common.paginationTotal', { total: totalCount }),
-              onChange: handleTableChange,
+              onChange: handlePaginationChange,
             }}
             size="middle"
             scroll={{ x: 'max-content' }}

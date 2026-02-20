@@ -40,6 +40,10 @@
     "title": "Стратегії",
     "trendFollowing": {
       "title": "Тренд-фолловінг",
+      "searchPlaceholder": "Пошук за назвою",
+      "actions": {
+        "clearSort": "Скинути сортування"
+      },
       "columns": {
         "name": "Назва",
         "timeframe": "Таймфрейм",
