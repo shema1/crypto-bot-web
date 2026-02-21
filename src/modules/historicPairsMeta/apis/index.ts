@@ -72,6 +72,7 @@ export const historicPairsMetaApi = createApi({
 
 export const {
   useGetMetaQuery,
+  useLazyGetMetaQuery,
   useAddHistoricPairDataMutation,
   useDeleteMetaMutation,
   useUpdateMetaMutation,

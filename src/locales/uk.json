@@ -150,6 +150,12 @@
       "save": "Зберегти",
       "cancel": "Скасувати"
     },
+    "addPairsModal": {
+      "title": "Додати пари",
+      "provider": "Провайдер",
+      "searchPlaceholder": "Пошук за символом або таймфреймом",
+      "addSelected": "Додати обрані ({{count}})"
+    },
     "tasks": {
       "title": "Задачі бектесту",
       "searchPlaceholder": "Пошук за назвою",
@@ -233,7 +239,10 @@
       "metricsTotalErrors": "Всього помилок",
       "selectedPairs": {
         "startDate": "Дата початку",
-        "endDate": "Дата кінця"
+        "endDate": "Дата кінця",
+        "candles": "Свічки",
+        "firstRecord": "Перший запис",
+        "lastRecord": "Останній запис"
       },
       "emptyFuturesPairs": "Пари не обрані."
     }

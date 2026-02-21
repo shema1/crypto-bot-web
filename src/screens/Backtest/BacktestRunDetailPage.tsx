@@ -65,17 +65,17 @@ const BacktestRunDetailPage: FC = () => {
 
 
 
-  const onUpdateBacktestTask = useCallback((backtestTask: UpdateBacktestTaskRequest) => {
-    console.log("backtestTask", backtestTask)
-    updateTask({ taskId: runId!, body: {
-      name: backtestTask.name,
-      selectedTrendFollowingStrategies: backtestTask.selectedTrendFollowingStrategies ?? [],
-      selectedBreakoutStrategies: backtestTask.selectedBreakoutStrategies ?? [],
-      stopLoss: backtestTask.stopLoss,
-      takeProfit: backtestTask.takeProfit,
-      stopLossTakeProfitStep: backtestTask.stopLossTakeProfitStep,
-    } });
-  }, []);
+  const onUpdateBacktestTask = useCallback((payload: UpdateBacktestTaskRequest) => {
+    const body: UpdateBacktestTaskRequest = {};
+    if (payload.name !== undefined) body.name = payload.name;
+    if (payload.selectedTrendFollowingStrategies !== undefined) body.selectedTrendFollowingStrategies = payload.selectedTrendFollowingStrategies;
+    if (payload.selectedBreakoutStrategies !== undefined) body.selectedBreakoutStrategies = payload.selectedBreakoutStrategies;
+    if (payload.selectedPairs !== undefined) body.selectedPairs = payload.selectedPairs;
+    if (payload.stopLoss !== undefined) body.stopLoss = payload.stopLoss;
+    if (payload.takeProfit !== undefined) body.takeProfit = payload.takeProfit;
+    if (payload.stopLossTakeProfitStep !== undefined) body.stopLossTakeProfitStep = payload.stopLossTakeProfitStep;
+    updateTask({ taskId: runId!, body });
+  }, [runId, updateTask]);
 
 
 
@@ -176,6 +176,7 @@ const BacktestRunDetailPage: FC = () => {
                     <FuturesPairsTab
                       selectedPairs={backtestTask?.selectedPairs ?? []}
                       loading={isLoading}
+                      onUpdateBacktestTask={onUpdateBacktestTask}
                     />
                   ),
                 },

@@ -150,6 +150,12 @@
       "save": "Save",
       "cancel": "Cancel"
     },
+    "addPairsModal": {
+      "title": "Add pairs",
+      "provider": "Provider",
+      "searchPlaceholder": "Search by symbol or interval",
+      "addSelected": "Add selected ({{count}})"
+    },
     "tasks": {
       "title": "Backtest tasks",
       "searchPlaceholder": "Search by name",
@@ -233,7 +239,10 @@
       "metricsTotalErrors": "Total errors",
       "selectedPairs": {
         "startDate": "Start date",
-        "endDate": "End date"
+        "endDate": "End date",
+        "candles": "Candles",
+        "firstRecord": "First record",
+        "lastRecord": "Last record"
       },
       "emptyFuturesPairs": "No pairs selected."
     }
