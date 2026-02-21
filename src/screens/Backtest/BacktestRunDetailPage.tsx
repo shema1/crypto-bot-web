@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type FC } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Alert, Button, Tabs } from 'antd';
@@ -11,8 +11,14 @@ import {
   ResultsTab,
   OrdersModal,
 } from './components';
-import type { PairTimeframeCount, ResultSummary } from './components';
-import { useGetTaskByIdQuery, useUpdateTaskMutation, type BacktestTask, type UpdateBacktestTaskRequest } from '../../modules/backtest';
+import type { PairTimeframeCount } from './components';
+import { useGetTaskByIdQuery, useUpdateTaskMutation, type UpdateBacktestTaskRequest } from '../../modules/backtest';
+import { API_BASE_URL } from '../../modules/core/baseQueries/mainBaseQuery';
+
+function buildTaskEventsUrl(taskId: string): string {
+  const base = API_BASE_URL.replace(/\/$/, '');
+  return `${base}/backtest/tasks/${encodeURIComponent(taskId)}/events`;
+}
 
 const BacktestRunDetailPage: FC = () => {
   const { t } = useTranslation();
@@ -20,11 +26,38 @@ const BacktestRunDetailPage: FC = () => {
   const navigate = useNavigate();
   const [ordersModalResultIndex, setOrdersModalResultIndex] = useState<number | null>(null);
 
-  const { data: task, isLoading, isError, error } = useGetTaskByIdQuery(runId!, {
+  const { data: task, isLoading, isError, error, refetch } = useGetTaskByIdQuery(runId!, {
     skip: !runId,
+    refetchOnFocus: true,
   });
 
-  const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation();
+  const refetchRef = useRef(refetch);
+  refetchRef.current = refetch;
+
+  useEffect(() => {
+    if (!runId) return;
+    const url = buildTaskEventsUrl(runId);
+    const eventSource = new EventSource(url);
+
+    eventSource.addEventListener('task-updated', () => {
+      refetchRef.current();
+    });
+
+    eventSource.addEventListener('task-deleted', () => {
+      eventSource.close();
+      navigate('/backtest', { replace: true });
+    });
+
+    eventSource.onerror = () => {
+      eventSource.close();
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, [runId, navigate]);
+
+  const [updateTask] = useUpdateTaskMutation();
 
 
   const backtestTask = useMemo(() => {
