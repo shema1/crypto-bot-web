@@ -1,43 +1,39 @@
 /** MA type (matches backend MaTypeEnum) */
 export type MaType = 'EMA' | 'SMA';
 
-/** Bybit kline interval (matches backend KlineIntervalV3) */
-export type Timeframe =
-  | '1'
-  | '3'
-  | '5'
-  | '15'
-  | '30'
-  | '60'
-  | '120'
-  | '240'
-  | '360'
-  | '720'
-  | 'D'
-  | 'W'
-  | 'M';
+/** Sort fields for list (matches backend TrendFollowingStrategySortField) */
+export type TrendFollowingStrategySortField =
+  | 'name'
+  | 'ma_type'
+  | 'short_ma'
+  | 'long_ma'
+  | 'adx_period'
+  | 'adx_threshold'
+  | 'leverage';
+
+export type TrendFollowingStrategySortOrder = 'asc' | 'desc';
 
 export interface TrendFollowingStrategyItem {
   id: string;
   name: string;
   strategy: string;
-  timeframe: Timeframe;
   ma_type: MaType;
   short_ma: number;
   long_ma: number;
   adx_period: number;
   adx_threshold: number;
-  stop_loss: number;
-  take_profit: number;
   leverage: number;
 }
 
-export interface GetTrendFollowingQueryParams {
+export interface TrendFollowingStrategyListQuery {
+  search?: string;
+  sortBy?: TrendFollowingStrategySortField;
+  sortOrder?: TrendFollowingStrategySortOrder;
   page?: number;
   limit?: number;
 }
 
-export interface GetTrendFollowingResponse {
+export interface TrendFollowingStrategyListResponse {
   items: TrendFollowingStrategyItem[];
   total: number;
   page: number;
@@ -46,27 +42,26 @@ export interface GetTrendFollowingResponse {
 
 export interface CreateTrendFollowingStrategyRequest {
   name: string;
-  timeframe: Timeframe;
   ma_type: MaType;
   short_ma: number;
   long_ma: number;
   adx_period: number;
   adx_threshold: number;
-  stop_loss: number;
-  take_profit: number;
   leverage: number;
 }
 
 export interface CreateTrendFollowingStrategiesBulkRequest {
   strategy?: string;
-  timeframes: Timeframe[];
   ma_type: MaType[];
   short_ma: number[];
   long_ma: number[];
   adx_period: number[];
   adx_threshold: number[];
-  stop_loss: number;
-  take_profit: number;
-  take_lost_step?: number;
   leverage: number[];
 }
+
+export const TREND_FOLLOWING_STRATEGY_LIST_DEFAULTS = {
+  page: 1,
+  limit: 20,
+  maxLimit: 9999,
+} as const;

@@ -131,11 +131,18 @@
       "takeProfit": "Take profit %"
     },
     "actions": {
-      "add": "Add task"
+      "add": "Add task",
+      "delete": "Delete"
     },
     "messages": {
       "taskCreated": "Task created",
-      "createError": "Failed to create task"
+      "createError": "Failed to create task",
+      "taskDeleted": "Task deleted",
+      "deleteError": "Failed to delete task"
+    },
+    "deleteConfirm": {
+      "title": "Delete this task?",
+      "description": "This action cannot be undone."
     },
     "addModal": {
       "title": "New backtest task",
@@ -154,7 +161,8 @@
         "failedIterations": "Failed",
         "stopLoss": "Stop loss %",
         "takeProfit": "Take profit %",
-        "createdAt": "Created"
+        "createdAt": "Created",
+        "actions": "Actions"
       },
       "status": {
         "created": "Created",
@@ -226,7 +234,8 @@
     "clearSort": "Clear sort",
     "error": "Error",
     "cancel": "Cancel",
-    "save": "Save"
+    "save": "Save",
+    "delete": "Delete"
   },
   "language": "Language"
 }

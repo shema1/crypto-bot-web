@@ -158,7 +158,7 @@ const TrendFollowingStrategyPage: FC = () => {
               onClearSort: handleClearSort,
             }}
             onDelete={(record) => handleDelete(record as TrendFollowingStrategyItem)}
-            hiddenColumns={['timeframe']}
+            hiddenColumns={['timeframe', 'stop_loss', 'take_profit']}
           />
         </div>
       </AppContainer>

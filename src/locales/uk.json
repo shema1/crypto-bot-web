@@ -131,11 +131,18 @@
       "takeProfit": "Тейк-профіт %"
     },
     "actions": {
-      "add": "Додати задачу"
+      "add": "Додати задачу",
+      "delete": "Видалити"
     },
     "messages": {
       "taskCreated": "Задачу створено",
-      "createError": "Не вдалося створити задачу"
+      "createError": "Не вдалося створити задачу",
+      "taskDeleted": "Задачу видалено",
+      "deleteError": "Не вдалося видалити задачу"
+    },
+    "deleteConfirm": {
+      "title": "Видалити цю задачу?",
+      "description": "Цю дію не можна скасувати."
     },
     "addModal": {
       "title": "Нова задача бектесту",
@@ -154,7 +161,8 @@
         "failedIterations": "Помилки",
         "stopLoss": "Стоп-лосс %",
         "takeProfit": "Тейк-профіт %",
-        "createdAt": "Створено"
+        "createdAt": "Створено",
+        "actions": "Дії"
       },
       "status": {
         "created": "Створено",
@@ -226,7 +234,8 @@
     "clearSort": "Скинути сортування",
     "error": "Помилка",
     "cancel": "Скасувати",
-    "save": "Зберегти"
+    "save": "Зберегти",
+    "delete": "Видалити"
   },
   "language": "Мова"
 }

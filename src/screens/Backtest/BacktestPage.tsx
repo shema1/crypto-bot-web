@@ -1,8 +1,8 @@
-import { useState, type FC } from 'react';
+import { useCallback, useState, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Alert, Button, Input, message, Table, Tag } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Alert, Button, Input, message, Popconfirm, Table, Tag } from 'antd';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { format } from 'date-fns';
 import AppContainer from '../../components/layout/AppContainer';
@@ -11,6 +11,7 @@ import { AddBacktestModal } from './components';
 import {
   useGetTasksQuery,
   useCreateTaskMutation,
+  useDeleteTaskMutation,
   type BacktestTask,
   type BacktestTaskStatus,
 } from '../../modules/backtest';
@@ -42,10 +43,23 @@ const BacktestPage: FC = () => {
     limit,
   });
   const [createTask, { isLoading: isCreating }] = useCreateTaskMutation();
+  const [deleteTask, { isLoading: isDeleting }] = useDeleteTaskMutation();
 
   const errorMessage = isError && error && 'message' in error ? String(error.message) : null;
   const items = data?.items ?? [];
   const total = data?.total ?? 0;
+
+  const handleDelete = useCallback(
+    async (record: BacktestTask) => {
+      try {
+        await deleteTask(record._id).unwrap();
+        message.success(t('backtest.messages.taskDeleted'));
+      } catch {
+        message.error(t('backtest.messages.deleteError'));
+      }
+    },
+    [deleteTask, t],
+  );
 
   const columns: ColumnsType<BacktestTask> = [
     {
@@ -113,6 +127,33 @@ const BacktestPage: FC = () => {
         value ? format(new Date(value), 'dd/MM/yyyy HH:mm:ss') : '—',
       sorter: (a, b) => (a.createdAt ?? '').localeCompare(b.createdAt ?? ''),
     },
+    {
+      title: t('backtest.tasks.columns.actions'),
+      key: 'actions',
+      width: 80,
+      align: 'center',
+      fixed: 'right',
+      render: (_: unknown, record: BacktestTask) => (
+        <Popconfirm
+          title={t('backtest.deleteConfirm.title')}
+          description={t('backtest.deleteConfirm.description')}
+          onConfirm={() => handleDelete(record)}
+          okText={t('common.delete')}
+          cancelText={t('common.cancel')}
+          okButtonProps={{ danger: true }}
+        >
+          <Button
+            type="text"
+            danger
+            icon={<DeleteOutlined />}
+            size="small"
+            loading={isDeleting}
+            onClick={(e) => e.stopPropagation()}
+            aria-label={t('backtest.actions.delete')}
+          />
+        </Popconfirm>
+      ),
+    },
   ];
 
   const handleTableChange = (newPage: number, newPageSize: number) => {
@@ -175,7 +216,7 @@ const BacktestPage: FC = () => {
             columns={columns}
             dataSource={items}
             rowKey="_id"
-            loading={isLoading || isCreating}
+            loading={isLoading || isCreating || isDeleting}
             onRow={(record) => ({
               onClick: () => navigate(`/backtest/${record._id}`),
               style: { cursor: 'pointer' },

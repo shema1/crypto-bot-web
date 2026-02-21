@@ -32,14 +32,11 @@ function itemToRow(item: TrendFollowingStrategyItem): TrendFollowingStrategyTabl
   return {
     id: item.id,
     name: item.name,
-    timeframe: item.timeframe,
     ma_type: item.ma_type,
     short_ma: item.short_ma,
     long_ma: item.long_ma,
     adx_period: item.adx_period,
     adx_threshold: item.adx_threshold,
-    stop_loss: item.stop_loss,
-    take_profit: item.take_profit,
     leverage: item.leverage,
   };
 }
@@ -157,6 +154,7 @@ const TrendFollowingStrategiesTab: FC<AllStrategiesTabProps> = ({ selection }) =
           onClearSort: handleClearSort,
         }}
         selection={selection}
+        hiddenColumns={['timeframe', 'stop_loss', 'take_profit']}
       />
     </div>
   );

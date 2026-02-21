@@ -23,14 +23,21 @@ export const BacktestTaskStatus = {
 
 export type BacktestTaskStatus = (typeof BacktestTaskStatus)[keyof typeof BacktestTaskStatus];
 
+/** One entry in selectedPairs (matches backend SelectedPairItem). */
+export interface SelectedPairItem {
+  meta: string;
+  startDate?: string;
+  endDate?: string;
+}
+
 /** Backtest task (matches backend BacktestTask schema). */
 export interface BacktestTask {
   _id: string;
   name: string;
   status: BacktestTaskStatus;
-  trendFollowingStrategies: string[];
-  candlesMeta: string[];
-  selectedStrategies: Record<string, string[]>;
+  selectedTrendFollowingStrategies: string[];
+  selectedBreakoutStrategies: string[];
+  selectedPairs: SelectedPairItem[];
   totalIterations: number;
   completedIterations: number;
   failedIterations: number;
@@ -57,9 +64,9 @@ export interface CreateBacktestTaskRequest {
 /** Request body for PATCH /backtest/tasks/:taskId. */
 export interface UpdateBacktestTaskRequest {
   name?: string;
-  candlesMeta?: string[];
-  trendFollowingStrategies?: string[];
-  selectedStrategies?: Record<string, string[]>;
+  selectedPairs?: SelectedPairItem[];
+  selectedTrendFollowingStrategies?: string[];
+  selectedBreakoutStrategies?: string[];
   stopLoss?: number;
   takeProfit?: number;
   stopLossTakeProfitStep?: number;

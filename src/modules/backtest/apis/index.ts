@@ -59,6 +59,16 @@ export const backtestApi = createApi({
         { type: 'BacktestTask', id: 'LIST' },
       ],
     }),
+    deleteTask: builder.mutation<void, string>({
+      query: (taskId) => ({
+        url: backtestUrls.taskById(taskId),
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_result, _error, taskId) => [
+        { type: 'BacktestTask', id: taskId },
+        { type: 'BacktestTask', id: 'LIST' },
+      ],
+    }),
   }),
 });
 
@@ -67,4 +77,5 @@ export const {
   useGetTaskByIdQuery,
   useCreateTaskMutation,
   useUpdateTaskMutation,
+  useDeleteTaskMutation,
 } = backtestApi;

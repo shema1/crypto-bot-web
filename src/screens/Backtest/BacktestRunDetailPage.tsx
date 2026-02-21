@@ -40,12 +40,12 @@ const BacktestRunDetailPage: FC = () => {
   }, [task]);
 
   const pairTimeframeCounts = useMemo<PairTimeframeCount[]>(() => {
-    if (!task?.candlesMeta?.length) return [];
+    if (!task?.selectedPairs?.length) return [];
     const map = new Map<string, PairTimeframeCount>();
-    for (const meta of task.candlesMeta) {
-      const parts = meta.split('|');
-      const pair = parts[0]?.trim() || meta;
-      const timeframe = parts[1]?.trim() || '—';
+    for (const item of task.selectedPairs) {
+      const metaId = typeof item.meta === 'string' ? item.meta : (item.meta as { _id?: string })?._id ?? '';
+      const pair = metaId || '—';
+      const timeframe = '—';
       const key = `${pair}|${timeframe}`;
       const existing = map.get(key);
       if (existing) {
@@ -55,11 +55,14 @@ const BacktestRunDetailPage: FC = () => {
       }
     }
     return Array.from(map.values());
-  }, [task?.candlesMeta]);
+  }, [task?.selectedPairs]);
 
   const resultsFromTask: ResultSummary[] = useMemo(() => {
-    if (!task?.trendFollowingStrategies?.length) return [];
-    return task.trendFollowingStrategies.map((strategyId) => ({
+    const trendIds = task?.selectedTrendFollowingStrategies ?? [];
+    const breakoutIds = task?.selectedBreakoutStrategies ?? [];
+    const allIds = [...trendIds, ...breakoutIds];
+    if (!allIds.length) return [];
+    return allIds.map((strategyId) => ({
       params: {
         name: strategyId,
         pair: '—',
@@ -71,7 +74,7 @@ const BacktestRunDetailPage: FC = () => {
       net_result: 0,
       win_rate: 0,
     }));
-  }, [task?.trendFollowingStrategies]);
+  }, [task?.selectedTrendFollowingStrategies, task?.selectedBreakoutStrategies]);
 
 
   useEffect(() => {
