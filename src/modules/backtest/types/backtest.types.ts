@@ -25,9 +25,29 @@ export const BacktestTaskStatus = {
 
 export type BacktestTaskStatus = (typeof BacktestTaskStatus)[keyof typeof BacktestTaskStatus];
 
-/** One entry in selectedPairs (matches backend SelectedPairItem). */
+/** Populated meta from GET (HistoricPairMeta). */
+export interface HistoricPairMetaPopulated {
+  id: string;
+  symbol?: string;
+  interval?: string;
+  oldestRecordDate?: string;
+  newestRecordDate?: string;
+  totalCandles?: number;
+  provider?: string;
+  pairStatus?: string;
+  updatedAt?: string;
+}
+
+/** One entry in selectedPairs on GET (meta may be populated). */
 export interface SelectedPairItem {
-  meta: string;
+  meta: string | HistoricPairMetaPopulated;
+  startDate?: string;
+  endDate?: string;
+}
+
+/** One entry for selectedPairs on PATCH (send id instead of meta). */
+export interface UpdateSelectedPairItem {
+  id: string;
   startDate?: string;
   endDate?: string;
 }
@@ -66,7 +86,7 @@ export interface CreateBacktestTaskRequest {
 /** Request body for PATCH /backtest/tasks/:taskId. */
 export interface UpdateBacktestTaskRequest {
   name?: string;
-  selectedPairs?: SelectedPairItem[];
+  selectedPairs?: UpdateSelectedPairItem[];
   selectedTrendFollowingStrategies?: string[];
   selectedBreakoutStrategies?: string[];
   stopLoss?: number;

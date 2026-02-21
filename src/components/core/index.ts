@@ -28,3 +28,16 @@ export type {
   BreakoutStrategyTableToolbar,
   BreakoutStrategyTableSelection,
 } from "./BreakoutStrategyTable";
+export { default as HistoricPairsDataTable } from "./HistoricPairsDataTable";
+export type {
+  HistoricPairsDataTableProps,
+  HistoricPairsDataTableRow,
+  HistoricPairsDataTableColumnTitles,
+  HistoricPairsDataTablePagination,
+  HistoricPairsDataTableSort,
+  HistoricPairsDataTableSortField,
+  HistoricPairsDataTableSortOrder,
+  HistoricPairsDataTableSearch,
+  HistoricPairsDataTableToolbar,
+  HistoricPairsDataTableSelection,
+} from "./HistoricPairsDataTable";

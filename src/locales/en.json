@@ -230,7 +230,12 @@
       },
       "pairsCount": "Results count",
       "metricsTotalResults": "Total results",
-      "metricsTotalErrors": "Total errors"
+      "metricsTotalErrors": "Total errors",
+      "selectedPairs": {
+        "startDate": "Start date",
+        "endDate": "End date"
+      },
+      "emptyFuturesPairs": "No pairs selected."
     }
   },
   "common": {

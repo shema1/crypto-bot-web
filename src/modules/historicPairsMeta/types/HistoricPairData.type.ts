@@ -6,13 +6,14 @@ export type PairStatusLabel = PairStatus;
 /** Exchange that provides candle data (bybit, binance) */
 export type ExchangeProvider = 'bybit' | 'binance';
 
+/** Single meta item from GET (matches backend HistoricPairMetaItemDto). */
 export interface HistoricPairMetaItem {
   id: string;
   symbol: string;
   interval: string;
   provider: ExchangeProvider;
-  firstRecordDate: string;
-  lastRecordDate: string;
+  oldestRecordDate: string;
+  newestRecordDate: string;
   totalCandles: number;
   pairStatus: PairStatus;
   updatedAt: string;
@@ -68,9 +69,10 @@ export interface AddHistoricPairDataResponse {
   count: number;
 }
 
+/** PATCH meta/:id body (matches backend UpdateMetaDto). */
 export interface UpdateMetaRequest {
-  firstRecordDate: string;
-  lastRecordDate: string;
+  oldestRecordDate: string;
+  newestRecordDate: string;
 }
 
 export interface UpdateMetaResponse {

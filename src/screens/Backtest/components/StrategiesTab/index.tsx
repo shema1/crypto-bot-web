@@ -120,9 +120,8 @@ const StrategiesTab: FC<StrategiesTabProps> = ({ loading = false, backtestTask, 
           selectedTrendFollowingStrategies,
         }) => {
           onUpdateBacktestTask({
-            ...backtestTask,
-            selectedTrendFollowingStrategies: selectedTrendFollowingStrategies,
-            selectedBreakoutStrategies: selectedBreakoutStrategies,
+            selectedTrendFollowingStrategies,
+            selectedBreakoutStrategies,
           });
         }}
       />

@@ -35,8 +35,8 @@ const EditPairDateRangeModal: FC<EditPairDateRangeModalProps> = ({ open, onClose
             await updateMeta({
                 id: metaId,
                 body: {
-                    firstRecordDate: pair.startDateTime,
-                    lastRecordDate: pair.endDateTime,
+                    oldestRecordDate: pair.startDateTime,
+                    newestRecordDate: pair.endDateTime,
                 },
             }).unwrap();
             message.success(t("historicPairsData.messages.dateRangeUpdated"));

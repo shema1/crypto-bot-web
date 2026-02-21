@@ -230,7 +230,12 @@
       },
       "pairsCount": "Кількість результатів",
       "metricsTotalResults": "Всього результатів",
-      "metricsTotalErrors": "Всього помилок"
+      "metricsTotalErrors": "Всього помилок",
+      "selectedPairs": {
+        "startDate": "Дата початку",
+        "endDate": "Дата кінця"
+      },
+      "emptyFuturesPairs": "Пари не обрані."
     }
   },
   "common": {

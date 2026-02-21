@@ -11,7 +11,6 @@ import {
   ResultsTab,
   OrdersModal,
 } from './components';
-import type { PairTimeframeCount } from './components';
 import { useGetTaskByIdQuery, useUpdateTaskMutation, type UpdateBacktestTaskRequest } from '../../modules/backtest';
 import { API_BASE_URL } from '../../modules/core/baseQueries/mainBaseQuery';
 
@@ -91,44 +90,6 @@ const BacktestRunDetailPage: FC = () => {
       updatedAt: task.updatedAt,
     };
   }, [task]);
-
-  const pairTimeframeCounts = useMemo<PairTimeframeCount[]>(() => {
-    if (!task?.selectedPairs?.length) return [];
-    const map = new Map<string, PairTimeframeCount>();
-    for (const item of task.selectedPairs) {
-      const metaId = typeof item.meta === 'string' ? item.meta : (item.meta as { id?: string; _id?: string })?.id ?? (item.meta as { _id?: string })?._id ?? '';
-      const pair = metaId || '—';
-      const timeframe = '—';
-      const key = `${pair}|${timeframe}`;
-      const existing = map.get(key);
-      if (existing) {
-        existing.count += 1;
-      } else {
-        map.set(key, { pair, timeframe, count: 1 });
-      }
-    }
-    return Array.from(map.values());
-  }, [task?.selectedPairs]);
-
-  // const resultsFromTask: ResultSummary[] = useMemo(() => {
-  //   const trendIds = task?.selectedTrendFollowingStrategies ?? [];
-  //   const breakoutIds = task?.selectedBreakoutStrategies ?? [];
-  //   const allIds = [...trendIds, ...breakoutIds];
-  //   if (!allIds.length) return [];
-  //   return allIds.map((strategyId) => ({
-  //     params: {
-  //       name: strategyId,
-  //       pair: '—',
-  //       timeframe: '—',
-  //     },
-  //     total_orders: 0,
-  //     winning_orders: 0,
-  //     losing_orders: 0,
-  //     net_result: 0,
-  //     win_rate: 0,
-  //   }));
-  // }, [task?.selectedTrendFollowingStrategies, task?.selectedBreakoutStrategies]);
-
 
 
   if (!runId) {
@@ -213,7 +174,7 @@ const BacktestRunDetailPage: FC = () => {
                   label: t('backtest.detail.tabs.futuresPairs'),
                   children: (
                     <FuturesPairsTab
-                      dataSource={pairTimeframeCounts}
+                      selectedPairs={backtestTask?.selectedPairs ?? []}
                       loading={isLoading}
                     />
                   ),
