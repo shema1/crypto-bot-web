@@ -1,17 +1,19 @@
 import { useState, useCallback, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Modal, Tabs } from 'antd';
-import { TrendFollowingStrategiesTab, SavedTab, TemplatesTab } from './tabs';
+import { TrendFollowingStrategiesTab, BreakoutStrategiesTab } from './tabs';
 import './SelectStrategiesModal.css';
+import type { BacktestTask } from '../../../../modules/backtest';
 
 export interface SelectStrategiesModalProps {
   open: boolean;
   onClose: () => void;
+  backtestTask: BacktestTask | null;
   /** Called when user confirms selection with selected strategy ids. */
   onConfirm?: (selectedIds: string[]) => void;
 }
 
-const SelectStrategiesModal: FC<SelectStrategiesModalProps> = ({ open, onClose, onConfirm }) => {
+const SelectStrategiesModal: FC<SelectStrategiesModalProps> = ({ open, onClose, onConfirm, backtestTask }) => {
   const { t } = useTranslation();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
@@ -36,8 +38,8 @@ const SelectStrategiesModal: FC<SelectStrategiesModalProps> = ({ open, onClose, 
 
   const tabItems = [
     {
-      key: 'all',
-      label: t('backtest.selectStrategiesModal.tabs.all'),
+      key: 'trendFollowing',
+      label: t('nav.trendFollowing'),
       children: (
         <TrendFollowingStrategiesTab
           selection={{
@@ -48,15 +50,22 @@ const SelectStrategiesModal: FC<SelectStrategiesModalProps> = ({ open, onClose, 
       ),
     },
     {
-      key: 'saved',
-      label: t('backtest.selectStrategiesModal.tabs.saved'),
-      children: <SavedTab />,
+      key: 'breakout',
+      label: t('nav.breakout'),
+      children: (
+        <BreakoutStrategiesTab
+          selection={{
+            selectedRowKeys,
+            onChange: handleSelectionChange,
+          }}
+        />
+      ),
     },
-    {
-      key: 'templates',
-      label: t('backtest.selectStrategiesModal.tabs.templates'),
-      children: <TemplatesTab />,
-    },
+    // {
+    //   key: 'templates',
+    //   label: t('backtest.selectStrategiesModal.tabs.templates'),
+    //   children: <TemplatesTab />,
+    // },
   ];
 
   const footer = (
@@ -80,7 +89,7 @@ const SelectStrategiesModal: FC<SelectStrategiesModalProps> = ({ open, onClose, 
     >
       <Tabs
         className="select-strategies-modal__tabs"
-        defaultActiveKey="all"
+        defaultActiveKey="trendFollowing"
         items={tabItems}
         size="large"
       />

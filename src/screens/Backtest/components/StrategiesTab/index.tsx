@@ -4,13 +4,15 @@ import { useCallback, useState, type FC } from 'react';
 import type { ResultSummary } from '../types';
 import ResultSummariesTable from '../ResultSummariesTable';
 import SelectStrategiesModal from '../SelectStrategiesModal';
+import type { BacktestTask } from '../../../../modules/backtest';
 
 export interface StrategiesTabProps {
   results: ResultSummary[];
+  backtestTask: BacktestTask | null;
   loading?: boolean;
 }
 
-const StrategiesTab: FC<StrategiesTabProps> = ({ results, loading = false }) => {
+const StrategiesTab: FC<StrategiesTabProps> = ({ results, loading = false, backtestTask }) => {
   const { t } = useTranslation();
   const [selectStrategiesModalOpen, setSelectStrategiesModalOpen] = useState<boolean>(false);
 
@@ -36,6 +38,7 @@ const StrategiesTab: FC<StrategiesTabProps> = ({ results, loading = false }) => 
 
       <SelectStrategiesModal
         open={selectStrategiesModalOpen}
+        backtestTask={backtestTask}
         onClose={() => setSelectStrategiesModalOpen(false)}
         onConfirm={(selectedIds) => {
           // TODO: add selectedIds to backtest task via API

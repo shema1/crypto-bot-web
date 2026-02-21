@@ -1,4 +1,4 @@
-import { useMemo, useState, type FC } from 'react';
+import { useEffect, useMemo, useState, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Alert, Button, Tabs } from 'antd';
@@ -72,6 +72,11 @@ const BacktestRunDetailPage: FC = () => {
       win_rate: 0,
     }));
   }, [task?.trendFollowingStrategies]);
+
+
+  useEffect(() => {
+    setBacktestTask(task ?? null);
+  }, [task])
 
   if (!runId) {
     return null;
@@ -167,6 +172,7 @@ const BacktestRunDetailPage: FC = () => {
                     <StrategiesTab
                       results={resultsFromTask}
                       loading={isLoading}
+                      backtestTask={backtestTask}
                     />
                   ),
                 },
