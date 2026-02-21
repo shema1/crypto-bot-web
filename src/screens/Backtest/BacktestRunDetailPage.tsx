@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FC } from 'react';
+import { useCallback, useEffect, useMemo, useState, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Alert, Button, Tabs } from 'antd';
@@ -12,7 +12,7 @@ import {
   OrdersModal,
 } from './components';
 import type { PairTimeframeCount, ResultSummary } from './components';
-import { useGetTaskByIdQuery, type BacktestTask } from '../../modules/backtest';
+import { useGetTaskByIdQuery, useUpdateTaskMutation, type BacktestTask, type UpdateBacktestTaskRequest } from '../../modules/backtest';
 
 const BacktestRunDetailPage: FC = () => {
   const { t } = useTranslation();
@@ -24,8 +24,28 @@ const BacktestRunDetailPage: FC = () => {
     skip: !runId,
   });
 
+  const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation();
 
-  const [backtestTask, setBacktestTask] = useState<BacktestTask | null>(null);
+
+  const backtestTask = useMemo(() => {
+    return task;
+  }, [task])
+
+
+
+  const onUpdateBacktestTask = useCallback((backtestTask: UpdateBacktestTaskRequest) => {
+    console.log("backtestTask", backtestTask)
+    updateTask({ taskId: runId!, body: {
+      name: backtestTask.name,
+      selectedTrendFollowingStrategies: backtestTask.selectedTrendFollowingStrategies ?? [],
+      selectedBreakoutStrategies: backtestTask.selectedBreakoutStrategies ?? [],
+      stopLoss: backtestTask.stopLoss,
+      takeProfit: backtestTask.takeProfit,
+      stopLossTakeProfitStep: backtestTask.stopLossTakeProfitStep,
+    } });
+  }, []);
+
+
 
   const errorMessage =
     isError && error && 'message' in error ? String(error.message) : null;
@@ -33,7 +53,7 @@ const BacktestRunDetailPage: FC = () => {
   const runForOverview = useMemo(() => {
     if (!task) return null;
     return {
-      id: task._id,
+      id: task.id,
       createdAt: task.createdAt,
       updatedAt: task.updatedAt,
     };
@@ -43,7 +63,7 @@ const BacktestRunDetailPage: FC = () => {
     if (!task?.selectedPairs?.length) return [];
     const map = new Map<string, PairTimeframeCount>();
     for (const item of task.selectedPairs) {
-      const metaId = typeof item.meta === 'string' ? item.meta : (item.meta as { _id?: string })?._id ?? '';
+      const metaId = typeof item.meta === 'string' ? item.meta : (item.meta as { id?: string; _id?: string })?.id ?? (item.meta as { _id?: string })?._id ?? '';
       const pair = metaId || '—';
       const timeframe = '—';
       const key = `${pair}|${timeframe}`;
@@ -57,29 +77,26 @@ const BacktestRunDetailPage: FC = () => {
     return Array.from(map.values());
   }, [task?.selectedPairs]);
 
-  const resultsFromTask: ResultSummary[] = useMemo(() => {
-    const trendIds = task?.selectedTrendFollowingStrategies ?? [];
-    const breakoutIds = task?.selectedBreakoutStrategies ?? [];
-    const allIds = [...trendIds, ...breakoutIds];
-    if (!allIds.length) return [];
-    return allIds.map((strategyId) => ({
-      params: {
-        name: strategyId,
-        pair: '—',
-        timeframe: '—',
-      },
-      total_orders: 0,
-      winning_orders: 0,
-      losing_orders: 0,
-      net_result: 0,
-      win_rate: 0,
-    }));
-  }, [task?.selectedTrendFollowingStrategies, task?.selectedBreakoutStrategies]);
+  // const resultsFromTask: ResultSummary[] = useMemo(() => {
+  //   const trendIds = task?.selectedTrendFollowingStrategies ?? [];
+  //   const breakoutIds = task?.selectedBreakoutStrategies ?? [];
+  //   const allIds = [...trendIds, ...breakoutIds];
+  //   if (!allIds.length) return [];
+  //   return allIds.map((strategyId) => ({
+  //     params: {
+  //       name: strategyId,
+  //       pair: '—',
+  //       timeframe: '—',
+  //     },
+  //     total_orders: 0,
+  //     winning_orders: 0,
+  //     losing_orders: 0,
+  //     net_result: 0,
+  //     win_rate: 0,
+  //   }));
+  // }, [task?.selectedTrendFollowingStrategies, task?.selectedBreakoutStrategies]);
 
 
-  useEffect(() => {
-    setBacktestTask(task ?? null);
-  }, [task])
 
   if (!runId) {
     return null;
@@ -173,9 +190,9 @@ const BacktestRunDetailPage: FC = () => {
                   label: t('backtest.detail.tabs.strategies'),
                   children: (
                     <StrategiesTab
-                      results={resultsFromTask}
                       loading={isLoading}
                       backtestTask={backtestTask}
+                      onUpdateBacktestTask={onUpdateBacktestTask}
                     />
                   ),
                 },
@@ -184,7 +201,6 @@ const BacktestRunDetailPage: FC = () => {
                   label: t('backtest.detail.tabs.results'),
                   children: (
                     <ResultsTab
-                      results={resultsFromTask}
                       loading={isLoading}
                       onViewOrders={setOrdersModalResultIndex}
                     />

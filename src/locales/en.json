@@ -224,6 +224,10 @@
         "strategies": "Strategies",
         "results": "Results"
       },
+      "strategies": {
+        "emptyTrendFollowing": "No trend following strategies selected.",
+        "emptyBreakout": "No breakout strategies selected."
+      },
       "pairsCount": "Results count",
       "metricsTotalResults": "Total results",
       "metricsTotalErrors": "Total errors"

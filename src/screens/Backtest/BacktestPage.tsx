@@ -52,7 +52,7 @@ const BacktestPage: FC = () => {
   const handleDelete = useCallback(
     async (record: BacktestTask) => {
       try {
-        await deleteTask(record._id).unwrap();
+        await deleteTask(record.id).unwrap();
         message.success(t('backtest.messages.taskDeleted'));
       } catch {
         message.error(t('backtest.messages.deleteError'));
@@ -215,10 +215,10 @@ const BacktestPage: FC = () => {
           <Table<BacktestTask>
             columns={columns}
             dataSource={items}
-            rowKey="_id"
+            rowKey="id"
             loading={isLoading || isCreating || isDeleting}
             onRow={(record) => ({
-              onClick: () => navigate(`/backtest/${record._id}`),
+              onClick: () => navigate(`/backtest/${record.id}`),
               style: { cursor: 'pointer' },
             })}
             pagination={{

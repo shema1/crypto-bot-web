@@ -224,6 +224,10 @@
         "strategies": "Стратегії",
         "results": "Результати"
       },
+      "strategies": {
+        "emptyTrendFollowing": "Тренд-фолловінг стратегії не обрані.",
+        "emptyBreakout": "Брейкаут стратегії не обрані."
+      },
       "pairsCount": "Кількість результатів",
       "metricsTotalResults": "Всього результатів",
       "metricsTotalErrors": "Всього помилок"

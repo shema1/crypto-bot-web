@@ -38,7 +38,7 @@ const AddBacktestModal: FC<AddBacktestModalProps> = ({ open, onClose, onSave }) 
           {t('backtest.addModal.save')}
         </Button>,
       ]}
-      destroyOnClose
+      destroyOnHidden
     >
       <Input
         placeholder={t('backtest.addModal.namePlaceholder')}

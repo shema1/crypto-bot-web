@@ -1,3 +1,5 @@
+import type { BreakoutStrategyItem, TrendFollowingStrategyItem } from "../../strategies";
+
 /** Sort field for GET /backtest/tasks. */
 export type GetTasksSortField = 'createdAt' | 'updatedAt' | 'name' | 'status';
 
@@ -30,13 +32,13 @@ export interface SelectedPairItem {
   endDate?: string;
 }
 
-/** Backtest task (matches backend BacktestTask schema). */
+/** Backtest task (matches backend BacktestTask schema). API returns id (not _id). */
 export interface BacktestTask {
-  _id: string;
+  id: string;
   name: string;
   status: BacktestTaskStatus;
-  selectedTrendFollowingStrategies: string[];
-  selectedBreakoutStrategies: string[];
+  selectedTrendFollowingStrategies:  TrendFollowingStrategyItem[];
+  selectedBreakoutStrategies: BreakoutStrategyItem[];
   selectedPairs: SelectedPairItem[];
   totalIterations: number;
   completedIterations: number;

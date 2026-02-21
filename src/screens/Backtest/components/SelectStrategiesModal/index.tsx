@@ -1,40 +1,75 @@
-import { useState, useCallback, type FC } from 'react';
+import { useState, useCallback, type FC, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Modal, Tabs } from 'antd';
 import { TrendFollowingStrategiesTab, BreakoutStrategiesTab } from './tabs';
 import './SelectStrategiesModal.css';
-import type { BacktestTask } from '../../../../modules/backtest';
+import type { SelectStrategiesModalOnConfirmParams } from '../StrategiesTab';
+
+
+
 
 export interface SelectStrategiesModalProps {
   open: boolean;
   onClose: () => void;
-  backtestTask: BacktestTask | null;
+  selectedTrendFollowingStrategies: string[];
+  selectedBreakoutStrategies: string[];
   /** Called when user confirms selection with selected strategy ids. */
-  onConfirm?: (selectedIds: string[]) => void;
+  onConfirm?: ({
+    selectedTrendFollowingStrategies,
+    selectedBreakoutStrategies,
+  }: SelectStrategiesModalOnConfirmParams) => void;
 }
 
-const SelectStrategiesModal: FC<SelectStrategiesModalProps> = ({ open, onClose, onConfirm, backtestTask }) => {
+const SelectStrategiesModal: FC<SelectStrategiesModalProps> = ({ open, onClose, onConfirm, selectedTrendFollowingStrategies, selectedBreakoutStrategies }) => {
   const { t } = useTranslation();
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
-  const handleSelectionChange = useCallback(
+  const [selectedTrendFollowingStrategiesState, setSelectedTrendFollowingStrategiesState] = useState<string[]>([]);
+  const [selectedBreakoutStrategiesState, setSelectedBreakoutStrategiesState] = useState<string[]>([]);
+
+
+console.log("selectedTrendFollowingStrategiesState", selectedTrendFollowingStrategiesState)
+  const handleSelectedTrendFollowingStrategiesChange = useCallback(
     (keys: React.Key[], _rows: unknown[]) => {
-      setSelectedRowKeys(keys);
+      setSelectedTrendFollowingStrategiesState(keys.map((k) => String(k)));
     },
     [],
   );
 
+  const handleSelectedBreakoutStrategiesChange = useCallback(
+    (keys: React.Key[], _rows: unknown[]) => {
+      setSelectedBreakoutStrategiesState(keys.map((k) => String(k)));
+    },
+    [],
+  );
+
+  const selectedRowKeys = useMemo(() => {
+    return [...selectedTrendFollowingStrategiesState, ...selectedBreakoutStrategiesState];
+  }, [selectedTrendFollowingStrategiesState, selectedBreakoutStrategiesState]);
+
   const handleConfirm = useCallback(() => {
-    const ids = selectedRowKeys.map((k) => String(k));
-    onConfirm?.(ids);
-    setSelectedRowKeys([]);
+    onConfirm?.({
+      selectedTrendFollowingStrategies: selectedTrendFollowingStrategiesState,
+      selectedBreakoutStrategies: selectedBreakoutStrategiesState,
+    });
+    setSelectedTrendFollowingStrategiesState([]);
+    setSelectedBreakoutStrategiesState([]);
     onClose();
-  }, [selectedRowKeys, onConfirm, onClose]);
+  }, [selectedTrendFollowingStrategiesState, selectedBreakoutStrategiesState, onConfirm, onClose]);
 
   const handleClose = useCallback(() => {
-    setSelectedRowKeys([]);
+    // setSelectedRowKeys([]);
+    setSelectedTrendFollowingStrategiesState([]);
+    setSelectedBreakoutStrategiesState([]);
     onClose();
   }, [onClose]);
+
+
+  useEffect(() => {
+    if (open) {
+      setSelectedTrendFollowingStrategiesState(selectedTrendFollowingStrategies);
+      setSelectedBreakoutStrategiesState(selectedBreakoutStrategies);
+    }
+  }, [open]);
 
   const tabItems = [
     {
@@ -43,8 +78,8 @@ const SelectStrategiesModal: FC<SelectStrategiesModalProps> = ({ open, onClose, 
       children: (
         <TrendFollowingStrategiesTab
           selection={{
-            selectedRowKeys,
-            onChange: handleSelectionChange,
+            selectedRowKeys: selectedTrendFollowingStrategiesState,
+            onChange: handleSelectedTrendFollowingStrategiesChange,
           }}
         />
       ),
@@ -55,8 +90,8 @@ const SelectStrategiesModal: FC<SelectStrategiesModalProps> = ({ open, onClose, 
       children: (
         <BreakoutStrategiesTab
           selection={{
-            selectedRowKeys,
-            onChange: handleSelectionChange,
+            selectedRowKeys: selectedBreakoutStrategiesState,
+            onChange: handleSelectedBreakoutStrategiesChange,
           }}
         />
       ),
@@ -84,7 +119,7 @@ const SelectStrategiesModal: FC<SelectStrategiesModalProps> = ({ open, onClose, 
       open={open}
       onCancel={handleClose}
       footer={footer}
-      destroyOnClose
+      destroyOnHidden
       width="90vw"
     >
       <Tabs

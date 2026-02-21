@@ -31,7 +31,7 @@ export const backtestApi = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.items.map((task) => ({ type: 'BacktestTask' as const, id: task._id })),
+              ...result.items.map((task) => ({ type: 'BacktestTask' as const, id: task.id })),
               { type: 'BacktestTask', id: 'LIST' },
             ]
           : [{ type: 'BacktestTask', id: 'LIST' }],

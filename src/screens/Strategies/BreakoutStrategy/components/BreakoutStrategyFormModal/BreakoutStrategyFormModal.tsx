@@ -74,7 +74,7 @@ const BreakoutStrategyFormModal: FC<BreakoutStrategyFormModalProps> = ({
           {t('strategies.breakout.form.save')}
         </Button>,
       ]}
-      destroyOnClose
+      destroyOnHidden
     >
       <Form
         form={form}
