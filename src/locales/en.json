@@ -112,6 +112,18 @@
         "failed": "Failed"
       }
     },
+    "selectStrategiesModal": {
+      "title": "Select strategies",
+      "tabs": {
+        "all": "All strategies",
+        "saved": "Saved",
+        "templates": "Templates"
+      },
+      "footer": {
+        "cancel": "Cancel",
+        "addSelected": "Add selected"
+      }
+    },
     "detail": {
       "title": "Run",
       "backToList": "Back to list",

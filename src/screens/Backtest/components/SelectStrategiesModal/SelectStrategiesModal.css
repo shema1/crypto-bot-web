@@ -1,0 +1,35 @@
+.select-strategies-modal .ant-modal-content {
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.select-strategies-modal .ant-modal-body {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  max-height: 75vh !important;
+}
+
+.select-strategies-modal__tabs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.select-strategies-modal__tabs .ant-tabs-content {
+  flex: 1;
+  height: 100%;
+}
+
+.select-strategies-modal__tabs .ant-tabs-content-holder {
+  flex: 1;
+  min-height: 0;
+}
+
+.select-strategies-modal__tabs .ant-tabs-tabpane {
+  height: 100%;
+  min-height: 0;
+}

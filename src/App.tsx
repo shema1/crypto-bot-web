@@ -36,7 +36,11 @@ function AppLayout() {
           />
         </div>
       </Sider>
-      <Content style={{ backgroundColor: colorBgContainer, }}>
+      <Content style={{ 
+        backgroundColor: colorBgContainer,
+        overflow: 'hidden',
+        overflowY: 'auto',
+        }}>
         <Routes>
           {getFlatRoutes(routes).map(({ path, element }) => (
             <Route key={path} path={path} element={element} />

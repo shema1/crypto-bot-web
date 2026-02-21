@@ -86,6 +86,7 @@ export const trendFollowingStrategyApi = createApi({
 
 export const {
   useGetTrendFollowingStrategiesQuery,
+  useLazyGetTrendFollowingStrategiesQuery,
   useGetTrendFollowingStrategyByIdQuery,
   useCreateTrendFollowingStrategyMutation,
   useCreateTrendFollowingStrategiesBulkMutation,

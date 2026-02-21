@@ -112,6 +112,18 @@
         "failed": "Помилка"
       }
     },
+    "selectStrategiesModal": {
+      "title": "Обрати стратегії",
+      "tabs": {
+        "all": "Усі стратегії",
+        "saved": "Збережені",
+        "templates": "Шаблони"
+      },
+      "footer": {
+        "cancel": "Скасувати",
+        "addSelected": "Додати обрані"
+      }
+    },
     "detail": {
       "title": "Запуск",
       "backToList": "До списку",

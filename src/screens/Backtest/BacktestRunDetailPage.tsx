@@ -6,14 +6,13 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import AppContainer from '../../components/layout/AppContainer';
 import AppHeaderContainer from '../../components/layout/AppHeaderContainer';
 import {
-  OverviewTab,
   FuturesPairsTab,
   StrategiesTab,
   ResultsTab,
   OrdersModal,
 } from './components';
-import type { BacktestErrorItem, PairTimeframeCount, ResultSummary } from './components';
-import { useGetTaskByIdQuery } from '../../modules/backtest';
+import type { PairTimeframeCount, ResultSummary } from './components';
+import { useGetTaskByIdQuery, type BacktestTask } from '../../modules/backtest';
 
 const BacktestRunDetailPage: FC = () => {
   const { t } = useTranslation();
@@ -24,6 +23,9 @@ const BacktestRunDetailPage: FC = () => {
   const { data: task, isLoading, isError, error } = useGetTaskByIdQuery(runId!, {
     skip: !runId,
   });
+
+
+  const [backtestTask, setBacktestTask] = useState<BacktestTask | null>(null);
 
   const errorMessage =
     isError && error && 'message' in error ? String(error.message) : null;
@@ -36,17 +38,6 @@ const BacktestRunDetailPage: FC = () => {
       updatedAt: task.updatedAt,
     };
   }, [task]);
-
-  const resultsCount = task?.completedIterations ?? 0;
-  const errorsFromTask: BacktestErrorItem[] = useMemo(() => {
-    if (!task || task.failedIterations <= 0) return [];
-    return [
-      {
-        name: t('backtest.detail.failedIterationsLabel'),
-        error: String(task.failedIterations),
-      },
-    ];
-  }, [task, t]);
 
   const pairTimeframeCounts = useMemo<PairTimeframeCount[]>(() => {
     if (!task?.candlesMeta?.length) return [];
@@ -151,11 +142,12 @@ const BacktestRunDetailPage: FC = () => {
                   key: 'overview',
                   label: t('backtest.detail.tabs.overview'),
                   children: (
-                    <OverviewTab
-                      run={runForOverview}
-                      resultsCount={resultsCount}
-                      errors={errorsFromTask}
-                    />
+                    // <OverviewTab
+                    //   run={runForOverview}
+                    //   resultsCount={resultsCount}
+                    //   errors={errorsFromTask}
+                    // />
+                    <></>
                   ),
                 },
                 {
@@ -194,6 +186,7 @@ const BacktestRunDetailPage: FC = () => {
           )}
         </div>
       </AppContainer>
+
 
       <OrdersModal
         open={ordersModalResultIndex !== null}

@@ -1,4 +1,5 @@
 export { default as AddBacktestModal } from './AddBacktestModal';
+export { default as SelectStrategiesModal } from './SelectStrategiesModal';
 export { default as OverviewTab } from './OverviewTab';
 export { default as FuturesPairsTab } from './FuturesPairsTab';
 export { default as StrategiesTab } from './StrategiesTab';
