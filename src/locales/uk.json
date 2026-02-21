@@ -3,6 +3,7 @@
     "historicPairsData": "Історичні дані пар",
     "strategies": "Стратегії",
     "trendFollowing": "Тренд-фолловінг",
+    "breakout": "Брейкаут",
     "meanReversion": "Mean Reversion",
     "backtest": "Бектест"
   },
@@ -28,7 +29,19 @@
     "messages": {
       "editInfo": "Редагувати: {{symbol}} / {{interval}}",
       "updateInfo": "Оновити/синхронізувати: {{symbol}} / {{interval}}",
-      "rowDeleted": "Рядок видалено"
+      "rowDeleted": "Рядок видалено",
+      "deleteError": "Помилка видалення",
+      "dateRangeUpdated": "Діапазон дат оновлено",
+      "updateDateRangeError": "Не вдалося оновити діапазон дат",
+      "pairsAdded": "Пари додано",
+      "requestNotAccepted": "Запит не прийнято",
+      "addPairsError": "Не вдалося додати пари"
+    },
+    "editPairDateRangeModal": {
+      "title": "Редагувати діапазон дат пари"
+    },
+    "addNewPairsModal": {
+      "title": "Додати нові пари"
     }
   },
   "pairStatus": {
@@ -155,7 +168,9 @@
       "tabs": {
         "all": "Усі стратегії",
         "saved": "Збережені",
-        "templates": "Шаблони"
+        "templates": "Шаблони",
+        "savedPlaceholder": "Збережені стратегії — заглушка.",
+        "templatesPlaceholder": "Шаблони стратегій — заглушка."
       },
       "footer": {
         "cancel": "Скасувати",
@@ -207,7 +222,11 @@
     }
   },
   "common": {
-    "paginationTotal": "Всього {{total}}"
+    "paginationTotal": "Всього {{total}}",
+    "clearSort": "Скинути сортування",
+    "error": "Помилка",
+    "cancel": "Скасувати",
+    "save": "Зберегти"
   },
   "language": "Мова"
 }

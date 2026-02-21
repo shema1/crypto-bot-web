@@ -1,4 +1,5 @@
 import { useCallback, useMemo, type FC, type ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Input, Space, Table } from 'antd';
 import { ClearOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
@@ -68,6 +69,7 @@ const BreakoutStrategyTable: FC<BreakoutStrategyTableProps> = ({
   hiddenColumns = [],
   selection,
 }) => {
+  const { t } = useTranslation();
   const titles = { ...DEFAULT_COLUMN_TITLES, ...columnTitles };
   const showClearSort = sort != null && sort.sortBy != null && toolbar?.onClearSort != null;
 
@@ -232,7 +234,7 @@ const BreakoutStrategyTable: FC<BreakoutStrategyTableProps> = ({
           )}
           {showClearSort && toolbar && (
             <Button icon={<ClearOutlined />} onClick={toolbar.onClearSort}>
-              {toolbar.clearSortLabel ?? 'Clear sort'}
+              {toolbar.clearSortLabel ?? t('common.clearSort')}
             </Button>
           )}
         </div>

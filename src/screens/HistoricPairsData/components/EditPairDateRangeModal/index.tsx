@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, type FC } from "react";
+import { useTranslation } from "react-i18next";
 import { DatePicker, Modal } from "../../../../components/core";
 import { addDays } from "date-fns";
 import { Button, message, Space } from "antd";
@@ -14,6 +15,7 @@ interface EditPairDateRangeModalProps {
 }
 
 const EditPairDateRangeModal: FC<EditPairDateRangeModalProps> = ({ open, onClose, metaId, pairData }) => {
+    const { t } = useTranslation();
     const [pair, setPair] = useState<AddHistoricPairDataItem | null>(pairData);
     const [updateMeta, { isLoading: isSubmitting }] = useUpdateMetaMutation();
 
@@ -37,10 +39,10 @@ const EditPairDateRangeModal: FC<EditPairDateRangeModalProps> = ({ open, onClose
                     lastRecordDate: pair.endDateTime,
                 },
             }).unwrap();
-            message.success("Date range updated");
+            message.success(t("historicPairsData.messages.dateRangeUpdated"));
             onClose();
         } catch {
-            message.error("Failed to update date range");
+            message.error(t("historicPairsData.messages.updateDateRangeError"));
         }
     };
 
@@ -53,12 +55,12 @@ const EditPairDateRangeModal: FC<EditPairDateRangeModalProps> = ({ open, onClose
         <Modal
             open={open}
             onClose={onClose}
-            title="Edit Pair Date Range"
+            title={t("historicPairsData.editPairDateRangeModal.title")}
             footer={
                 <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 16, marginBottom: 16 }}>
-                    <Button onClick={onClose}>Cancel</Button>
+                    <Button onClick={onClose}>{t("common.cancel")}</Button>
                     <Button type="primary" loading={isSubmitting} onClick={onSave}>
-                        Save
+                        {t("common.save")}
                     </Button>
                 </div>
             }

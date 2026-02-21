@@ -37,7 +37,7 @@ const SelectStrategiesModal: FC<SelectStrategiesModalProps> = ({ open, onClose, 
   const tabItems = [
     {
       key: 'all',
-      label: 'Trend Following',
+      label: t('backtest.selectStrategiesModal.tabs.all'),
       children: (
         <TrendFollowingStrategiesTab
           selection={{

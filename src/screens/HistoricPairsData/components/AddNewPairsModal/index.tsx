@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type FC } from "react";
+import { useTranslation } from "react-i18next";
 import { DatePicker, Modal, Select } from "../../../../components/core";
 import { addDays, subMonths } from "date-fns";
 import { Button, message, Space } from "antd";
@@ -27,6 +28,7 @@ const getInitialPair = (defaultSymbol: string): AddHistoricPairDataItem => ({
 const DEFAULT_SYMBOL = "BTCUSDT";
 
 const AddNewPairsModal: FC<AddNewPairsModalProps> = ({ open, onClose }) => {
+    const { t } = useTranslation();
     const { data: instruments = [] } = useGetInstrumentsQuery(
         { category: "linear" },
         { skip: !open }
@@ -160,13 +162,13 @@ const AddNewPairsModal: FC<AddNewPairsModalProps> = ({ open, onClose }) => {
         try {
             const result = await addHistoricPairData({ data: newPairs }).unwrap();
             if (result.accepted) {
-                message.success(result.message ?? "Pairs added");
+                message.success(result.message ?? t("historicPairsData.messages.pairsAdded"));
                 onClose();
             } else {
-                message.warning(result.message ?? "Request was not accepted");
+                message.warning(result.message ?? t("historicPairsData.messages.requestNotAccepted"));
             }
         } catch {
-            message.error("Failed to add pairs");
+            message.error(t("historicPairsData.messages.addPairsError"));
         }
     };
 
@@ -229,12 +231,12 @@ const AddNewPairsModal: FC<AddNewPairsModalProps> = ({ open, onClose }) => {
         <Modal
             open={open}
             onClose={onClose}
-            title="Add New Pairs"
+            title={t("historicPairsData.addNewPairsModal.title")}
             footer={
                 <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
-                    <Button onClick={onClose}>Cancel</Button>
+                    <Button onClick={onClose}>{t("common.cancel")}</Button>
                     <Button type="primary" loading={isSubmitting} onClick={savePairs}>
-                        Save
+                        {t("common.save")}
                     </Button>
                 </div>
             }

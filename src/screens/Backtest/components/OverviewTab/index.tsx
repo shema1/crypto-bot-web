@@ -54,7 +54,7 @@ const OverviewTab: FC<OverviewTabProps> = ({ run, resultsCount, errors }) => {
                 key={i}
                 type="error"
                 showIcon
-                message={err.name ?? 'Error'}
+                message={err.name ?? t('common.error')}
                 description={err.error}
               />
             ))}

@@ -3,6 +3,7 @@
     "historicPairsData": "Historic Pairs Data",
     "strategies": "Strategies",
     "trendFollowing": "Trend Following",
+    "breakout": "Breakout",
     "meanReversion": "Mean Reversion",
     "backtest": "Backtest"
   },
@@ -28,7 +29,19 @@
     "messages": {
       "editInfo": "Edit: {{symbol}} / {{interval}}",
       "updateInfo": "Update/sync: {{symbol}} / {{interval}}",
-      "rowDeleted": "Row deleted"
+      "rowDeleted": "Row deleted",
+      "deleteError": "Failed to delete",
+      "dateRangeUpdated": "Date range updated",
+      "updateDateRangeError": "Failed to update date range",
+      "pairsAdded": "Pairs added",
+      "requestNotAccepted": "Request was not accepted",
+      "addPairsError": "Failed to add pairs"
+    },
+    "editPairDateRangeModal": {
+      "title": "Edit pair date range"
+    },
+    "addNewPairsModal": {
+      "title": "Add new pairs"
     }
   },
   "pairStatus": {
@@ -155,7 +168,9 @@
       "tabs": {
         "all": "All strategies",
         "saved": "Saved",
-        "templates": "Templates"
+        "templates": "Templates",
+        "savedPlaceholder": "Saved strategies — content placeholder.",
+        "templatesPlaceholder": "Strategy templates — content placeholder."
       },
       "footer": {
         "cancel": "Cancel",
@@ -207,7 +222,11 @@
     }
   },
   "common": {
-    "paginationTotal": "Total {{total}} items"
+    "paginationTotal": "Total {{total}} items",
+    "clearSort": "Clear sort",
+    "error": "Error",
+    "cancel": "Cancel",
+    "save": "Save"
   },
   "language": "Language"
 }
