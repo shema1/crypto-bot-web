@@ -61,6 +61,44 @@
         "rowDeleted": "Рядок видалено",
         "deleteError": "Помилка видалення"
       }
+    },
+    "breakout": {
+      "title": "Брейкаут",
+      "searchPlaceholder": "Пошук за назвою",
+      "actions": {
+        "clearSort": "Скинути сортування",
+        "add": "Додати"
+      },
+      "columns": {
+        "name": "Назва",
+        "lookbackPeriod": "Період огляду",
+        "breakoutBuffer": "Буфер брейкауту",
+        "minVolumeRatio": "Мін. співвідношення обʼєму",
+        "leverage": "Кредитне плече",
+        "actions": "Дії"
+      },
+      "form": {
+        "titleCreate": "Нова стратегія брейкаут",
+        "titleEdit": "Редагувати стратегію брейкаут",
+        "nameLabel": "Назва",
+        "namePlaceholder": "Назва стратегії",
+        "nameRequired": "Назва обовʼязкова",
+        "lookbackPeriod": "Період огляду",
+        "breakoutBuffer": "Буфер брейкауту",
+        "minVolumeRatio": "Мін. співвідношення обʼєму",
+        "leverage": "Кредитне плече",
+        "fieldRequired": "Поле обовʼязкове",
+        "cancel": "Скасувати",
+        "save": "Зберегти"
+      },
+      "messages": {
+        "rowDeleted": "Рядок видалено",
+        "deleteError": "Помилка видалення",
+        "rowCreated": "Стратегію створено",
+        "createError": "Помилка створення",
+        "rowUpdated": "Стратегію оновлено",
+        "updateError": "Помилка оновлення"
+      }
     }
   },
   "backtest": {

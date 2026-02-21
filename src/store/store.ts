@@ -6,6 +6,7 @@ import { backtestApi } from '../modules/backtest/apis';
 import { bybitApi } from '../modules/bybit/apis';
 import { historicPairsMetaApi } from '../modules/historicPairsMeta/apis';
 import { trendFollowingStrategyApi } from '../modules/strategies/trendFollowingStrategy/apis';
+import { breakoutStrategyApi } from '../modules/strategies/breakoutStrategy/apis';
 
 export const store = configureStore({
   reducer: rootReducer,
@@ -15,6 +16,7 @@ export const store = configureStore({
       bybitApi.middleware,
       historicPairsMetaApi.middleware,
       trendFollowingStrategyApi.middleware,
+      breakoutStrategyApi.middleware,
     ),
 });
 

@@ -1,0 +1,16 @@
+.breakout-strategy-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.breakout-strategy-page__title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.breakout-strategy-page__error {
+  margin-bottom: 16px;
+}

@@ -2,5 +2,7 @@ export { default as HistoricPairsDataPage } from './HistoricPairsData/HistoricPa
 export { default as StrategiesPage } from './Strategies/StrategiesPage';
 export { default as TrendFollowingStrategyPage } from './Strategies/TrendFollowingStrategy/TrendFollowingStrategyPage';
 export { default as MeanReversionStrategyPage } from './Strategies/MeanReversionStrategy/MeanReversionStrategyPage';
+export { default as BreakoutStrategyPage } from './Strategies/BreakoutStrategy/BreakoutStrategyPage';
 export { default as BacktestPage } from './Backtest/BacktestPage';
 export { default as BacktestRunDetailPage } from './Backtest/BacktestRunDetailPage';
+

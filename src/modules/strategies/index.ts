@@ -1,2 +1,3 @@
 export * from './apis';
-export * from './types';
+export * from './trendFollowingStrategy/types';
+export * from './breakoutStrategy';

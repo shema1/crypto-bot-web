@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { BarChartOutlined, DatabaseOutlined } from '@ant-design/icons';
-import { BacktestPage, BacktestRunDetailPage, HistoricPairsDataPage, MeanReversionStrategyPage, StrategiesPage, TrendFollowingStrategyPage } from './screens';
+import { BacktestPage, BacktestRunDetailPage, BreakoutStrategyPage, HistoricPairsDataPage, MeanReversionStrategyPage, StrategiesPage, TrendFollowingStrategyPage } from './screens';
 
 export interface RouteConfig {
   path: string;
@@ -34,10 +34,15 @@ export const routes: RouteConfig[] = [
         element: <TrendFollowingStrategyPage />,
       },
       {
-        path: '/strategies/mean-reversion',
-        label: 'nav.meanReversion',
-        element: <MeanReversionStrategyPage />,
+        path: '/strategies/breakout',
+        label: 'nav.breakout',
+        element: <BreakoutStrategyPage />,
       },
+      // {
+      //   path: '/strategies/mean-reversion',
+      //   label: 'nav.meanReversion',
+      //   element: <MeanReversionStrategyPage />,
+      // },
     ],
   },
   {

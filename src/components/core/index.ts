@@ -15,3 +15,16 @@ export type {
   TrendFollowingTableToolbar,
   TrendFollowingTableSelection,
 } from "./TrendFollowingTable";
+export { default as BreakoutStrategyTable } from "./BreakoutStrategyTable";
+export type {
+  BreakoutStrategyTableProps,
+  BreakoutStrategyTableRow,
+  BreakoutStrategyTableColumnTitles,
+  BreakoutStrategyTablePagination,
+  BreakoutStrategyTableSort,
+  BreakoutStrategyTableSortField,
+  BreakoutStrategyTableSortOrder,
+  BreakoutStrategyTableSearch,
+  BreakoutStrategyTableToolbar,
+  BreakoutStrategyTableSelection,
+} from "./BreakoutStrategyTable";

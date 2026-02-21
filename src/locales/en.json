@@ -61,6 +61,44 @@
         "rowDeleted": "Row deleted",
         "deleteError": "Failed to delete"
       }
+    },
+    "breakout": {
+      "title": "Breakout",
+      "searchPlaceholder": "Search by name",
+      "actions": {
+        "clearSort": "Clear sort",
+        "add": "Add"
+      },
+      "columns": {
+        "name": "Name",
+        "lookbackPeriod": "Lookback period",
+        "breakoutBuffer": "Breakout buffer",
+        "minVolumeRatio": "Min volume ratio",
+        "leverage": "Leverage",
+        "actions": "Actions"
+      },
+      "form": {
+        "titleCreate": "New breakout strategy",
+        "titleEdit": "Edit breakout strategy",
+        "nameLabel": "Name",
+        "namePlaceholder": "Strategy name",
+        "nameRequired": "Name is required",
+        "lookbackPeriod": "Lookback period",
+        "breakoutBuffer": "Breakout buffer",
+        "minVolumeRatio": "Min volume ratio",
+        "leverage": "Leverage",
+        "fieldRequired": "This field is required",
+        "cancel": "Cancel",
+        "save": "Save"
+      },
+      "messages": {
+        "rowDeleted": "Row deleted",
+        "deleteError": "Failed to delete",
+        "rowCreated": "Strategy created",
+        "createError": "Failed to create",
+        "rowUpdated": "Strategy updated",
+        "updateError": "Failed to update"
+      }
     }
   },
   "backtest": {

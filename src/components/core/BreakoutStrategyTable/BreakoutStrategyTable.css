@@ -1,0 +1,11 @@
+.breakout-strategy-table__toolbar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.breakout-strategy-table__search {
+  min-width: 200px;
+}
