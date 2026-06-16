@@ -249,6 +249,7 @@
     },
     "config": {
       "dataSelection": {
+        "title": "Вибір даних",
         "futuresPairs": {
           "title": "Фючерсні пари",
           "hint": "Пошук і вибір торгових пар",
@@ -263,7 +264,25 @@
           "title": "Історичний діапазон дат",
           "startPlaceholder": "Початок",
           "endPlaceholder": "Кінець"
+        },
+        "stopLossTakeProfit": {
+          "title": "Стоп-лосс / Тейк-профіт",
+          "hint": "Параметри ризику для сітки бектесту",
+          "stopLoss": "Стоп-лосс",
+          "takeProfit": "Тейк-профіт",
+          "step": "Крок"
         }
+      },
+      "strategyManager": {
+        "title": "Менеджер стратегій"
+      },
+      "summary": {
+        "title": "Підсумок конфігурації та запуск",
+        "currentlySelected": "Поточний вибір",
+        "selectedStats": "{{assets}} активів, {{timeframes}} таймфреймів, {{strategyConfigs}} конфігів стратегій, {{slTpCombinations}} SL/TP",
+        "totalCombinations": "Усього комбінацій",
+        "combinationFormula": "({{assets}} × {{timeframes}}) × {{strategyConfigs}} конфігів × ({{stopLossSteps}} SL × {{takeProfitSteps}} TP) = {{total}} симуляцій",
+        "runBacktest": "Запустити бектест ({{count}} сим.)"
       }
     }
   },

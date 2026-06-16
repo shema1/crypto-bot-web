@@ -249,6 +249,7 @@
     },
     "config": {
       "dataSelection": {
+        "title": "Data Selection",
         "futuresPairs": {
           "title": "Futures pairs",
           "hint": "Search and select trading pairs",
@@ -263,7 +264,25 @@
           "title": "Historical date range",
           "startPlaceholder": "Start",
           "endPlaceholder": "End"
+        },
+        "stopLossTakeProfit": {
+          "title": "Stop loss / Take profit",
+          "hint": "Configure risk parameters for the backtest grid",
+          "stopLoss": "Stop loss",
+          "takeProfit": "Take profit",
+          "step": "Step"
         }
+      },
+      "strategyManager": {
+        "title": "Strategy Manager"
+      },
+      "summary": {
+        "title": "Configuration Summary & Run",
+        "currentlySelected": "Currently Selected",
+        "selectedStats": "{{assets}} Assets, {{timeframes}} Timeframes, {{strategyConfigs}} Strategy configs, {{slTpCombinations}} SL/TP",
+        "totalCombinations": "Total Combinations",
+        "combinationFormula": "({{assets}} × {{timeframes}}) × {{strategyConfigs}} configs × ({{stopLossSteps}} SL × {{takeProfitSteps}} TP) = {{total}} Simulations",
+        "runBacktest": "Run Backtest ({{count}} Sim)"
       }
     }
   },

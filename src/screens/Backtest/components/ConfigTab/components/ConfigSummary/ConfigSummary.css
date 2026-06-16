@@ -1,0 +1,38 @@
+.config-summary {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.config-summary__block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.config-summary__label {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ant-color-text-secondary);
+}
+
+.config-summary__value {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.config-summary__formula {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ant-color-text-secondary);
+}
+
+.config-summary__run {
+  margin-top: auto;
+  padding-top: 8px;
+}

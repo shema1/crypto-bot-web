@@ -1,7 +1,9 @@
 import { useCallback, type FC } from 'react';
-import type { BacktestDateRange, BacktestTask } from '../../../../../../modules/backtest';
+import { useTranslation } from 'react-i18next';
+import type { BacktestDateRange, BacktestStopLossTakeProfit, BacktestTask } from '../../../../../../modules/backtest';
 import type { BybitTimeframe } from '../../../../../../modules/bybit/types';
-import { DateConfig, SymbolConfig, TimeframeConfig } from './components';
+import { DateConfig, StopLossTakeProfitConfig, SymbolConfig, TimeframeConfig } from './components';
+import '../../ConfigTabPanel.css';
 import './DataSelection.css';
 
 export interface DataSelectionProps {
@@ -15,6 +17,7 @@ const DataSelection: FC<DataSelectionProps> = ({
   onChangeBacktestTask,
   loading = false,
 }) => {
+  const { t } = useTranslation();
   const handleSymbolsChange = useCallback(
     (symbols: string[]) => {
       onChangeBacktestTask({ ...backtestTask, selectedPairs: symbols });
@@ -36,26 +39,42 @@ const DataSelection: FC<DataSelectionProps> = ({
     [backtestTask, onChangeBacktestTask]
   );
 
+  const handleStopLossTakeProfitChange = useCallback(
+    (stopLossTakeProfit: BacktestStopLossTakeProfit) => {
+      onChangeBacktestTask({ ...backtestTask, stopLossTakeProfit });
+    },
+    [backtestTask, onChangeBacktestTask]
+  );
+
   return (
-    <div className="data-selection">
-      <SymbolConfig
-        symbols={backtestTask.selectedPairs}
-        disabled={loading}
-        onChange={handleSymbolsChange}
-      />
+    <section className="config-tab-panel" aria-labelledby="config-tab-data-selection-title">
+      <h2 id="config-tab-data-selection-title" className="config-tab-panel__title">
+        {t('backtest.config.dataSelection.title')}
+      </h2>
+      <div className="config-tab-panel__body data-selection">
+        <SymbolConfig
+          symbols={backtestTask.selectedPairs}
+          disabled={loading}
+          onChange={handleSymbolsChange}
+        />
 
-      <TimeframeConfig
-        timeframes={backtestTask.selectedTimeframes}
-        disabled={loading}
-        onChange={handleTimeframesChange}
-      />
-
-      <DateConfig
-        dateRange={backtestTask.dateRange}
-        disabled={loading}
-        onChange={handleDateRangeChange}
-      />
-    </div>
+        <TimeframeConfig
+          timeframes={backtestTask.selectedTimeframes}
+          disabled={loading}
+          onChange={handleTimeframesChange}
+        />
+        <StopLossTakeProfitConfig
+          stopLossTakeProfit={backtestTask.stopLossTakeProfit}
+          disabled={loading}
+          onChange={handleStopLossTakeProfitChange}
+        />
+        <DateConfig
+          dateRange={backtestTask.dateRange}
+          disabled={loading}
+          onChange={handleDateRangeChange}
+        />
+      </div>
+    </section>
   );
 };
 
