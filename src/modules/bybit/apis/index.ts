@@ -1,12 +1,18 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import createMainBaseQuery from '../../core/baseQueries/mainBaseQuery';
-import type { CandleData, GetKlineParams, GetInstrumentsParams, InstrumentItem } from '../types';
+import type {
+  CandleData,
+  GetKlineParams,
+  GetInstrumentsParams,
+  GetSymbolsParams,
+  InstrumentItem,
+} from '../types';
 import { bybitUrls } from './bybit.api';
 
 export const bybitApi = createApi({
   reducerPath: 'bybitApi',
   baseQuery: createMainBaseQuery(),
-  tagTypes: ['BybitKline', 'BybitInstruments'],
+  tagTypes: ['BybitKline', 'BybitInstruments', 'BybitSymbols'],
   endpoints: (builder) => ({
     getKline: builder.query<CandleData[], GetKlineParams>({
       query: (params) => ({
@@ -32,7 +38,29 @@ export const bybitApi = createApi({
           ? [{ type: 'BybitInstruments', id: params?.category ?? 'linear' }]
           : [{ type: 'BybitInstruments', id: 'LIST' }],
     }),
+    getSymbols: builder.query<string[], GetSymbolsParams | void>({
+      query: (params) => {
+        const queryParams: Record<string, string | undefined> = {};
+        if (params?.category) queryParams.category = params.category;
+        if (params?.search?.trim()) queryParams.search = params.search.trim();
+        return {
+          url: bybitUrls.symbols,
+          params: queryParams,
+        };
+      },
+      providesTags: (_result, _error, params) => [
+        {
+          type: 'BybitSymbols',
+          id: params?.search?.trim() || params?.category || 'LIST',
+        },
+      ],
+    }),
   }),
 });
 
-export const { useGetKlineQuery, useGetInstrumentsQuery } = bybitApi;
+export const {
+  useGetKlineQuery,
+  useGetInstrumentsQuery,
+  useGetSymbolsQuery,
+  useLazyGetSymbolsQuery,
+} = bybitApi;

@@ -83,40 +83,44 @@ const BacktestPage: FC = () => {
     },
     {
       title: t('backtest.tasks.columns.totalIterations'),
-      dataIndex: 'totalIterations',
       key: 'totalIterations',
       width: 100,
       align: 'right',
+      render: (_: unknown, record: BacktestTask) => record.iterationInfo?.totalIterations ?? '—',
     },
     {
       title: t('backtest.tasks.columns.completedIterations'),
-      dataIndex: 'completedIterations',
       key: 'completedIterations',
       width: 110,
       align: 'right',
+      render: (_: unknown, record: BacktestTask) => record.iterationInfo?.completedIterations ?? '—',
     },
     {
       title: t('backtest.tasks.columns.failedIterations'),
-      dataIndex: 'failedIterations',
       key: 'failedIterations',
       width: 100,
       align: 'right',
+      render: (_: unknown, record: BacktestTask) => record.iterationInfo?.failedIterations ?? '—',
     },
     {
       title: t('backtest.tasks.columns.stopLoss'),
-      dataIndex: 'stopLoss',
       key: 'stopLoss',
       width: 100,
       align: 'right',
-      render: (v: number) => (v != null ? `${v}%` : '—'),
+      render: (_: unknown, record: BacktestTask) => {
+        const v = record.stopLossTakeProfit?.stopLoss;
+        return v != null ? `${v}%` : '—';
+      },
     },
     {
       title: t('backtest.tasks.columns.takeProfit'),
-      dataIndex: 'takeProfit',
       key: 'takeProfit',
       width: 110,
       align: 'right',
-      render: (v: number) => (v != null ? `${v}%` : '—'),
+      render: (_: unknown, record: BacktestTask) => {
+        const v = record.stopLossTakeProfit?.takeProfit;
+        return v != null ? `${v}%` : '—';
+      },
     },
     {
       title: t('backtest.tasks.columns.createdAt'),

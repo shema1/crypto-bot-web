@@ -6,3 +6,4 @@ export { default as StrategiesTab } from './StrategiesTab';
 export { default as ResultsTab } from './ResultsTab';
 export { default as OrdersModal } from './OrdersModal';
 export type { ResultSummary, BacktestErrorItem, BacktestRunDetailRun, PairTimeframeCount } from './types';
+export { default as ConfigTab } from './ConfigTab/ConfigTabComponent';

@@ -6,75 +6,36 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import AppContainer from '../../components/layout/AppContainer';
 import AppHeaderContainer from '../../components/layout/AppHeaderContainer';
 import {
-  FuturesPairsTab,
-  StrategiesTab,
-  ResultsTab,
   OrdersModal,
+  ConfigTab
 } from './components';
-import { useGetTaskByIdQuery, useUpdateTaskMutation, type UpdateBacktestTaskRequest } from '../../modules/backtest';
-import { API_BASE_URL } from '../../modules/core/baseQueries/mainBaseQuery';
+import { useGetTaskByIdQuery, useUpdateTaskMutation, type BacktestTask, type UpdateBacktestTaskRequest } from '../../modules/backtest';
 
-function buildTaskEventsUrl(taskId: string): string {
-  const base = API_BASE_URL.replace(/\/$/, '');
-  return `${base}/backtest/tasks/${encodeURIComponent(taskId)}/events`;
-}
+
 
 const BacktestRunDetailPage: FC = () => {
   const { t } = useTranslation();
   const { runId } = useParams<{ runId: string }>();
-  const navigate = useNavigate();
-  const [ordersModalResultIndex, setOrdersModalResultIndex] = useState<number | null>(null);
-
   const { data: task, isLoading, isError, error, refetch } = useGetTaskByIdQuery(runId!, {
     skip: !runId,
-    refetchOnFocus: true,
-  });
+      refetchOnFocus: true,
+    });
+
+
+  const [updateTask] = useUpdateTaskMutation();
+  const [ordersModalResultIndex, setOrdersModalResultIndex] = useState<number | null>(null);
+  
+  const navigate = useNavigate();
+
 
   const refetchRef = useRef(refetch);
   refetchRef.current = refetch;
 
-  useEffect(() => {
-    if (!runId) return;
-    const url = buildTaskEventsUrl(runId);
-    const eventSource = new EventSource(url);
-
-    eventSource.addEventListener('task-updated', () => {
-      refetchRef.current();
-    });
-
-    eventSource.addEventListener('task-deleted', () => {
-      eventSource.close();
-      navigate('/backtest', { replace: true });
-    });
-
-    eventSource.onerror = () => {
-      eventSource.close();
-    };
-
-    return () => {
-      eventSource.close();
-    };
-  }, [runId, navigate]);
-
-  const [updateTask] = useUpdateTaskMutation();
-
-
-  const backtestTask = useMemo(() => {
-    return task;
-  }, [task])
+  const [currentTask, setCurrentTask] = useState<BacktestTask | null>(null);
 
 
 
   const onUpdateBacktestTask = useCallback((payload: UpdateBacktestTaskRequest) => {
-    const body: UpdateBacktestTaskRequest = {};
-    if (payload.name !== undefined) body.name = payload.name;
-    if (payload.selectedTrendFollowingStrategies !== undefined) body.selectedTrendFollowingStrategies = payload.selectedTrendFollowingStrategies;
-    if (payload.selectedBreakoutStrategies !== undefined) body.selectedBreakoutStrategies = payload.selectedBreakoutStrategies;
-    if (payload.selectedPairs !== undefined) body.selectedPairs = payload.selectedPairs;
-    if (payload.stopLoss !== undefined) body.stopLoss = payload.stopLoss;
-    if (payload.takeProfit !== undefined) body.takeProfit = payload.takeProfit;
-    if (payload.stopLossTakeProfitStep !== undefined) body.stopLossTakeProfitStep = payload.stopLossTakeProfitStep;
-    updateTask({ taskId: runId!, body });
   }, [runId, updateTask]);
 
 
@@ -82,14 +43,13 @@ const BacktestRunDetailPage: FC = () => {
   const errorMessage =
     isError && error && 'message' in error ? String(error.message) : null;
 
-  const runForOverview = useMemo(() => {
-    if (!task) return null;
-    return {
-      id: task.id,
-      createdAt: task.createdAt,
-      updatedAt: task.updatedAt,
-    };
-  }, [task]);
+
+  useEffect(() => {
+    if (task && !currentTask) {
+      setCurrentTask(task);
+    }
+  }, [task, currentTask]);
+
 
 
   if (!runId) {
@@ -153,57 +113,68 @@ const BacktestRunDetailPage: FC = () => {
               className="backtest-detail-page__error"
             />
           )}
-          {runForOverview && (
+          {currentTask ?  (
             <Tabs
               defaultActiveKey="overview"
               items={[
+                // {
+                //   key: 'overview',
+                //   label: t('backtest.detail.tabs.overview'),
+                //   children: (
+                //     // <OverviewTab
+                //     //   run={runForOverview}
+                //     //   resultsCount={resultsCount}
+                //     //   errors={errorsFromTask}
+                //     // />
+                //     <></>
+                //   ),
+                // },
+                // {
+                //   key: 'futuresPairs',
+                //   label: t('backtest.detail.tabs.futuresPairs'),
+                //   children: (
+                //     <FuturesPairsTab
+                //       selectedPairs={backtestTask?.selectedPairs ?? []}
+                //       loading={isLoading}
+                //       onUpdateBacktestTask={onUpdateBacktestTask}
+                //     />
+                //   ),
+                // },
+                // {
+                //   key: 'strategies',
+                //   label: t('backtest.detail.tabs.strategies'),
+                //   children: (
+                //     <StrategiesTab
+                //       loading={isLoading}
+                //       backtestTask={backtestTask}
+                //       onUpdateBacktestTask={onUpdateBacktestTask}
+                //     />
+                //   ),
+                // },
+                // {
+                //   key: 'results',
+                //   label: t('backtest.detail.tabs.results'),
+                //   children: (
+                //     <ResultsTab
+                //       loading={isLoading}
+                //       onViewOrders={setOrdersModalResultIndex}
+                //     />
+                //   ),
+                // },
                 {
-                  key: 'overview',
-                  label: t('backtest.detail.tabs.overview'),
+                  key: 'config',
+                  label: t('backtest.detail.tabs.config'),
                   children: (
-                    // <OverviewTab
-                    //   run={runForOverview}
-                    //   resultsCount={resultsCount}
-                    //   errors={errorsFromTask}
-                    // />
-                    <></>
-                  ),
-                },
-                {
-                  key: 'futuresPairs',
-                  label: t('backtest.detail.tabs.futuresPairs'),
-                  children: (
-                    <FuturesPairsTab
-                      selectedPairs={backtestTask?.selectedPairs ?? []}
+                    <ConfigTab
+                      backtestTask={currentTask}
+                      onChangeBacktestTask={setCurrentTask}
                       loading={isLoading}
-                      onUpdateBacktestTask={onUpdateBacktestTask}
-                    />
-                  ),
-                },
-                {
-                  key: 'strategies',
-                  label: t('backtest.detail.tabs.strategies'),
-                  children: (
-                    <StrategiesTab
-                      loading={isLoading}
-                      backtestTask={backtestTask}
-                      onUpdateBacktestTask={onUpdateBacktestTask}
-                    />
-                  ),
-                },
-                {
-                  key: 'results',
-                  label: t('backtest.detail.tabs.results'),
-                  children: (
-                    <ResultsTab
-                      loading={isLoading}
-                      onViewOrders={setOrdersModalResultIndex}
                     />
                   ),
                 },
               ]}
             />
-          )}
+          ) : null}
         </div>
       </AppContainer>
 

@@ -1,20 +1,4 @@
-export const KLINE_INTERVALS = [
-  '1',
-  '3',
-  '5',
-  '15',
-  '30',
-  '60',
-  '120',
-  '240',
-  '360',
-  '720',
-  'D',
-  'W',
-  'M',
-] as const;
-
-export type KlineInterval = (typeof KLINE_INTERVALS)[number];
+import type { BybitTimeframe } from './timeframes.type';
 
 export const INSTRUMENT_CATEGORIES = ['spot', 'linear'] as const;
 export type InstrumentCategory = (typeof INSTRUMENT_CATEGORIES)[number];
@@ -22,7 +6,7 @@ export type InstrumentCategory = (typeof INSTRUMENT_CATEGORIES)[number];
 /** Query params for GET bybit/kline */
 export interface GetKlineParams {
   symbol?: string;
-  interval?: KlineInterval;
+  interval?: BybitTimeframe;
   start: string;
   end: string;
 }
@@ -30,4 +14,10 @@ export interface GetKlineParams {
 /** Query params for GET bybit/instruments */
 export interface GetInstrumentsParams {
   category?: InstrumentCategory;
+}
+
+/** Query params for GET bybit/symbols */
+export interface GetSymbolsParams {
+  category?: InstrumentCategory;
+  search?: string;
 }

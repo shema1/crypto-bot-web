@@ -228,7 +228,8 @@
         "overview": "Огляд",
         "futuresPairs": "Фючерсні пари",
         "strategies": "Стратегії",
-        "results": "Результати"
+        "results": "Результати",
+        "config": "Конфіг"
       },
       "strategies": {
         "emptyTrendFollowing": "Тренд-фолловінг стратегії не обрані.",
@@ -245,6 +246,25 @@
         "lastRecord": "Останній запис"
       },
       "emptyFuturesPairs": "Пари не обрані."
+    },
+    "config": {
+      "dataSelection": {
+        "futuresPairs": {
+          "title": "Фючерсні пари",
+          "hint": "Пошук і вибір торгових пар",
+          "searchPlaceholder": "Пошук пар",
+          "empty": "Пари не обрані"
+        },
+        "timeframes": {
+          "title": "Таймфрейми",
+          "hint": "Оберіть один або кілька інтервалів"
+        },
+        "dateRange": {
+          "title": "Історичний діапазон дат",
+          "startPlaceholder": "Початок",
+          "endPlaceholder": "Кінець"
+        }
+      }
     }
   },
   "common": {

@@ -228,7 +228,8 @@
         "overview": "Overview",
         "futuresPairs": "Futures pairs",
         "strategies": "Strategies",
-        "results": "Results"
+        "results": "Results",
+        "config": "Config"
       },
       "strategies": {
         "emptyTrendFollowing": "No trend following strategies selected.",
@@ -245,6 +246,25 @@
         "lastRecord": "Last record"
       },
       "emptyFuturesPairs": "No pairs selected."
+    },
+    "config": {
+      "dataSelection": {
+        "futuresPairs": {
+          "title": "Futures pairs",
+          "hint": "Search and select trading pairs",
+          "searchPlaceholder": "Search pairs",
+          "empty": "No pairs selected"
+        },
+        "timeframes": {
+          "title": "Timeframes",
+          "hint": "Select one or more intervals"
+        },
+        "dateRange": {
+          "title": "Historical date range",
+          "startPlaceholder": "Start",
+          "endPlaceholder": "End"
+        }
+      }
     }
   },
   "common": {
