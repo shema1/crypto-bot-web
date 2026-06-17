@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Alert, Button, Tabs } from 'antd';
+import { Alert, Button, Tabs, message } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import AppContainer from '../../components/layout/AppContainer';
 import AppHeaderContainer from '../../components/layout/AppHeaderContainer';
@@ -9,6 +9,10 @@ import {
   OrdersModal,
   ConfigTab
 } from './components';
+import {
+  buildBacktestTaskConfigUpdateRequest,
+  isBacktestTaskConfigDirty,
+} from './components/ConfigTab/configTab.utils';
 import { useGetTaskByIdQuery, useUpdateTaskMutation, type BacktestTask, type UpdateBacktestTaskRequest } from '../../modules/backtest';
 
 
@@ -22,7 +26,7 @@ const BacktestRunDetailPage: FC = () => {
     });
 
 
-  const [updateTask] = useUpdateTaskMutation();
+  const [updateTask, { isLoading: isUpdatingTask }] = useUpdateTaskMutation();
   const [ordersModalResultIndex, setOrdersModalResultIndex] = useState<number | null>(null);
   
   const navigate = useNavigate();
@@ -38,19 +42,34 @@ const BacktestRunDetailPage: FC = () => {
   const onUpdateBacktestTask = useCallback((payload: UpdateBacktestTaskRequest) => {
   }, [runId, updateTask]);
 
-
-
   const errorMessage =
     isError && error && 'message' in error ? String(error.message) : null;
 
-
   useEffect(() => {
-    if (task && !currentTask) {
+    if (task) {
       setCurrentTask(task);
     }
+  }, [task?.id]);
+
+  const isConfigDirty = useMemo(() => {
+    if (!task || !currentTask) return false;
+    return isBacktestTaskConfigDirty(task, currentTask);
   }, [task, currentTask]);
 
+  const handleSaveConfig = useCallback(async () => {
+    if (!runId || !currentTask || !isConfigDirty) return;
 
+    try {
+      const updatedTask = await updateTask({
+        taskId: runId,
+        body: buildBacktestTaskConfigUpdateRequest(currentTask),
+      }).unwrap();
+      setCurrentTask(updatedTask);
+      message.success(t('backtest.config.summary.taskUpdated'));
+    } catch {
+      message.error(t('backtest.config.summary.taskUpdateError'));
+    }
+  }, [currentTask, isConfigDirty, runId, t, updateTask]);
 
   if (!runId) {
     return null;
@@ -169,6 +188,9 @@ const BacktestRunDetailPage: FC = () => {
                       backtestTask={currentTask}
                       onChangeBacktestTask={setCurrentTask}
                       loading={isLoading}
+                      isDirty={isConfigDirty}
+                      isSaving={isUpdatingTask}
+                      onSave={handleSaveConfig}
                     />
                   ),
                 },

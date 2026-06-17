@@ -14,9 +14,18 @@ import './ConfigSummary.css';
 export interface ConfigSummaryProps {
   backtestTask: BacktestTask;
   loading?: boolean;
+  isDirty?: boolean;
+  isSaving?: boolean;
+  onSave?: () => void;
 }
 
-const ConfigSummary: FC<ConfigSummaryProps> = ({ backtestTask, loading = false }) => {
+const ConfigSummary: FC<ConfigSummaryProps> = ({
+  backtestTask,
+  loading = false,
+  isDirty = false,
+  isSaving = false,
+  onSave,
+}) => {
   const { t } = useTranslation();
 
   const assetsCount = backtestTask.selectedPairs.length;
@@ -49,6 +58,7 @@ const ConfigSummary: FC<ConfigSummaryProps> = ({ backtestTask, loading = false }
   );
 
   const canRun = totalSimulations > 0 && !loading;
+  const canSave = isDirty && !loading && !isSaving;
 
   return (
     <section className="config-tab-panel" aria-labelledby="config-tab-summary-title">
@@ -85,6 +95,19 @@ const ConfigSummary: FC<ConfigSummaryProps> = ({ backtestTask, loading = false }
               total: totalSimulations,
             })}
           </Typography.Paragraph>
+        </div>
+
+        <div className="config-summary__actions">
+          <Button
+            type="default"
+            size="large"
+            block
+            disabled={!canSave}
+            loading={isSaving}
+            onClick={onSave}
+          >
+            {t('backtest.config.summary.updateTask')}
+          </Button>
         </div>
 
         <div className="config-summary__run">

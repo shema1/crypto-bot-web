@@ -1,0 +1,38 @@
+.strategies-selection {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.strategies-selection__accordion {
+  background: transparent;
+}
+
+.strategies-selection__accordion .ant-collapse-item {
+  border-color: var(--ant-color-border-secondary);
+}
+
+.strategies-selection__accordion .ant-collapse-header {
+  align-items: center !important;
+  font-weight: 600;
+}
+
+.strategies-selection__bulk-action {
+  margin-right: 8px;
+  font-weight: 500;
+}
+
+.strategies-selection__list {
+  min-width: 0;
+}
+
+.strategies-selection__list .trend-following-table__search,
+.strategies-selection__list .breakout-strategy-table__search {
+  max-width: 100%;
+}
+
+.strategies-selection__list .ant-table-wrapper {
+  overflow-x: auto;
+}

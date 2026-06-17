@@ -274,7 +274,11 @@
         }
       },
       "strategyManager": {
-        "title": "Менеджер стратегій"
+        "title": "Менеджер стратегій",
+        "add": "Додати",
+        "remove": "Прибрати",
+        "addAll": "Додати всі",
+        "removeAll": "Прибрати всі"
       },
       "summary": {
         "title": "Підсумок конфігурації та запуск",
@@ -282,7 +286,10 @@
         "selectedStats": "{{assets}} активів, {{timeframes}} таймфреймів, {{strategyConfigs}} конфігів стратегій, {{slTpCombinations}} SL/TP",
         "totalCombinations": "Усього комбінацій",
         "combinationFormula": "({{assets}} × {{timeframes}}) × {{strategyConfigs}} конфігів × ({{stopLossSteps}} SL × {{takeProfitSteps}} TP) = {{total}} симуляцій",
-        "runBacktest": "Запустити бектест ({{count}} сим.)"
+        "runBacktest": "Запустити бектест ({{count}} сим.)",
+        "updateTask": "Оновити таску",
+        "taskUpdated": "Таску оновлено",
+        "taskUpdateError": "Не вдалося оновити таску"
       }
     }
   },

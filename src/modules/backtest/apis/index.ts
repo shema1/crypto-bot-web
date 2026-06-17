@@ -1,6 +1,10 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import createMainBaseQuery from '../../core/baseQueries/mainBaseQuery';
 import { backtestUrls } from './backtest.api';
+import {
+  normalizeBacktestDateRange,
+  normalizeBacktestDateRangeOptional,
+} from '../utils';
 import type {
   GetTasksQuery,
   GetTasksResponse,
@@ -8,6 +12,24 @@ import type {
   UpdateBacktestTaskRequest,
   BacktestTask,
 } from '../types';
+
+function normalizeBacktestTask(task: BacktestTask): BacktestTask {
+  return {
+    ...task,
+    dateRange: normalizeBacktestDateRange(task.dateRange),
+    selectedTrendFollowingStrategies: (task.selectedTrendFollowingStrategies ?? []).filter(Boolean),
+    selectedBreakoutStrategies: (task.selectedBreakoutStrategies ?? []).filter(Boolean),
+  };
+}
+
+function normalizeUpdateBacktestTaskRequest(body: UpdateBacktestTaskRequest): UpdateBacktestTaskRequest {
+  if (!body.dateRange) return body;
+
+  return {
+    ...body,
+    dateRange: normalizeBacktestDateRangeOptional(body.dateRange),
+  };
+}
 
 export const backtestApi = createApi({
   reducerPath: 'backtestApi',
@@ -35,10 +57,15 @@ export const backtestApi = createApi({
               { type: 'BacktestTask', id: 'LIST' },
             ]
           : [{ type: 'BacktestTask', id: 'LIST' }],
+      transformResponse: (response: GetTasksResponse): GetTasksResponse => ({
+        ...response,
+        items: response.items.map(normalizeBacktestTask),
+      }),
     }),
     getTaskById: builder.query<BacktestTask, string>({
       query: (taskId) => ({ url: backtestUrls.taskById(taskId) }),
       providesTags: (_result, _error, taskId) => [{ type: 'BacktestTask', id: taskId }],
+      transformResponse: (response: BacktestTask): BacktestTask => normalizeBacktestTask(response),
     }),
     createTask: builder.mutation<BacktestTask, CreateBacktestTaskRequest>({
       query: (body) => ({
@@ -47,17 +74,19 @@ export const backtestApi = createApi({
         body,
       }),
       invalidatesTags: [{ type: 'BacktestTask', id: 'LIST' }],
+      transformResponse: (response: BacktestTask): BacktestTask => normalizeBacktestTask(response),
     }),
     updateTask: builder.mutation<BacktestTask, { taskId: string; body: UpdateBacktestTaskRequest }>({
       query: ({ taskId, body }) => ({
         url: backtestUrls.taskById(taskId),
         method: 'PATCH',
-        body,
+        body: normalizeUpdateBacktestTaskRequest(body),
       }),
       invalidatesTags: (_result, _error, { taskId }) => [
         { type: 'BacktestTask', id: taskId },
         { type: 'BacktestTask', id: 'LIST' },
       ],
+      transformResponse: (response: BacktestTask): BacktestTask => normalizeBacktestTask(response),
     }),
     deleteTask: builder.mutation<void, string>({
       query: (taskId) => ({

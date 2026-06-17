@@ -274,7 +274,11 @@
         }
       },
       "strategyManager": {
-        "title": "Strategy Manager"
+        "title": "Strategy Manager",
+        "add": "Add",
+        "remove": "Remove",
+        "addAll": "Add all",
+        "removeAll": "Remove all"
       },
       "summary": {
         "title": "Configuration Summary & Run",
@@ -282,7 +286,10 @@
         "selectedStats": "{{assets}} Assets, {{timeframes}} Timeframes, {{strategyConfigs}} Strategy configs, {{slTpCombinations}} SL/TP",
         "totalCombinations": "Total Combinations",
         "combinationFormula": "({{assets}} × {{timeframes}}) × {{strategyConfigs}} configs × ({{stopLossSteps}} SL × {{takeProfitSteps}} TP) = {{total}} Simulations",
-        "runBacktest": "Run Backtest ({{count}} Sim)"
+        "runBacktest": "Run Backtest ({{count}} Sim)",
+        "updateTask": "Update task",
+        "taskUpdated": "Task updated",
+        "taskUpdateError": "Failed to update task"
       }
     }
   },

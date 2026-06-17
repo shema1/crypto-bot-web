@@ -7,6 +7,9 @@ export interface ConfigTabProps {
   backtestTask: BacktestTask;
   onChangeBacktestTask: (backtestTask: BacktestTask) => void;
   loading?: boolean;
+  isDirty?: boolean;
+  isSaving?: boolean;
+  onSave?: () => void;
 }
 
 const ConfigTab: FC<ConfigTabProps> = (props) => {

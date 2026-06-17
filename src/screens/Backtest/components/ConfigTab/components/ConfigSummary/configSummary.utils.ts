@@ -30,7 +30,9 @@ export function countStopLossTakeProfitCombinations({
  * is one concrete config variant (e.g. 10 Trend Following configs → 10).
  */
 export function countStrategyConfigVariants(task: BacktestTask): number {
-  return task.selectedTrendFollowingStrategies.length + task.selectedBreakoutStrategies.length;
+  const trendFollowingCount = task.selectedTrendFollowingStrategies.filter(Boolean).length;
+  const breakoutCount = task.selectedBreakoutStrategies.filter(Boolean).length;
+  return trendFollowingCount + breakoutCount;
 }
 
 export function countBacktestSimulations(task: BacktestTask): number {

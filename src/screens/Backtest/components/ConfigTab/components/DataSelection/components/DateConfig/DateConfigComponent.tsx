@@ -1,8 +1,13 @@
 import { DatePicker } from 'antd';
-import dayjs, { type Dayjs } from 'dayjs';
-import { useCallback, type FC } from 'react';
+import { type Dayjs } from 'dayjs';
+import { useCallback, useMemo, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { BacktestDateRange } from '../../../../../../../../modules/backtest';
+import {
+  BACKTEST_DATE_FORMAT,
+  formatBacktestDate,
+  parseBacktestDate,
+  type BacktestDateRange,
+} from '../../../../../../../../modules/backtest';
 
 const { RangePicker } = DatePicker;
 
@@ -15,17 +20,18 @@ export interface DateConfigProps {
 const DateConfig: FC<DateConfigProps> = ({ dateRange, disabled = false, onChange }) => {
   const { t } = useTranslation();
 
-  const rangeValue: [Dayjs, Dayjs] | null =
-    dateRange.startDate && dateRange.endDate
-      ? [dayjs(dateRange.startDate), dayjs(dateRange.endDate)]
-      : null;
+  const rangeValue = useMemo<[Dayjs, Dayjs] | null>(() => {
+    if (!dateRange.startDate || !dateRange.endDate) return null;
+
+    return [parseBacktestDate(dateRange.startDate), parseBacktestDate(dateRange.endDate)];
+  }, [dateRange.endDate, dateRange.startDate]);
 
   const handleRangeChange = useCallback(
     (value: [Dayjs | null, Dayjs | null] | null) => {
       if (!value?.[0] || !value[1]) return;
       onChange({
-        startDate: value[0].toISOString(),
-        endDate: value[1].toISOString(),
+        startDate: formatBacktestDate(value[0]),
+        endDate: formatBacktestDate(value[1]),
       });
     },
     [onChange]
@@ -42,7 +48,7 @@ const DateConfig: FC<DateConfigProps> = ({ dateRange, disabled = false, onChange
         value={rangeValue}
         onChange={handleRangeChange}
         disabled={disabled}
-        showTime
+        format={BACKTEST_DATE_FORMAT}
         style={{ width: '100%' }}
         placeholder={[
           t('backtest.config.dataSelection.dateRange.startPlaceholder'),

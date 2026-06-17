@@ -67,7 +67,9 @@ export interface BacktestIterationInfo {
 }
 
 export interface BacktestDateRange {
+  /** Inclusive start date in YYYY-MM-DD format (no time component). */
   startDate: string;
+  /** Inclusive end date in YYYY-MM-DD format (no time component). */
   endDate: string;
 }
 /** Backtest task (matches backend BacktestTask schema). API returns id (not _id). */

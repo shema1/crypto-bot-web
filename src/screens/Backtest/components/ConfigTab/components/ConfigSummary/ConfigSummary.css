@@ -32,7 +32,11 @@
   color: var(--ant-color-text-secondary);
 }
 
-.config-summary__run {
+.config-summary__actions {
   margin-top: auto;
+  padding-top: 8px;
+}
+
+.config-summary__run {
   padding-top: 8px;
 }
