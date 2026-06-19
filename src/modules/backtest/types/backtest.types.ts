@@ -96,6 +96,8 @@ export interface BacktestExecutionSettings {
   closeOnReverseSignalBreakout: boolean;
   /** When true, emit per-step perf_timing logs for this task run. */
   timingLogs: boolean;
+  /** How many subtasks to run in parallel during execution. */
+  subtaskConcurrency: number;
 }
 
 export const DEFAULT_BACKTEST_EXECUTION_SETTINGS: BacktestExecutionSettings = {
@@ -108,6 +110,7 @@ export const DEFAULT_BACKTEST_EXECUTION_SETTINGS: BacktestExecutionSettings = {
   closeOnReverseSignalTrendFollowing: true,
   closeOnReverseSignalBreakout: true,
   timingLogs: false,
+  subtaskConcurrency: 5,
 };
 /** Backtest task (matches backend BacktestTask schema). API returns id (not _id). */
 export interface BacktestTask {

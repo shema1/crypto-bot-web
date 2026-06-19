@@ -488,6 +488,9 @@ const OverviewTab: FC<OverviewTabProps> = ({
           <Descriptions.Item label={t('backtest.config.dataSelection.execution.initialCash')}>
             {executionSettings.initialCash}
           </Descriptions.Item>
+          <Descriptions.Item label={t('backtest.config.dataSelection.execution.subtaskConcurrency')}>
+            {executionSettings.subtaskConcurrency}
+          </Descriptions.Item>
           {runStartedAt && (
             <Descriptions.Item label={t('backtest.detail.overview.runStartedAt')}>
               {format(new Date(runStartedAt), 'dd/MM/yyyy HH:mm:ss')}

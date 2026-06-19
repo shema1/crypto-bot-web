@@ -47,7 +47,8 @@ function areExecutionSettingsEqual(
     a.leverageOverride === b.leverageOverride &&
     a.closeOnReverseSignalTrendFollowing === b.closeOnReverseSignalTrendFollowing &&
     a.closeOnReverseSignalBreakout === b.closeOnReverseSignalBreakout &&
-    a.timingLogs === b.timingLogs
+    a.timingLogs === b.timingLogs &&
+    a.subtaskConcurrency === b.subtaskConcurrency
   );
 }
 

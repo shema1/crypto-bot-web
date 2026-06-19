@@ -176,6 +176,21 @@ const ExecutionConfig: FC<ExecutionConfigProps> = ({
           ),
         )}
         {renderField(
+          'backtest.config.dataSelection.execution.subtaskConcurrency',
+          'backtest.config.dataSelection.execution.tooltips.subtaskConcurrency',
+          (
+            <InputNumber
+              className="data-selection__sltp-input"
+              value={executionSettings.subtaskConcurrency}
+              min={1}
+              max={20}
+              step={1}
+              disabled={disabled}
+              onChange={(value) => updateField('subtaskConcurrency', value)}
+            />
+          ),
+        )}
+        {renderField(
           'backtest.config.dataSelection.execution.closeOnReverseTrendFollowing',
           'backtest.config.dataSelection.execution.tooltips.closeOnReverseTrendFollowing',
           (

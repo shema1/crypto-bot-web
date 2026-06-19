@@ -357,6 +357,7 @@
           "maxDrawdownLimitPct": "Max drawdown limit",
           "closeOnReverseTrendFollowing": "TF: exit on reverse signal",
           "closeOnReverseBreakout": "Breakout: exit on reverse break",
+          "subtaskConcurrency": "Parallel subtasks",
           "timingLogs": "Performance timing logs",
           "tooltips": {
             "section": "These settings simulate Bybit Linear Perpetual conditions: capital, fees, slippage, and exit rules. They apply to every subtask in the run and affect net profit, ROI, and trade count, but do not change indicator signal logic.",
@@ -368,6 +369,7 @@
             "maxDrawdownLimitPct": "If equity falls this % from its peak, trading stops: no new entries and open positions are closed. Limits catastrophic runs but may reduce trade count and change final PnL.",
             "closeOnReverseTrendFollowing": "For Trend Following: close long on death cross (short MA crosses below long MA). On = classic crossover behavior. Off = exits only via SL/TP; behaves differently (often more trades with fixed stops).",
             "closeOnReverseBreakout": "For Breakout: close long when the previous close breaks below the Donchian lower channel. On = exit on false breakout. Off = hold until SL/TP; trades may last longer with more intra-trade drawdown.",
+            "subtaskConcurrency": "How many simulations run at the same time. Higher values finish large grids faster but load the analysis bot and MongoDB more. Start with 5; lower if runs fail or time out.",
             "timingLogs": "When enabled, each subtask writes perf_timing logs (step durations in ms) to the task log. Useful for profiling slow runs; adds a small MongoDB overhead when on."
           }
         }
