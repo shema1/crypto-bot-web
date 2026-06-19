@@ -1,4 +1,4 @@
-import { useCallback, useMemo, type FC } from 'react';
+import { useCallback, useEffect, useMemo, useState, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import {
@@ -18,13 +18,17 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import {
   BacktestTaskStatus,
+  BacktestRunPhase,
   useGetTaskOverviewQuery,
   useBacktestTaskLiveEvents,
+  formatRunDuration,
+  computeRunDurationSeconds,
   type BacktestTask,
   type BacktestTaskOverviewTopResult,
   type BacktestTaskResultItem,
 } from '../../../../modules/backtest';
 import { countBacktestSimulations } from '../ConfigTab/components/ConfigSummary/configSummary.utils';
+import PhaseDurationTimer from './PhaseDurationTimer';
 import './OverviewTab.css';
 
 export interface OverviewTabProps {
@@ -85,7 +89,24 @@ const OverviewTab: FC<OverviewTabProps> = ({
   onViewTrades,
 }) => {
   const { t } = useTranslation();
-  const { data: overview, isLoading, refetch } = useGetTaskOverviewQuery(taskId);
+  const { data: overview, isLoading, refetch } = useGetTaskOverviewQuery(taskId, {
+    pollingInterval: task.status === BacktestTaskStatus.RUNNING ? 1000 : 0,
+  });
+  const [localPrepStartedAt, setLocalPrepStartedAt] = useState<string | undefined>();
+  const [localSubtasksStartedAt, setLocalSubtasksStartedAt] = useState<string | undefined>();
+
+  useEffect(() => {
+    if (isRunningMutation) {
+      setLocalPrepStartedAt(new Date().toISOString());
+    }
+  }, [isRunningMutation]);
+
+  useEffect(() => {
+    if (task.status !== BacktestTaskStatus.RUNNING) {
+      setLocalPrepStartedAt(undefined);
+      setLocalSubtasksStartedAt(undefined);
+    }
+  }, [task.status]);
 
   const handleLiveRefresh = useCallback(() => {
     void refetch();
@@ -93,21 +114,69 @@ const OverviewTab: FC<OverviewTabProps> = ({
 
   useBacktestTaskLiveEvents(taskId, handleLiveRefresh);
 
-  const status = overview?.task.status ?? task.status;
-  const isTaskRunning = status === BacktestTaskStatus.RUNNING;
+  const status = task.status;
+  const runPhase = overview?.runPhase ?? BacktestRunPhase.IDLE;
+  const preparation = overview?.preparation;
+  const subtasks = overview?.subtasks;
+  const isPreparingData = preparation?.isActive ?? runPhase === BacktestRunPhase.PREPARING_DATA;
+  const isRunningSubtasks = subtasks?.isActive ?? runPhase === BacktestRunPhase.RUNNING_SUBTASKS;
+  /** Task status from parent is the source of truth (refetched on SSE). */
+  const isRunActive = status === BacktestTaskStatus.RUNNING;
   const totalSimulations = useMemo(() => countBacktestSimulations(task), [task]);
   const canRun =
     totalSimulations > 0 &&
     !isConfigDirty &&
     !isSaving &&
     !isRunningMutation &&
-    !isTaskRunning;
-  const canStop = isTaskRunning && !isStoppingMutation;
+    !isRunActive;
+  const canStop = isRunActive && !isStoppingMutation;
 
   const progress = overview?.progress;
   const stats = overview?.stats;
-  const configSummary = overview?.task.configSummary;
-  const executionSettings = overview?.task.executionSettings ?? task.executionSettings;
+  const configSummary = overview?.task?.configSummary;
+  const executionSettings = overview?.task?.executionSettings ?? task.executionSettings;
+  const runStartedAt =
+    overview?.timing?.runStartedAt
+    ?? overview?.task?.runStartedAt
+    ?? task.runStartedAt;
+  const runFinishedAt =
+    overview?.timing?.runFinishedAt
+    ?? overview?.task?.runFinishedAt
+    ?? task.runFinishedAt;
+
+  useEffect(() => {
+    if (isRunningSubtasks && !subtasks?.startedAt) {
+      setLocalSubtasksStartedAt((prev) => prev ?? new Date().toISOString());
+    }
+  }, [isRunningSubtasks, subtasks?.startedAt]);
+
+  useEffect(() => {
+    if (preparation?.startedAt && localPrepStartedAt) {
+      setLocalPrepStartedAt(undefined);
+    }
+  }, [preparation?.startedAt, localPrepStartedAt]);
+
+  useEffect(() => {
+    if (subtasks?.startedAt && localSubtasksStartedAt) {
+      setLocalSubtasksStartedAt(undefined);
+    }
+  }, [subtasks?.startedAt, localSubtasksStartedAt]);
+
+  const prepStartedAt = preparation?.startedAt ?? localPrepStartedAt;
+  const subtasksStartedAt = subtasks?.startedAt ?? localSubtasksStartedAt;
+  const showPrepSection =
+    isPreparingData
+    || Boolean(prepStartedAt)
+    || ((preparation?.totalSymbols ?? 0) > 0 && isRunActive);
+  const backtestProgress = subtasks ?? progress;
+  const showSubtasksSection =
+    isRunningSubtasks
+    || Boolean(subtasksStartedAt)
+    || (backtestProgress?.total ?? 0) > 0;
+
+  const finishedDurationSeconds =
+    overview?.timing?.durationSeconds
+    ?? computeRunDurationSeconds(runStartedAt, runFinishedAt);
 
   const topColumns: ColumnsType<BacktestTaskOverviewTopResult> = [
     {
@@ -223,12 +292,12 @@ const OverviewTab: FC<OverviewTabProps> = ({
           <Tag color={taskStatusTagColor[status] ?? 'default'}>
             {t(`backtest.tasks.status.${status}`, status)}
           </Tag>
-          {isTaskRunning && (
+          {isRunActive && (
             <Badge status="processing" text={t('backtest.detail.overview.live')} />
           )}
         </Space>
         <Space wrap>
-          {isTaskRunning ? (
+          {isRunActive ? (
             <Button danger loading={isStoppingMutation} disabled={!canStop} onClick={onStop}>
               {t('backtest.detail.overview.stop')}
             </Button>
@@ -254,27 +323,92 @@ const OverviewTab: FC<OverviewTabProps> = ({
         />
       )}
 
-      {isTaskRunning && progress && (
+      {showPrepSection && (
         <section className="overview-tab__section">
-          <Typography.Title level={5} className="overview-tab__section-title">
-            {t('backtest.detail.overview.progress')}
-          </Typography.Title>
+          <div className="overview-tab__section-header">
+            <Typography.Title level={5} className="overview-tab__section-title">
+              {t('backtest.detail.overview.preparationProgress')}
+            </Typography.Title>
+            <PhaseDurationTimer
+              startedAt={prepStartedAt}
+              finishedAt={preparation?.finishedAt}
+              isActive={isPreparingData}
+              durationSeconds={preparation?.durationSeconds}
+              formatRunningLabel={(duration) =>
+                t('backtest.detail.overview.phaseDurationRunning', { duration })
+              }
+              formatFinishedLabel={(duration) =>
+                t('backtest.detail.overview.phaseDurationFinished', { duration })
+              }
+            />
+          </div>
           <Progress
-            percent={progress.percent}
-            status="active"
+            percent={preparation?.percent ?? 0}
+            status={isPreparingData ? 'active' : 'success'}
             format={() =>
-              t('backtest.detail.overview.progressFormat', {
-                completed: progress.completed,
-                failed: progress.failed,
-                total: progress.total,
+              t('backtest.detail.overview.preparationFormat', {
+                completed: preparation?.completedSymbols ?? 0,
+                total: preparation?.totalSymbols ?? 0,
               })
             }
           />
-          <div className="overview-tab__progress-meta">
-            <Typography.Text type="secondary">
-              {t('backtest.detail.overview.skipped', { count: progress.skipped })}
-            </Typography.Text>
+          {preparation?.currentSymbol && isPreparingData && (
+            <div className="overview-tab__progress-meta">
+              <Typography.Text type="secondary">
+                {t('backtest.detail.overview.preparationCurrentSymbol', {
+                  symbol: preparation.currentSymbol,
+                })}
+              </Typography.Text>
+            </div>
+          )}
+        </section>
+      )}
+
+      {showSubtasksSection && backtestProgress && (
+        <section className="overview-tab__section">
+          <div className="overview-tab__section-header">
+            <Typography.Title level={5} className="overview-tab__section-title">
+              {t('backtest.detail.overview.backtestProgress')}
+            </Typography.Title>
+            <PhaseDurationTimer
+              startedAt={subtasksStartedAt}
+              finishedAt={subtasks?.finishedAt}
+              isActive={isRunningSubtasks}
+              durationSeconds={subtasks?.durationSeconds}
+              formatRunningLabel={(duration) =>
+                t('backtest.detail.overview.phaseDurationRunning', { duration })
+              }
+              formatFinishedLabel={(duration) =>
+                t('backtest.detail.overview.phaseDurationFinished', { duration })
+              }
+            />
           </div>
+          <Progress
+            percent={backtestProgress.percent}
+            status={
+              isRunningSubtasks
+                ? 'active'
+                : status === BacktestTaskStatus.FAILED
+                  ? 'exception'
+                  : status === BacktestTaskStatus.STOPPED
+                    ? 'normal'
+                    : 'success'
+            }
+            format={() =>
+              t('backtest.detail.overview.progressFormat', {
+                completed: backtestProgress.completed,
+                failed: backtestProgress.failed,
+                total: backtestProgress.total,
+              })
+            }
+          />
+          {(backtestProgress.skipped > 0 || isRunningSubtasks) && (
+            <div className="overview-tab__progress-meta">
+              <Typography.Text type="secondary">
+                {t('backtest.detail.overview.skipped', { count: backtestProgress.skipped })}
+              </Typography.Text>
+            </div>
+          )}
         </section>
       )}
 
@@ -284,14 +418,14 @@ const OverviewTab: FC<OverviewTabProps> = ({
         </Typography.Title>
         <Descriptions bordered size="small" column={{ xs: 1, sm: 2, lg: 3 }}>
           <Descriptions.Item label={t('backtest.tasks.columns.name')}>
-            {overview?.task.name ?? task.name}
+            {overview?.task?.name ?? task.name}
           </Descriptions.Item>
           <Descriptions.Item label={t('backtest.config.dataSelection.dateRange.title')}>
-            {overview?.task.dateRange.startDate ?? task.dateRange.startDate} —{' '}
-            {overview?.task.dateRange.endDate ?? task.dateRange.endDate}
+            {overview?.task?.dateRange?.startDate ?? task.dateRange.startDate} —{' '}
+            {overview?.task?.dateRange?.endDate ?? task.dateRange.endDate}
           </Descriptions.Item>
           <Descriptions.Item label={t('backtest.columns.createdAt')}>
-            {overview?.task.createdAt
+            {overview?.task?.createdAt
               ? format(new Date(overview.task.createdAt), 'dd/MM/yyyy HH:mm:ss')
               : task.createdAt
                 ? format(new Date(task.createdAt), 'dd/MM/yyyy HH:mm:ss')
@@ -318,6 +452,21 @@ const OverviewTab: FC<OverviewTabProps> = ({
           <Descriptions.Item label={t('backtest.config.dataSelection.execution.initialCash')}>
             {executionSettings.initialCash}
           </Descriptions.Item>
+          {runStartedAt && (
+            <Descriptions.Item label={t('backtest.detail.overview.runStartedAt')}>
+              {format(new Date(runStartedAt), 'dd/MM/yyyy HH:mm:ss')}
+            </Descriptions.Item>
+          )}
+          {runFinishedAt && !isRunActive && (
+            <Descriptions.Item label={t('backtest.detail.overview.runFinishedAt')}>
+              {format(new Date(runFinishedAt), 'dd/MM/yyyy HH:mm:ss')}
+            </Descriptions.Item>
+          )}
+          {finishedDurationSeconds != null && !isRunActive && (
+            <Descriptions.Item label={t('backtest.detail.overview.durationLabel')}>
+              {formatRunDuration(finishedDurationSeconds)}
+            </Descriptions.Item>
+          )}
         </Descriptions>
       </section>
 
@@ -405,7 +554,7 @@ const OverviewTab: FC<OverviewTabProps> = ({
         </section>
       )}
 
-      {!stats && !isTaskRunning && (
+      {!stats && !isRunActive && (
         <Alert
           type="info"
           showIcon
@@ -430,13 +579,13 @@ const OverviewTab: FC<OverviewTabProps> = ({
         />
       </section>
 
-      {(overview?.recentErrors.length ?? 0) > 0 && (
+      {(overview?.recentErrors?.length ?? 0) > 0 && (
         <section className="overview-tab__section">
           <Typography.Title level={5} className="overview-tab__section-title">
-            {t('backtest.detail.errorsSection')} ({overview?.recentErrors.length})
+            {t('backtest.detail.errorsSection')} ({overview?.recentErrors?.length})
           </Typography.Title>
           <Space direction="vertical" size="small" style={{ width: '100%' }}>
-            {overview?.recentErrors.map((err) => (
+            {overview?.recentErrors?.map((err) => (
               <Alert
                 key={err.id}
                 type="error"

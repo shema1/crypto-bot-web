@@ -261,6 +261,12 @@
         "stopError": "Failed to stop task",
         "unsavedConfig": "Save configuration changes before running",
         "progress": "Execution progress",
+        "backtestProgress": "Backtest progress",
+        "preparationProgress": "Historical data preparation",
+        "preparationFormat": "{{completed}} / {{total}} pairs",
+        "preparationCurrentSymbol": "Current: {{symbol}}",
+        "phaseDurationRunning": "Running: {{duration}}",
+        "phaseDurationFinished": "Duration: {{duration}}",
         "progressFormat": "{{completed}} ok, {{failed}} failed / {{total}}",
         "skipped": "Skipped: {{count}}",
         "taskInfo": "General information",
@@ -279,7 +285,12 @@
         "unprofitableResults": "Unprofitable",
         "noStatsYet": "Statistics will appear after the first successful subtask",
         "topStrategies": "Top strategies",
-        "noTopResults": "No results yet"
+        "noTopResults": "No results yet",
+        "durationRunning": "Running: {{duration}}",
+        "durationFinished": "Duration: {{duration}}",
+        "durationLabel": "Duration",
+        "runStartedAt": "Run started",
+        "runFinishedAt": "Run finished"
       },
       "logs": {
         "empty": "No logs yet. Run the task to see execution progress.",

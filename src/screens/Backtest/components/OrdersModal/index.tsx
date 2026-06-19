@@ -127,7 +127,7 @@ const OrdersModal: FC<OrdersModalProps> = ({ open, taskId, result, onClose }) =>
       onCancel={onClose}
       footer={null}
       width={1100}
-      destroyOnClose
+      destroyOnHidden
     >
       <Table<BacktestTradeRecord>
         columns={columns}

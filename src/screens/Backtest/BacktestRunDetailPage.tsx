@@ -46,12 +46,13 @@ const BacktestRunDetailPage: FC = () => {
   refetchRef.current = refetch;
 
   const [currentTask, setCurrentTask] = useState<BacktestTask | null>(null);
+  const isTaskLoaded = Boolean(task);
 
   const handleLiveRefresh = useCallback(() => {
     void refetchRef.current();
   }, []);
 
-  useBacktestTaskLiveEvents(runId, handleLiveRefresh);
+  useBacktestTaskLiveEvents(runId, handleLiveRefresh, undefined, isTaskLoaded);
 
   const errorMessage =
     isError && error && 'message' in error ? String(error.message) : null;
@@ -59,8 +60,12 @@ const BacktestRunDetailPage: FC = () => {
   useEffect(() => {
     if (task) {
       setCurrentTask(normalizeBacktestTask(task));
+      return;
     }
-  }, [task]);
+    if (!isLoading) {
+      setCurrentTask(null);
+    }
+  }, [task, isLoading]);
 
   const isConfigDirty = useMemo(() => {
     if (!task || !currentTask) return false;
@@ -166,7 +171,7 @@ const BacktestRunDetailPage: FC = () => {
               className="backtest-detail-page__error"
             />
           )}
-          {currentTask ? (
+          {currentTask && isTaskLoaded ? (
             <Tabs
               defaultActiveKey="overview"
               items={[

@@ -261,6 +261,12 @@
         "stopError": "Не вдалося зупинити задачу",
         "unsavedConfig": "Збережіть зміни конфігурації перед запуском",
         "progress": "Прогрес виконання",
+        "backtestProgress": "Прогрес бектестів",
+        "preparationProgress": "Підготовка історичних даних",
+        "preparationFormat": "{{completed}} / {{total}} пар",
+        "preparationCurrentSymbol": "Зараз: {{symbol}}",
+        "phaseDurationRunning": "Триває: {{duration}}",
+        "phaseDurationFinished": "Тривалість: {{duration}}",
         "progressFormat": "{{completed}} успішних, {{failed}} помилок / {{total}}",
         "skipped": "Пропущено: {{count}}",
         "taskInfo": "Загальна інформація",
@@ -279,7 +285,12 @@
         "unprofitableResults": "Збиткових",
         "noStatsYet": "Статистика зʼявиться після першого успішного субтаску",
         "topStrategies": "Найуспішніші стратегії",
-        "noTopResults": "Результатів ще немає"
+        "noTopResults": "Результатів ще немає",
+        "durationRunning": "Триває: {{duration}}",
+        "durationFinished": "Тривала: {{duration}}",
+        "durationLabel": "Тривалість",
+        "runStartedAt": "Початок запуску",
+        "runFinishedAt": "Кінець запуску"
       },
       "logs": {
         "empty": "Логів ще немає. Запустіть задачу, щоб побачити процес виконання.",

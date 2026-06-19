@@ -19,6 +19,7 @@ import type {
   GetTaskResultTradesResponse,
   BacktestTaskOverview,
   StopBacktestTaskResponse,
+  DEFAULT_BACKTEST_EXECUTION_SETTINGS,
 } from '../types';
 
 function normalizeBacktestTask(task: BacktestTask): BacktestTask {
@@ -36,6 +37,62 @@ function normalizeUpdateBacktestTaskRequest(body: UpdateBacktestTaskRequest): Up
   return {
     ...body,
     dateRange: normalizeBacktestDateRangeOptional(body.dateRange),
+  };
+}
+
+function normalizeTaskOverview(response: BacktestTaskOverview): BacktestTaskOverview {
+  const runStartedAt = response.timing?.runStartedAt ?? response.task?.runStartedAt;
+  const runFinishedAt = response.timing?.runFinishedAt ?? response.task?.runFinishedAt;
+
+  return {
+    ...response,
+    task: response.task ?? {
+      id: '',
+      name: '',
+      status: 'created',
+      dateRange: { startDate: '', endDate: '' },
+      iterationInfo: { totalIterations: 0, completedIterations: 0, failedIterations: 0 },
+      configSummary: {
+        pairsCount: 0,
+        timeframesCount: 0,
+        trendFollowingCount: 0,
+        breakoutCount: 0,
+        slTpCombinations: 0,
+        totalPlannedSubtasks: 0,
+      },
+      executionSettings: DEFAULT_BACKTEST_EXECUTION_SETTINGS,
+    },
+    timing: response.timing ?? {
+      runStartedAt,
+      runFinishedAt,
+      durationSeconds: null,
+    },
+    runPhase: response.runPhase ?? 'idle',
+    preparation: response.preparation ?? {
+      totalSymbols: 0,
+      completedSymbols: 0,
+      percent: 0,
+      isActive: false,
+      durationSeconds: null,
+    },
+    subtasks: response.subtasks ?? {
+      completed: response.progress?.completed ?? 0,
+      failed: response.progress?.failed ?? 0,
+      skipped: response.progress?.skipped ?? 0,
+      total: response.progress?.total ?? 0,
+      percent: response.progress?.percent ?? 0,
+      isActive: response.runPhase === 'running_subtasks',
+      durationSeconds: null,
+    },
+    progress: response.progress ?? {
+      completed: 0,
+      failed: 0,
+      skipped: 0,
+      total: 0,
+      percent: 0,
+    },
+    topResults: response.topResults ?? [],
+    recentErrors: response.recentErrors ?? [],
   };
 }
 
@@ -133,6 +190,8 @@ export const backtestApi = createApi({
     getTaskOverview: builder.query<BacktestTaskOverview, string>({
       query: (taskId) => ({ url: backtestUrls.taskOverviewById(taskId) }),
       providesTags: (_result, _error, taskId) => [{ type: 'BacktestTaskOverview', id: taskId }],
+      transformResponse: (response: BacktestTaskOverview): BacktestTaskOverview =>
+        normalizeTaskOverview(response),
     }),
     getTaskResults: builder.query<GetTaskResultsResponse, { taskId: string; query?: GetTaskResultsQuery }>({
       query: ({ taskId, query }) => ({

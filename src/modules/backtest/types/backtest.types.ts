@@ -27,6 +27,14 @@ export const BacktestTaskStatus = {
 
 export type BacktestTaskStatus = (typeof BacktestTaskStatus)[keyof typeof BacktestTaskStatus];
 
+export const BacktestRunPhase = {
+  IDLE: 'idle',
+  PREPARING_DATA: 'preparing_data',
+  RUNNING_SUBTASKS: 'running_subtasks',
+} as const;
+
+export type BacktestRunPhase = (typeof BacktestRunPhase)[keyof typeof BacktestRunPhase];
+
 /** Populated meta from GET (HistoricPairMeta). */
 export interface HistoricPairMetaPopulated {
   id: string;
@@ -113,6 +121,10 @@ export interface BacktestTask {
   dateRange: BacktestDateRange;
   createdAt?: string;
   updatedAt?: string;
+  /** UTC ISO-8601 — latest run start (includes candle sync). */
+  runStartedAt?: string;
+  /** UTC ISO-8601 — latest run end. */
+  runFinishedAt?: string;
 }
 
 /** Paginated list of backtest tasks. */
@@ -296,6 +308,29 @@ export interface BacktestTaskOverviewProgress {
   percent: number;
 }
 
+export interface BacktestTaskOverviewPreparation {
+  totalSymbols: number;
+  completedSymbols: number;
+  currentSymbol?: string;
+  percent: number;
+  isActive: boolean;
+  startedAt?: string;
+  finishedAt?: string;
+  durationSeconds: number | null;
+}
+
+export interface BacktestTaskOverviewSubtasks {
+  completed: number;
+  failed: number;
+  skipped: number;
+  total: number;
+  percent: number;
+  isActive: boolean;
+  startedAt?: string;
+  finishedAt?: string;
+  durationSeconds: number | null;
+}
+
 export interface BacktestTaskOverviewStats {
   completedResults: number;
   failedResults: number;
@@ -336,6 +371,12 @@ export interface BacktestTaskOverviewError {
   error: string;
 }
 
+export interface BacktestTaskOverviewTiming {
+  runStartedAt?: string;
+  runFinishedAt?: string;
+  durationSeconds: number | null;
+}
+
 export interface BacktestTaskOverview {
   task: {
     id: string;
@@ -347,7 +388,13 @@ export interface BacktestTaskOverview {
     executionSettings: BacktestExecutionSettings;
     createdAt?: string;
     updatedAt?: string;
+    runStartedAt?: string;
+    runFinishedAt?: string;
   };
+  timing: BacktestTaskOverviewTiming;
+  runPhase: BacktestRunPhase;
+  preparation: BacktestTaskOverviewPreparation;
+  subtasks: BacktestTaskOverviewSubtasks;
   progress: BacktestTaskOverviewProgress;
   stats: BacktestTaskOverviewStats | null;
   topResults: BacktestTaskOverviewTopResult[];

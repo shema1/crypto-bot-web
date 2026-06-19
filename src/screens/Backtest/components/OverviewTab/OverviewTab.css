@@ -22,8 +22,31 @@
   margin: 0 !important;
 }
 
+.overview-tab__section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+
+.overview-tab__phase-duration {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
 .overview-tab__alert {
   margin: 0;
+}
+
+.overview-tab__duration {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.overview-tab__duration-icon {
+  margin-right: 6px;
 }
 
 .overview-tab__progress-meta {
