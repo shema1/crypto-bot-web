@@ -7,7 +7,8 @@ import AppContainer from '../../components/layout/AppContainer';
 import AppHeaderContainer from '../../components/layout/AppHeaderContainer';
 import {
   OrdersModal,
-  ConfigTab
+  ConfigTab,
+  LogsTab,
 } from './components';
 import {
   buildBacktestTaskConfigUpdateRequest,
@@ -192,6 +193,16 @@ const BacktestRunDetailPage: FC = () => {
                 //     />
                 //   ),
                 // },
+                {
+                  key: 'logs',
+                  label: t('backtest.detail.tabs.logs'),
+                  children: (
+                    <LogsTab
+                      taskId={runId}
+                      isRunning={currentTask.status === 'running'}
+                    />
+                  ),
+                },
                 {
                   key: 'config',
                   label: t('backtest.detail.tabs.config'),

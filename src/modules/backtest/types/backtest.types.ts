@@ -103,8 +103,40 @@ export interface CreateBacktestTaskRequest {
 
 /** Response from POST /backtest/tasks/:taskId/run. */
 export interface RunBacktestTaskResponse {
-  trendFollowingStrategyItems: unknown[];
-  breakoutStrategyItems: unknown[];
+  accepted: boolean;
+  message: string;
+  totalSubtasks?: number;
+}
+
+export const BacktestTaskLogLevel = {
+  DEBUG: 'debug',
+  INFO: 'info',
+  WARN: 'warn',
+  ERROR: 'error',
+} as const;
+
+export type BacktestTaskLogLevel = (typeof BacktestTaskLogLevel)[keyof typeof BacktestTaskLogLevel];
+
+export const BacktestTaskLogSource = {
+  BOT_HELPER: 'bot-helper',
+  ANALYSIS_BOT: 'analysis-bot',
+  HISTORIC_DATA: 'historic-data',
+} as const;
+
+export type BacktestTaskLogSource = (typeof BacktestTaskLogSource)[keyof typeof BacktestTaskLogSource];
+
+/** Single execution log entry for a backtest task run. */
+export interface BacktestTaskLogEntry {
+  id: string;
+  taskId: string;
+  sequence: number;
+  level: BacktestTaskLogLevel;
+  source: BacktestTaskLogSource;
+  stage: string;
+  message: string;
+  metadata?: Record<string, unknown>;
+  subtaskIndex?: number;
+  createdAt?: string;
 }
 
 /** Request body for PATCH /backtest/tasks/:taskId. */

@@ -12,6 +12,7 @@ import type {
   UpdateBacktestTaskRequest,
   RunBacktestTaskResponse,
   BacktestTask,
+  BacktestTaskLogEntry,
 } from '../types';
 
 function normalizeBacktestTask(task: BacktestTask): BacktestTask {
@@ -35,7 +36,7 @@ function normalizeUpdateBacktestTaskRequest(body: UpdateBacktestTaskRequest): Up
 export const backtestApi = createApi({
   reducerPath: 'backtestApi',
   baseQuery: createMainBaseQuery(),
-  tagTypes: ['BacktestTask'],
+  tagTypes: ['BacktestTask', 'BacktestTaskLogs'],
   endpoints: (builder) => ({
     getTasks: builder.query<GetTasksResponse, GetTasksQuery | void>({
       query: (params) => {
@@ -107,7 +108,12 @@ export const backtestApi = createApi({
       invalidatesTags: (_result, _error, taskId) => [
         { type: 'BacktestTask', id: taskId },
         { type: 'BacktestTask', id: 'LIST' },
+        { type: 'BacktestTaskLogs', id: taskId },
       ],
+    }),
+    getTaskLogs: builder.query<BacktestTaskLogEntry[], string>({
+      query: (taskId) => ({ url: backtestUrls.taskLogsById(taskId) }),
+      providesTags: (_result, _error, taskId) => [{ type: 'BacktestTaskLogs', id: taskId }],
     }),
   }),
 });
@@ -119,4 +125,5 @@ export const {
   useUpdateTaskMutation,
   useDeleteTaskMutation,
   useRunTaskMutation,
+  useGetTaskLogsQuery,
 } = backtestApi;

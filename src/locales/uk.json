@@ -229,7 +229,18 @@
         "futuresPairs": "Фючерсні пари",
         "strategies": "Стратегії",
         "results": "Результати",
-        "config": "Конфіг"
+        "config": "Конфіг",
+        "logs": "Логи"
+      },
+      "logs": {
+        "empty": "Логів ще немає. Запустіть задачу, щоб побачити процес виконання.",
+        "count": "{{count}} записів",
+        "live": "Live",
+        "sources": {
+          "bot-helper": "Bot Helper",
+          "analysis-bot": "Analysis Bot",
+          "historic-data": "Historic Data"
+        }
       },
       "strategies": {
         "emptyTrendFollowing": "Тренд-фолловінг стратегії не обрані.",

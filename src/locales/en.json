@@ -229,7 +229,18 @@
         "futuresPairs": "Futures pairs",
         "strategies": "Strategies",
         "results": "Results",
-        "config": "Config"
+        "config": "Config",
+        "logs": "Logs"
+      },
+      "logs": {
+        "empty": "No logs yet. Run the task to see execution progress.",
+        "count": "{{count}} entries",
+        "live": "Live",
+        "sources": {
+          "bot-helper": "Bot Helper",
+          "analysis-bot": "Analysis Bot",
+          "historic-data": "Historic Data"
+        }
       },
       "strategies": {
         "emptyTrendFollowing": "No trend following strategies selected.",
