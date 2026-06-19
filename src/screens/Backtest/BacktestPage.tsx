@@ -24,6 +24,7 @@ const taskStatusConfig: Record<BacktestTaskStatus, { color: string }> = {
   running: { color: 'processing' },
   completed: { color: 'success' },
   failed: { color: 'error' },
+  stopped: { color: 'warning' },
 };
 
 const BacktestPage: FC = () => {

@@ -174,7 +174,8 @@
         "created": "Створено",
         "running": "Виконується",
         "completed": "Завершено",
-        "failed": "Помилка"
+        "failed": "Помилка",
+        "stopped": "Зупинено"
       }
     },
     "selectStrategiesModal": {
@@ -251,6 +252,34 @@
         "results": "Результати",
         "config": "Конфіг",
         "logs": "Логи"
+      },
+      "overview": {
+        "live": "Live",
+        "run": "Запустити",
+        "stop": "Зупинити",
+        "stopRequested": "Зупинку запитано",
+        "stopError": "Не вдалося зупинити задачу",
+        "unsavedConfig": "Збережіть зміни конфігурації перед запуском",
+        "progress": "Прогрес виконання",
+        "progressFormat": "{{completed}} успішних, {{failed}} помилок / {{total}}",
+        "skipped": "Пропущено: {{count}}",
+        "taskInfo": "Загальна інформація",
+        "plannedSubtasks": "Заплановано субтасок",
+        "pairs": "Пари",
+        "timeframes": "Таймфрейми",
+        "strategies": "Стратегії",
+        "strategiesBreakdown": "TF: {{trend}}, Breakout: {{breakout}}",
+        "slTpGrid": "Комбінацій SL/TP",
+        "aggregateStats": "Загальна статистика",
+        "completedResults": "Успішних результатів",
+        "failedResults": "Помилок",
+        "bestRoi": "Найкращий ROI",
+        "worstRoi": "Найгірший ROI",
+        "profitableResults": "Прибуткових",
+        "unprofitableResults": "Збиткових",
+        "noStatsYet": "Статистика зʼявиться після першого успішного субтаску",
+        "topStrategies": "Найуспішніші стратегії",
+        "noTopResults": "Результатів ще немає"
       },
       "logs": {
         "empty": "Логів ще немає. Запустіть задачу, щоб побачити процес виконання.",

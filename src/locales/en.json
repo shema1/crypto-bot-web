@@ -174,7 +174,8 @@
         "created": "Created",
         "running": "Running",
         "completed": "Completed",
-        "failed": "Failed"
+        "failed": "Failed",
+        "stopped": "Stopped"
       }
     },
     "selectStrategiesModal": {
@@ -251,6 +252,34 @@
         "results": "Results",
         "config": "Config",
         "logs": "Logs"
+      },
+      "overview": {
+        "live": "Live",
+        "run": "Run",
+        "stop": "Stop",
+        "stopRequested": "Stop requested",
+        "stopError": "Failed to stop task",
+        "unsavedConfig": "Save configuration changes before running",
+        "progress": "Execution progress",
+        "progressFormat": "{{completed}} ok, {{failed}} failed / {{total}}",
+        "skipped": "Skipped: {{count}}",
+        "taskInfo": "General information",
+        "plannedSubtasks": "Planned subtasks",
+        "pairs": "Pairs",
+        "timeframes": "Timeframes",
+        "strategies": "Strategies",
+        "strategiesBreakdown": "TF: {{trend}}, Breakout: {{breakout}}",
+        "slTpGrid": "SL/TP combinations",
+        "aggregateStats": "Aggregate statistics",
+        "completedResults": "Successful results",
+        "failedResults": "Failed",
+        "bestRoi": "Best ROI",
+        "worstRoi": "Worst ROI",
+        "profitableResults": "Profitable",
+        "unprofitableResults": "Unprofitable",
+        "noStatsYet": "Statistics will appear after the first successful subtask",
+        "topStrategies": "Top strategies",
+        "noTopResults": "No results yet"
       },
       "logs": {
         "empty": "No logs yet. Run the task to see execution progress.",

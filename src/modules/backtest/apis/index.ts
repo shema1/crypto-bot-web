@@ -17,6 +17,8 @@ import type {
   GetTaskResultsResponse,
   GetTaskResultTradesQuery,
   GetTaskResultTradesResponse,
+  BacktestTaskOverview,
+  StopBacktestTaskResponse,
 } from '../types';
 
 function normalizeBacktestTask(task: BacktestTask): BacktestTask {
@@ -40,7 +42,7 @@ function normalizeUpdateBacktestTaskRequest(body: UpdateBacktestTaskRequest): Up
 export const backtestApi = createApi({
   reducerPath: 'backtestApi',
   baseQuery: createMainBaseQuery(),
-  tagTypes: ['BacktestTask', 'BacktestTaskLogs', 'BacktestTaskResults'],
+  tagTypes: ['BacktestTask', 'BacktestTaskLogs', 'BacktestTaskResults', 'BacktestTaskOverview'],
   endpoints: (builder) => ({
     getTasks: builder.query<GetTasksResponse, GetTasksQuery | void>({
       query: (params) => {
@@ -114,7 +116,23 @@ export const backtestApi = createApi({
         { type: 'BacktestTask', id: 'LIST' },
         { type: 'BacktestTaskLogs', id: taskId },
         { type: 'BacktestTaskResults', id: taskId },
+        { type: 'BacktestTaskOverview', id: taskId },
       ],
+    }),
+    stopTask: builder.mutation<StopBacktestTaskResponse, string>({
+      query: (taskId) => ({
+        url: backtestUrls.taskStopById(taskId),
+        method: 'POST',
+      }),
+      invalidatesTags: (_result, _error, taskId) => [
+        { type: 'BacktestTask', id: taskId },
+        { type: 'BacktestTask', id: 'LIST' },
+        { type: 'BacktestTaskOverview', id: taskId },
+      ],
+    }),
+    getTaskOverview: builder.query<BacktestTaskOverview, string>({
+      query: (taskId) => ({ url: backtestUrls.taskOverviewById(taskId) }),
+      providesTags: (_result, _error, taskId) => [{ type: 'BacktestTaskOverview', id: taskId }],
     }),
     getTaskResults: builder.query<GetTaskResultsResponse, { taskId: string; query?: GetTaskResultsQuery }>({
       query: ({ taskId, query }) => ({
@@ -155,6 +173,8 @@ export const {
   useUpdateTaskMutation,
   useDeleteTaskMutation,
   useRunTaskMutation,
+  useStopTaskMutation,
+  useGetTaskOverviewQuery,
   useGetTaskLogsQuery,
   useGetTaskResultsQuery,
   useGetTaskResultTradesQuery,

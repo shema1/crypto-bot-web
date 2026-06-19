@@ -9,15 +9,17 @@ import {
   OrdersModal,
   ConfigTab,
   LogsTab,
+  OverviewTab,
   ResultsTab,
 } from './components';
 import {
   useGetTaskByIdQuery,
   useUpdateTaskMutation,
   useRunTaskMutation,
+  useStopTaskMutation,
+  useBacktestTaskLiveEvents,
   type BacktestTask,
   type BacktestTaskResultItem,
-  type UpdateBacktestTaskRequest,
 } from '../../modules/backtest';
 import {
   buildBacktestTaskConfigUpdateRequest,
@@ -30,26 +32,26 @@ const BacktestRunDetailPage: FC = () => {
   const { runId } = useParams<{ runId: string }>();
   const { data: task, isLoading, isError, error, refetch } = useGetTaskByIdQuery(runId!, {
     skip: !runId,
-      refetchOnFocus: true,
-    });
-
+    refetchOnFocus: true,
+  });
 
   const [updateTask, { isLoading: isUpdatingTask }] = useUpdateTaskMutation();
   const [runTask, { isLoading: isRunningTask }] = useRunTaskMutation();
+  const [stopTask, { isLoading: isStoppingTask }] = useStopTaskMutation();
   const [selectedResult, setSelectedResult] = useState<BacktestTaskResultItem | null>(null);
-  
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
 
   const refetchRef = useRef(refetch);
   refetchRef.current = refetch;
 
   const [currentTask, setCurrentTask] = useState<BacktestTask | null>(null);
 
+  const handleLiveRefresh = useCallback(() => {
+    void refetchRef.current();
+  }, []);
 
-
-  const onUpdateBacktestTask = useCallback((payload: UpdateBacktestTaskRequest) => {
-  }, [runId, updateTask]);
+  useBacktestTaskLiveEvents(runId, handleLiveRefresh);
 
   const errorMessage =
     isError && error && 'message' in error ? String(error.message) : null;
@@ -58,7 +60,7 @@ const BacktestRunDetailPage: FC = () => {
     if (task) {
       setCurrentTask(normalizeBacktestTask(task));
     }
-  }, [task?.id]);
+  }, [task]);
 
   const isConfigDirty = useMemo(() => {
     if (!task || !currentTask) return false;
@@ -85,11 +87,23 @@ const BacktestRunDetailPage: FC = () => {
 
     try {
       await runTask(runId).unwrap();
+      void refetch();
       message.success(t('backtest.config.summary.taskRunStarted'));
     } catch {
       message.error(t('backtest.config.summary.taskRunError'));
     }
-  }, [isConfigDirty, runId, runTask, t]);
+  }, [isConfigDirty, refetch, runId, runTask, t]);
+
+  const handleStopTask = useCallback(async () => {
+    if (!runId) return;
+
+    try {
+      await stopTask(runId).unwrap();
+      message.success(t('backtest.detail.overview.stopRequested'));
+    } catch {
+      message.error(t('backtest.detail.overview.stopError'));
+    }
+  }, [runId, stopTask, t]);
 
   if (!runId) {
     return null;
@@ -152,54 +166,27 @@ const BacktestRunDetailPage: FC = () => {
               className="backtest-detail-page__error"
             />
           )}
-          {currentTask ?  (
+          {currentTask ? (
             <Tabs
               defaultActiveKey="overview"
               items={[
-                // {
-                //   key: 'overview',
-                //   label: t('backtest.detail.tabs.overview'),
-                //   children: (
-                //     // <OverviewTab
-                //     //   run={runForOverview}
-                //     //   resultsCount={resultsCount}
-                //     //   errors={errorsFromTask}
-                //     // />
-                //     <></>
-                //   ),
-                // },
-                // {
-                //   key: 'futuresPairs',
-                //   label: t('backtest.detail.tabs.futuresPairs'),
-                //   children: (
-                //     <FuturesPairsTab
-                //       selectedPairs={backtestTask?.selectedPairs ?? []}
-                //       loading={isLoading}
-                //       onUpdateBacktestTask={onUpdateBacktestTask}
-                //     />
-                //   ),
-                // },
-                // {
-                //   key: 'strategies',
-                //   label: t('backtest.detail.tabs.strategies'),
-                //   children: (
-                //     <StrategiesTab
-                //       loading={isLoading}
-                //       backtestTask={backtestTask}
-                //       onUpdateBacktestTask={onUpdateBacktestTask}
-                //     />
-                //   ),
-                // },
-                // {
-                //   key: 'results',
-                //   label: t('backtest.detail.tabs.results'),
-                //   children: (
-                //     <ResultsTab
-                //       loading={isLoading}
-                //       onViewOrders={setOrdersModalResultIndex}
-                //     />
-                //   ),
-                // },
+                {
+                  key: 'overview',
+                  label: t('backtest.detail.tabs.overview'),
+                  children: (
+                    <OverviewTab
+                      taskId={runId}
+                      task={currentTask}
+                      isConfigDirty={isConfigDirty}
+                      isSaving={isUpdatingTask}
+                      isRunningMutation={isRunningTask}
+                      isStoppingMutation={isStoppingTask}
+                      onRun={handleRunTask}
+                      onStop={handleStopTask}
+                      onViewTrades={setSelectedResult}
+                    />
+                  ),
+                },
                 {
                   key: 'results',
                   label: t('backtest.detail.tabs.results'),
@@ -242,7 +229,6 @@ const BacktestRunDetailPage: FC = () => {
           ) : null}
         </div>
       </AppContainer>
-
 
       <OrdersModal
         open={selectedResult !== null}

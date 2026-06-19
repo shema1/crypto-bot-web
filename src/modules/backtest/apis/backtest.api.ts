@@ -4,6 +4,8 @@ export const backtestUrls = {
   tasks: `${BASE}/tasks`,
   taskById: (taskId: string) => `${BASE}/tasks/${taskId}`,
   taskRunById: (taskId: string) => `${BASE}/tasks/${taskId}/run`,
+  taskStopById: (taskId: string) => `${BASE}/tasks/${taskId}/stop`,
+  taskOverviewById: (taskId: string) => `${BASE}/tasks/${taskId}/overview`,
   taskEventsById: (taskId: string) => `${BASE}/tasks/${taskId}/events`,
   taskLogsById: (taskId: string) => `${BASE}/tasks/${taskId}/logs`,
   taskResultsById: (taskId: string) => `${BASE}/tasks/${taskId}/results`,

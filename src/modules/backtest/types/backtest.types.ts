@@ -22,6 +22,7 @@ export const BacktestTaskStatus = {
   RUNNING: 'running',
   COMPLETED: 'completed',
   FAILED: 'failed',
+  STOPPED: 'stopped',
 } as const;
 
 export type BacktestTaskStatus = (typeof BacktestTaskStatus)[keyof typeof BacktestTaskStatus];
@@ -276,4 +277,84 @@ export interface UpdateBacktestTaskRequest {
   stopLossTakeProfit?: Partial<BacktestStopLossTakeProfit>;
   executionSettings?: Partial<BacktestExecutionSettings>;
   dateRange?: BacktestDateRange;
+}
+
+export interface BacktestTaskOverviewConfigSummary {
+  pairsCount: number;
+  timeframesCount: number;
+  trendFollowingCount: number;
+  breakoutCount: number;
+  slTpCombinations: number;
+  totalPlannedSubtasks: number;
+}
+
+export interface BacktestTaskOverviewProgress {
+  completed: number;
+  failed: number;
+  skipped: number;
+  total: number;
+  percent: number;
+}
+
+export interface BacktestTaskOverviewStats {
+  completedResults: number;
+  failedResults: number;
+  avgRoiPct: number | null;
+  bestRoiPct: number | null;
+  worstRoiPct: number | null;
+  avgWinRatePct: number | null;
+  avgSharpeRatio: number | null;
+  totalTrades: number;
+  profitableResults: number;
+  unprofitableResults: number;
+}
+
+export interface BacktestTaskOverviewTopResult {
+  id: string;
+  subtaskIndex: number;
+  strategyName: string;
+  strategyType: BacktestSubtaskStrategyType;
+  status: BacktestSubtaskStatus;
+  pair: string;
+  timeframe: string;
+  stopLossPct?: number;
+  takeProfitPct?: number;
+  roiPct: number;
+  netProfit: number;
+  winRatePct: number;
+  sharpeRatio: number;
+  totalTrades: number;
+}
+
+export interface BacktestTaskOverviewError {
+  id: string;
+  subtaskIndex: number;
+  strategyName: string;
+  strategyType: BacktestSubtaskStrategyType;
+  pair: string;
+  timeframe: string;
+  error: string;
+}
+
+export interface BacktestTaskOverview {
+  task: {
+    id: string;
+    name: string;
+    status: BacktestTaskStatus;
+    dateRange: BacktestDateRange;
+    iterationInfo: BacktestIterationInfo;
+    configSummary: BacktestTaskOverviewConfigSummary;
+    executionSettings: BacktestExecutionSettings;
+    createdAt?: string;
+    updatedAt?: string;
+  };
+  progress: BacktestTaskOverviewProgress;
+  stats: BacktestTaskOverviewStats | null;
+  topResults: BacktestTaskOverviewTopResult[];
+  recentErrors: BacktestTaskOverviewError[];
+}
+
+export interface StopBacktestTaskResponse {
+  accepted: boolean;
+  message: string;
 }
