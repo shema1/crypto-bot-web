@@ -4,6 +4,7 @@ import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import { useState, type FC } from 'react';
 import {
   useGetTaskResultTradesQuery,
+  formatTradeHistoryTimeLocal,
   type BacktestTaskResultItem,
   type BacktestTradeRecord,
 } from '../../../../modules/backtest';
@@ -47,12 +48,14 @@ const OrdersModal: FC<OrdersModalProps> = ({ open, taskId, result, onClose }) =>
       dataIndex: 'entry_time',
       key: 'entry_time',
       width: 170,
+      render: (value: string) => formatTradeHistoryTimeLocal(value),
     },
     {
       title: t('backtest.detail.orders.closeTime'),
       dataIndex: 'exit_time',
       key: 'exit_time',
       width: 170,
+      render: (value: string) => formatTradeHistoryTimeLocal(value),
     },
     {
       title: t('backtest.detail.orders.openPrice'),

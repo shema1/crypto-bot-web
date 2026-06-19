@@ -72,6 +72,31 @@ export interface BacktestDateRange {
   /** Inclusive end date in YYYY-MM-DD format (no time component). */
   endDate: string;
 }
+
+/** Broker execution and simulation settings (matches backend executionSettings). */
+export interface BacktestExecutionSettings {
+  initialCash: number;
+  positionSizePct: number;
+  /** Decimal rate like Bybit takerFeeRate (0.001 = 0.1%). */
+  commissionRate: number;
+  slippagePct: number;
+  maxDrawdownLimitPct: number;
+  /** When set, overrides leverage on every selected strategy for this task. */
+  leverageOverride: number | null;
+  closeOnReverseSignalTrendFollowing: boolean;
+  closeOnReverseSignalBreakout: boolean;
+}
+
+export const DEFAULT_BACKTEST_EXECUTION_SETTINGS: BacktestExecutionSettings = {
+  initialCash: 10_000,
+  positionSizePct: 5,
+  commissionRate: 0.001,
+  slippagePct: 0.02,
+  maxDrawdownLimitPct: 20,
+  leverageOverride: null,
+  closeOnReverseSignalTrendFollowing: true,
+  closeOnReverseSignalBreakout: true,
+};
 /** Backtest task (matches backend BacktestTask schema). API returns id (not _id). */
 export interface BacktestTask {
   id: string;
@@ -82,6 +107,7 @@ export interface BacktestTask {
   selectedPairs: string[];
   selectedTimeframes: BybitTimeframe[];
   stopLossTakeProfit: BacktestStopLossTakeProfit;
+  executionSettings: BacktestExecutionSettings;
   iterationInfo: BacktestIterationInfo;
   dateRange: BacktestDateRange;
   createdAt?: string;
@@ -214,8 +240,10 @@ export interface GetTaskResultsResponse {
 export interface BacktestTradeRecord {
   ticket: number;
   type: 'long' | 'short';
+  /** UTC ISO-8601 with Z suffix, e.g. 2024-01-02T12:00:00Z */
   entry_time: string;
   entry_price: number;
+  /** UTC ISO-8601 with Z suffix */
   exit_time: string;
   exit_price: number;
   pnl: number;
@@ -243,5 +271,6 @@ export interface UpdateBacktestTaskRequest {
   selectedTrendFollowingStrategies?: string[];
   selectedBreakoutStrategies?: string[];
   stopLossTakeProfit?: Partial<BacktestStopLossTakeProfit>;
+  executionSettings?: Partial<BacktestExecutionSettings>;
   dateRange?: BacktestDateRange;
 }

@@ -22,6 +22,7 @@ import {
 import {
   buildBacktestTaskConfigUpdateRequest,
   isBacktestTaskConfigDirty,
+  normalizeBacktestTask,
 } from './components/ConfigTab/configTab.utils';
 
 const BacktestRunDetailPage: FC = () => {
@@ -55,13 +56,13 @@ const BacktestRunDetailPage: FC = () => {
 
   useEffect(() => {
     if (task) {
-      setCurrentTask(task);
+      setCurrentTask(normalizeBacktestTask(task));
     }
   }, [task?.id]);
 
   const isConfigDirty = useMemo(() => {
     if (!task || !currentTask) return false;
-    return isBacktestTaskConfigDirty(task, currentTask);
+    return isBacktestTaskConfigDirty(normalizeBacktestTask(task), currentTask);
   }, [task, currentTask]);
 
   const handleSaveConfig = useCallback(async () => {

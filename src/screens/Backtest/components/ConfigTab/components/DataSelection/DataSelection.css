@@ -15,8 +15,45 @@
 .data-selection__section-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
   margin-bottom: 4px;
+}
+
+.data-selection__section-title-icon {
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 14px;
+  cursor: help;
+}
+
+.data-selection__field-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.data-selection__field-label-icon {
+  flex-shrink: 0;
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 12px;
+  cursor: help;
+}
+
+.data-selection__sltp-field--switch {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.data-selection__sltp-field--switch .data-selection__field-label {
+  flex: 1;
+}
+
+.data-selection__field-tooltip .ant-tooltip-inner {
+  max-width: 360px;
+  text-align: left;
+  white-space: pre-wrap;
 }
 
 .data-selection__section-title {

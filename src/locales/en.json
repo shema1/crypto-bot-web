@@ -301,6 +301,30 @@
           "stopLoss": "Stop loss",
           "takeProfit": "Take profit",
           "step": "Step"
+        },
+        "execution": {
+          "title": "Execution & fees",
+          "hint": "Bybit Linear simulation (taker fee 0.001 = 0.1%)",
+          "initialCash": "Initial balance",
+          "positionSizePct": "Position size",
+          "leverageOverride": "Leverage (override)",
+          "leverageOverridePlaceholder": "From strategy",
+          "commissionRate": "Taker fee (decimal)",
+          "slippagePct": "Slippage",
+          "maxDrawdownLimitPct": "Max drawdown limit",
+          "closeOnReverseTrendFollowing": "TF: exit on reverse signal",
+          "closeOnReverseBreakout": "Breakout: exit on reverse break",
+          "tooltips": {
+            "section": "These settings simulate Bybit Linear Perpetual conditions: capital, fees, slippage, and exit rules. They apply to every subtask in the run and affect net profit, ROI, and trade count, but do not change indicator signal logic.",
+            "initialCash": "Starting account balance in USDT. Affects ROI % and absolute dollar PnL. Does not change when entries/exits trigger (MA, Donchian, etc.). Example: +$500 on $10,000 = +5% ROI.",
+            "positionSizePct": "Share of free capital per trade (margin). Higher values mean larger profit/loss for the same price move and higher drawdown. Leverage comes from the override below or from each strategy.",
+            "leverageOverride": "When set, applies to every selected strategy instead of its own leverage. Leave empty to use each strategy's leverage. Example: 10 to test 10x on all configs.",
+            "commissionRate": "Taker fee in Bybit decimal format: 0.001 = 0.1% per side (entry or exit). Charged on each market fill. Full round-trip is about 0.2% of notional. Lower values make backtests unrealistically optimistic.",
+            "slippagePct": "Models worse execution price vs. ideal (spread, latency). Applied on every entry/exit. Reduces win rate and profit factor, especially on short timeframes with many trades. 0.02% is moderate for liquid pairs.",
+            "maxDrawdownLimitPct": "If equity falls this % from its peak, trading stops: no new entries and open positions are closed. Limits catastrophic runs but may reduce trade count and change final PnL.",
+            "closeOnReverseTrendFollowing": "For Trend Following: close long on death cross (short MA crosses below long MA). On = classic crossover behavior. Off = exits only via SL/TP; behaves differently (often more trades with fixed stops).",
+            "closeOnReverseBreakout": "For Breakout: close long when the previous close breaks below the Donchian lower channel. On = exit on false breakout. Off = hold until SL/TP; trades may last longer with more intra-trade drawdown."
+          }
         }
       },
       "strategyManager": {

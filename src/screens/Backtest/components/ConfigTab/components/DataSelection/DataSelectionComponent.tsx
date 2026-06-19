@@ -1,8 +1,8 @@
 import { useCallback, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { BacktestDateRange, BacktestStopLossTakeProfit, BacktestTask } from '../../../../../../modules/backtest';
+import type { BacktestDateRange, BacktestExecutionSettings, BacktestStopLossTakeProfit, BacktestTask } from '../../../../../../modules/backtest';
 import type { BybitTimeframe } from '../../../../../../modules/bybit/types';
-import { DateConfig, StopLossTakeProfitConfig, SymbolConfig, TimeframeConfig } from './components';
+import { DateConfig, ExecutionConfig, StopLossTakeProfitConfig, SymbolConfig, TimeframeConfig } from './components';
 import '../../ConfigTabPanel.css';
 import './DataSelection.css';
 
@@ -46,6 +46,13 @@ const DataSelection: FC<DataSelectionProps> = ({
     [backtestTask, onChangeBacktestTask]
   );
 
+  const handleExecutionSettingsChange = useCallback(
+    (executionSettings: BacktestExecutionSettings) => {
+      onChangeBacktestTask({ ...backtestTask, executionSettings });
+    },
+    [backtestTask, onChangeBacktestTask]
+  );
+
   return (
     <section className="config-tab-panel" aria-labelledby="config-tab-data-selection-title">
       <h2 id="config-tab-data-selection-title" className="config-tab-panel__title">
@@ -67,6 +74,11 @@ const DataSelection: FC<DataSelectionProps> = ({
           stopLossTakeProfit={backtestTask.stopLossTakeProfit}
           disabled={loading}
           onChange={handleStopLossTakeProfitChange}
+        />
+        <ExecutionConfig
+          executionSettings={backtestTask.executionSettings}
+          disabled={loading}
+          onChange={handleExecutionSettingsChange}
         />
         <DateConfig
           dateRange={backtestTask.dateRange}

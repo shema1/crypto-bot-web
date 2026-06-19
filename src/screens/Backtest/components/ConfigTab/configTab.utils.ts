@@ -1,4 +1,9 @@
-import type { BacktestTask, UpdateBacktestTaskRequest } from '../../../../../modules/backtest';
+import type {
+  BacktestExecutionSettings,
+  BacktestTask,
+  UpdateBacktestTaskRequest,
+} from '../../../../modules/backtest';
+import { DEFAULT_BACKTEST_EXECUTION_SETTINGS } from '../../../../modules/backtest/types/backtest.types';
 
 function sortedCopy(values: string[]): string[] {
   return [...values].sort();
@@ -29,6 +34,32 @@ function areStopLossTakeProfitEqual(
   );
 }
 
+function areExecutionSettingsEqual(
+  a: BacktestExecutionSettings,
+  b: BacktestExecutionSettings,
+): boolean {
+  return (
+    a.initialCash === b.initialCash &&
+    a.positionSizePct === b.positionSizePct &&
+    a.commissionRate === b.commissionRate &&
+    a.slippagePct === b.slippagePct &&
+    a.maxDrawdownLimitPct === b.maxDrawdownLimitPct &&
+    a.leverageOverride === b.leverageOverride &&
+    a.closeOnReverseSignalTrendFollowing === b.closeOnReverseSignalTrendFollowing &&
+    a.closeOnReverseSignalBreakout === b.closeOnReverseSignalBreakout
+  );
+}
+
+export function normalizeBacktestTask(task: BacktestTask): BacktestTask {
+  return {
+    ...task,
+    executionSettings: {
+      ...DEFAULT_BACKTEST_EXECUTION_SETTINGS,
+      ...task.executionSettings,
+    },
+  };
+}
+
 function areDateRangesEqual(a: BacktestTask['dateRange'], b: BacktestTask['dateRange']): boolean {
   return a.startDate === b.startDate && a.endDate === b.endDate;
 }
@@ -53,6 +84,7 @@ export function isBacktestTaskConfigDirty(saved: BacktestTask, current: Backtest
     return true;
   }
   if (!areStopLossTakeProfitEqual(saved.stopLossTakeProfit, current.stopLossTakeProfit)) return true;
+  if (!areExecutionSettingsEqual(saved.executionSettings, current.executionSettings)) return true;
   if (!areDateRangesEqual(saved.dateRange, current.dateRange)) return true;
 
   return false;
@@ -65,6 +97,7 @@ export function buildBacktestTaskConfigUpdateRequest(task: BacktestTask): Update
     selectedTrendFollowingStrategies: getStrategyIds(task.selectedTrendFollowingStrategies),
     selectedBreakoutStrategies: getStrategyIds(task.selectedBreakoutStrategies),
     stopLossTakeProfit: task.stopLossTakeProfit,
+    executionSettings: task.executionSettings,
     dateRange: task.dateRange,
   };
 }
