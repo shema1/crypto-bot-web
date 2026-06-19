@@ -258,6 +258,7 @@
         "run": "Run",
         "stop": "Stop",
         "stopRequested": "Stop requested",
+        "stopSuccess": "Task stopped",
         "stopError": "Failed to stop task",
         "unsavedConfig": "Save configuration changes before running",
         "progress": "Execution progress",

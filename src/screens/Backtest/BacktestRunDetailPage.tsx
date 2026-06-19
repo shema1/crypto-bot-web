@@ -103,12 +103,20 @@ const BacktestRunDetailPage: FC = () => {
     if (!runId) return;
 
     try {
-      await stopTask(runId).unwrap();
-      message.success(t('backtest.detail.overview.stopRequested'));
+      const result = await stopTask(runId).unwrap();
+      const refreshed = await refetch();
+      if (refreshed.data) {
+        setCurrentTask(normalizeBacktestTask(refreshed.data));
+      }
+      message.success(
+        result.finalized
+          ? t('backtest.detail.overview.stopSuccess')
+          : t('backtest.detail.overview.stopRequested'),
+      );
     } catch {
       message.error(t('backtest.detail.overview.stopError'));
     }
-  }, [runId, stopTask, t]);
+  }, [refetch, runId, stopTask, t]);
 
   if (!runId) {
     return null;

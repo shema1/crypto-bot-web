@@ -404,4 +404,5 @@ export interface BacktestTaskOverview {
 export interface StopBacktestTaskResponse {
   accepted: boolean;
   message: string;
+  finalized: boolean;
 }
