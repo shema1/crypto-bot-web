@@ -198,7 +198,8 @@
       "failedIterationsLabel": "Невдалі ітерації",
       "resultsSection": "Результати",
       "results": {
-        "strategyType": "Стратегія",
+        "strategyName": "Стратегія",
+        "strategyType": "Тип",
         "strategyTypes": {
           "trend_following": "Trend Following",
           "breakout": "Breakout"

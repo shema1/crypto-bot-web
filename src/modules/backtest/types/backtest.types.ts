@@ -200,6 +200,8 @@ export interface BacktestTaskResultSummary {
   winRatePct: number;
   profitFactor: number;
   totalTrades: number;
+  winningTrades?: number;
+  losingTrades?: number;
   initialCash: number;
   finalValue: number;
 }
@@ -209,6 +211,7 @@ export interface BacktestTaskResultItem {
   taskId: string;
   subtaskIndex: number;
   strategyType: BacktestSubtaskStrategyType;
+  strategyName?: string;
   status: BacktestSubtaskStatus;
   pair: string;
   timeframe: string;

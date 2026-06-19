@@ -198,7 +198,8 @@
       "failedIterationsLabel": "Failed iterations",
       "resultsSection": "Results",
       "results": {
-        "strategyType": "Strategy",
+        "strategyName": "Strategy",
+        "strategyType": "Type",
         "strategyTypes": {
           "trend_following": "Trend Following",
           "breakout": "Breakout"

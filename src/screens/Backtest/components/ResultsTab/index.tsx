@@ -101,6 +101,14 @@ const ResultsTab: FC<ResultsTabProps> = ({ taskId, isRunning, onViewTrades }) =>
           : undefined,
     },
     {
+      title: t('backtest.detail.results.strategyName'),
+      dataIndex: 'strategyName',
+      key: 'strategyName',
+      width: 160,
+      ellipsis: true,
+      render: (value?: string) => value ?? '—',
+    },
+    {
       title: t('backtest.detail.results.strategyType'),
       dataIndex: 'strategyType',
       key: 'strategyType',
@@ -202,6 +210,30 @@ const ResultsTab: FC<ResultsTabProps> = ({ taskId, isRunning, onViewTrades }) =>
             : 'descend'
           : undefined,
       render: (_, row) => row.summary?.totalTrades ?? '—',
+    },
+    {
+      title: t('backtest.detail.winningOrders'),
+      key: 'winningTrades',
+      width: 90,
+      align: 'right',
+      render: (_, row) =>
+        row.summary?.winningTrades != null ? (
+          <Typography.Text type="success">{row.summary.winningTrades}</Typography.Text>
+        ) : (
+          '—'
+        ),
+    },
+    {
+      title: t('backtest.detail.losingOrders'),
+      key: 'losingTrades',
+      width: 90,
+      align: 'right',
+      render: (_, row) =>
+        row.summary?.losingTrades != null ? (
+          <Typography.Text type="danger">{row.summary.losingTrades}</Typography.Text>
+        ) : (
+          '—'
+        ),
     },
     {
       title: t('backtest.detail.results.sharpe'),
