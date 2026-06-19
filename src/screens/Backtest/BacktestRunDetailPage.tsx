@@ -13,7 +13,7 @@ import {
   buildBacktestTaskConfigUpdateRequest,
   isBacktestTaskConfigDirty,
 } from './components/ConfigTab/configTab.utils';
-import { useGetTaskByIdQuery, useUpdateTaskMutation, type BacktestTask, type UpdateBacktestTaskRequest } from '../../modules/backtest';
+import { useGetTaskByIdQuery, useUpdateTaskMutation, useRunTaskMutation, type BacktestTask, type UpdateBacktestTaskRequest } from '../../modules/backtest';
 
 
 
@@ -27,6 +27,7 @@ const BacktestRunDetailPage: FC = () => {
 
 
   const [updateTask, { isLoading: isUpdatingTask }] = useUpdateTaskMutation();
+  const [runTask, { isLoading: isRunningTask }] = useRunTaskMutation();
   const [ordersModalResultIndex, setOrdersModalResultIndex] = useState<number | null>(null);
   
   const navigate = useNavigate();
@@ -70,6 +71,17 @@ const BacktestRunDetailPage: FC = () => {
       message.error(t('backtest.config.summary.taskUpdateError'));
     }
   }, [currentTask, isConfigDirty, runId, t, updateTask]);
+
+  const handleRunTask = useCallback(async () => {
+    if (!runId || isConfigDirty) return;
+
+    try {
+      await runTask(runId).unwrap();
+      message.success(t('backtest.config.summary.taskRunStarted'));
+    } catch {
+      message.error(t('backtest.config.summary.taskRunError'));
+    }
+  }, [isConfigDirty, runId, runTask, t]);
 
   if (!runId) {
     return null;
@@ -190,7 +202,9 @@ const BacktestRunDetailPage: FC = () => {
                       loading={isLoading}
                       isDirty={isConfigDirty}
                       isSaving={isUpdatingTask}
+                      isRunning={isRunningTask}
                       onSave={handleSaveConfig}
+                      onRun={handleRunTask}
                     />
                   ),
                 },

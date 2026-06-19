@@ -9,7 +9,9 @@ export interface ConfigTabProps {
   loading?: boolean;
   isDirty?: boolean;
   isSaving?: boolean;
+  isRunning?: boolean;
   onSave?: () => void;
+  onRun?: () => void;
 }
 
 const ConfigTab: FC<ConfigTabProps> = (props) => {

@@ -289,7 +289,9 @@
         "runBacktest": "Run Backtest ({{count}} Sim)",
         "updateTask": "Update task",
         "taskUpdated": "Task updated",
-        "taskUpdateError": "Failed to update task"
+        "taskUpdateError": "Failed to update task",
+        "taskRunStarted": "Backtest run started",
+        "taskRunError": "Failed to start backtest run"
       }
     }
   },

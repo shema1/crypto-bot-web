@@ -289,7 +289,9 @@
         "runBacktest": "Запустити бектест ({{count}} сим.)",
         "updateTask": "Оновити таску",
         "taskUpdated": "Таску оновлено",
-        "taskUpdateError": "Не вдалося оновити таску"
+        "taskUpdateError": "Не вдалося оновити таску",
+        "taskRunStarted": "Запуск бектесту розпочато",
+        "taskRunError": "Не вдалося запустити бектест"
       }
     }
   },

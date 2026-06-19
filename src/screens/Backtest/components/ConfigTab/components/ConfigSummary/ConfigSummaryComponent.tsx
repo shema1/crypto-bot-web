@@ -1,7 +1,7 @@
 import { Button, Typography } from 'antd';
 import { useMemo, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { BacktestTask } from '../../../../../../modules/backtest';
+import { BacktestTaskStatus, type BacktestTask } from '../../../../../../modules/backtest';
 import '../../ConfigTabPanel.css';
 import {
   countBacktestSimulations,
@@ -16,7 +16,9 @@ export interface ConfigSummaryProps {
   loading?: boolean;
   isDirty?: boolean;
   isSaving?: boolean;
+  isRunning?: boolean;
   onSave?: () => void;
+  onRun?: () => void;
 }
 
 const ConfigSummary: FC<ConfigSummaryProps> = ({
@@ -24,7 +26,9 @@ const ConfigSummary: FC<ConfigSummaryProps> = ({
   loading = false,
   isDirty = false,
   isSaving = false,
+  isRunning = false,
   onSave,
+  onRun,
 }) => {
   const { t } = useTranslation();
 
@@ -57,8 +61,9 @@ const ConfigSummary: FC<ConfigSummaryProps> = ({
     [backtestTask]
   );
 
-  const canRun = totalSimulations > 0 && !loading;
-  const canSave = isDirty && !loading && !isSaving;
+  const isTaskRunning = backtestTask.status === BacktestTaskStatus.RUNNING;
+  const canRun = totalSimulations > 0 && !loading && !isDirty && !isSaving && !isRunning && !isTaskRunning;
+  const canSave = isDirty && !loading && !isSaving && !isRunning;
 
   return (
     <section className="config-tab-panel" aria-labelledby="config-tab-summary-title">
@@ -111,7 +116,14 @@ const ConfigSummary: FC<ConfigSummaryProps> = ({
         </div>
 
         <div className="config-summary__run">
-          <Button type="primary" size="large" block disabled={!canRun}>
+          <Button
+            type="primary"
+            size="large"
+            block
+            disabled={!canRun}
+            loading={isRunning}
+            onClick={onRun}
+          >
             {t('backtest.config.summary.runBacktest', { count: totalSimulations })}
           </Button>
         </div>

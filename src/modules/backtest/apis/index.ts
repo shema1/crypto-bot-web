@@ -10,6 +10,7 @@ import type {
   GetTasksResponse,
   CreateBacktestTaskRequest,
   UpdateBacktestTaskRequest,
+  RunBacktestTaskResponse,
   BacktestTask,
 } from '../types';
 
@@ -98,6 +99,16 @@ export const backtestApi = createApi({
         { type: 'BacktestTask', id: 'LIST' },
       ],
     }),
+    runTask: builder.mutation<RunBacktestTaskResponse, string>({
+      query: (taskId) => ({
+        url: backtestUrls.taskRunById(taskId),
+        method: 'POST',
+      }),
+      invalidatesTags: (_result, _error, taskId) => [
+        { type: 'BacktestTask', id: taskId },
+        { type: 'BacktestTask', id: 'LIST' },
+      ],
+    }),
   }),
 });
 
@@ -107,4 +118,5 @@ export const {
   useCreateTaskMutation,
   useUpdateTaskMutation,
   useDeleteTaskMutation,
+  useRunTaskMutation,
 } = backtestApi;

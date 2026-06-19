@@ -101,6 +101,12 @@ export interface CreateBacktestTaskRequest {
   name: string;
 }
 
+/** Response from POST /backtest/tasks/:taskId/run. */
+export interface RunBacktestTaskResponse {
+  trendFollowingStrategyItems: unknown[];
+  breakoutStrategyItems: unknown[];
+}
+
 /** Request body for PATCH /backtest/tasks/:taskId. */
 export interface UpdateBacktestTaskRequest {
   name?: string;
