@@ -197,6 +197,25 @@
       "notAvailable": "Run details are not available. The backend does not expose this endpoint.",
       "failedIterationsLabel": "Failed iterations",
       "resultsSection": "Results",
+      "results": {
+        "strategyType": "Strategy",
+        "strategyTypes": {
+          "trend_following": "Trend Following",
+          "breakout": "Breakout"
+        },
+        "slTp": "SL/TP",
+        "roi": "ROI",
+        "sharpe": "Sharpe",
+        "maxDrawdown": "Max DD",
+        "statusCompleted": "Completed",
+        "statusFailed": "Failed",
+        "statusAll": "All",
+        "total": "Total: {{total}}",
+        "failed": "Failed",
+        "pnlPct": "P&L %",
+        "exitReason": "Exit",
+        "tradesTotal": "Trades: {{total}}"
+      },
       "errorsSection": "Errors",
       "resultName": "Name",
       "pair": "Pair",
@@ -209,7 +228,7 @@
       "winRate": "Win rate",
       "actions": "Actions",
       "viewOrders": "Orders",
-      "ordersModalTitle": "Orders (result #{{index}})",
+      "ordersModalTitle": "Trades — {{label}}",
       "orders": {
         "openTime": "Open time",
         "closeTime": "Close time",

@@ -13,6 +13,10 @@ import type {
   RunBacktestTaskResponse,
   BacktestTask,
   BacktestTaskLogEntry,
+  GetTaskResultsQuery,
+  GetTaskResultsResponse,
+  GetTaskResultTradesQuery,
+  GetTaskResultTradesResponse,
 } from '../types';
 
 function normalizeBacktestTask(task: BacktestTask): BacktestTask {
@@ -36,7 +40,7 @@ function normalizeUpdateBacktestTaskRequest(body: UpdateBacktestTaskRequest): Up
 export const backtestApi = createApi({
   reducerPath: 'backtestApi',
   baseQuery: createMainBaseQuery(),
-  tagTypes: ['BacktestTask', 'BacktestTaskLogs'],
+  tagTypes: ['BacktestTask', 'BacktestTaskLogs', 'BacktestTaskResults'],
   endpoints: (builder) => ({
     getTasks: builder.query<GetTasksResponse, GetTasksQuery | void>({
       query: (params) => {
@@ -109,7 +113,33 @@ export const backtestApi = createApi({
         { type: 'BacktestTask', id: taskId },
         { type: 'BacktestTask', id: 'LIST' },
         { type: 'BacktestTaskLogs', id: taskId },
+        { type: 'BacktestTaskResults', id: taskId },
       ],
+    }),
+    getTaskResults: builder.query<GetTaskResultsResponse, { taskId: string; query?: GetTaskResultsQuery }>({
+      query: ({ taskId, query }) => ({
+        url: backtestUrls.taskResultsById(taskId),
+        params: {
+          sortBy: query?.sortBy ?? 'roi_pct',
+          sortOrder: query?.sortOrder ?? 'desc',
+          status: query?.status ?? 'completed',
+          page: query?.page ?? 1,
+          limit: query?.limit ?? 20,
+        },
+      }),
+      providesTags: (_result, _error, { taskId }) => [{ type: 'BacktestTaskResults', id: taskId }],
+    }),
+    getTaskResultTrades: builder.query<
+      GetTaskResultTradesResponse,
+      { taskId: string; resultId: string; query?: GetTaskResultTradesQuery }
+    >({
+      query: ({ taskId, resultId, query }) => ({
+        url: backtestUrls.taskResultTradesById(taskId, resultId),
+        params: {
+          page: query?.page ?? 1,
+          limit: query?.limit ?? 50,
+        },
+      }),
     }),
     getTaskLogs: builder.query<BacktestTaskLogEntry[], string>({
       query: (taskId) => ({ url: backtestUrls.taskLogsById(taskId) }),
@@ -126,4 +156,6 @@ export const {
   useDeleteTaskMutation,
   useRunTaskMutation,
   useGetTaskLogsQuery,
+  useGetTaskResultsQuery,
+  useGetTaskResultTradesQuery,
 } = backtestApi;

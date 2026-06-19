@@ -139,6 +139,102 @@ export interface BacktestTaskLogEntry {
   createdAt?: string;
 }
 
+export const BacktestSubtaskStatus = {
+  COMPLETED: 'completed',
+  FAILED: 'failed',
+} as const;
+
+export type BacktestSubtaskStatus = (typeof BacktestSubtaskStatus)[keyof typeof BacktestSubtaskStatus];
+
+export const BacktestSubtaskStrategyType = {
+  TREND_FOLLOWING: 'trend_following',
+  BREAKOUT: 'breakout',
+} as const;
+
+export type BacktestSubtaskStrategyType =
+  (typeof BacktestSubtaskStrategyType)[keyof typeof BacktestSubtaskStrategyType];
+
+export type TaskResultSortField =
+  | 'roi_pct'
+  | 'net_profit'
+  | 'win_rate_pct'
+  | 'sharpe_ratio'
+  | 'profit_factor'
+  | 'total_trades'
+  | 'max_drawdown_pct'
+  | 'subtask_index';
+
+export type TaskResultSortOrder = 'asc' | 'desc';
+
+export interface BacktestTaskResultSummary {
+  netProfit: number;
+  roiPct: number;
+  maxDrawdownPct: number;
+  sharpeRatio: number;
+  winRatePct: number;
+  profitFactor: number;
+  totalTrades: number;
+  initialCash: number;
+  finalValue: number;
+}
+
+export interface BacktestTaskResultItem {
+  id: string;
+  taskId: string;
+  subtaskIndex: number;
+  strategyType: BacktestSubtaskStrategyType;
+  status: BacktestSubtaskStatus;
+  pair: string;
+  timeframe: string;
+  stopLossPct?: number;
+  takeProfitPct?: number;
+  summary?: BacktestTaskResultSummary;
+  error?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface GetTaskResultsQuery {
+  sortBy?: TaskResultSortField;
+  sortOrder?: TaskResultSortOrder;
+  status?: BacktestSubtaskStatus | 'all';
+  page?: number;
+  limit?: number;
+}
+
+export interface GetTaskResultsResponse {
+  items: BacktestTaskResultItem[];
+  total: number;
+  page: number;
+  limit: number;
+  sortBy: TaskResultSortField;
+  sortOrder: TaskResultSortOrder;
+}
+
+export interface BacktestTradeRecord {
+  ticket: number;
+  type: 'long' | 'short';
+  entry_time: string;
+  entry_price: number;
+  exit_time: string;
+  exit_price: number;
+  pnl: number;
+  pnl_pct: number;
+  exit_reason: string;
+}
+
+export interface GetTaskResultTradesQuery {
+  page?: number;
+  limit?: number;
+}
+
+export interface GetTaskResultTradesResponse {
+  items: BacktestTradeRecord[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
 /** Request body for PATCH /backtest/tasks/:taskId. */
 export interface UpdateBacktestTaskRequest {
   name?: string;

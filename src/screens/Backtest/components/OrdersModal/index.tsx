@@ -1,37 +1,40 @@
 import { useTranslation } from 'react-i18next';
 import { Modal, Table, Typography } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
-import type { FC } from 'react';
+import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
+import { useState, type FC } from 'react';
+import {
+  useGetTaskResultTradesQuery,
+  type BacktestTaskResultItem,
+  type BacktestTradeRecord,
+} from '../../../../modules/backtest';
 
 export interface OrdersModalProps {
   open: boolean;
-  resultIndex: number | null;
-  orders: Record<string, unknown>[];
-  loading?: boolean;
+  taskId: string;
+  result: BacktestTaskResultItem | null;
   onClose: () => void;
 }
 
-const OrdersModal: FC<OrdersModalProps> = ({
-  open,
-  resultIndex,
-  orders,
-  loading = false,
-  onClose,
-}) => {
+const OrdersModal: FC<OrdersModalProps> = ({ open, taskId, result, onClose }) => {
   const { t } = useTranslation();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(50);
 
-  const columns: ColumnsType<Record<string, unknown>> = [
+  const { data, isLoading, isFetching } = useGetTaskResultTradesQuery(
     {
-      title: t('backtest.detail.orders.openTime'),
-      dataIndex: 'open_time_utc',
-      key: 'open_time_utc',
-      width: 155,
+      taskId,
+      resultId: result?.id ?? '',
+      query: { page, limit: pageSize },
     },
+    { skip: !open || !result?.id },
+  );
+
+  const columns: ColumnsType<BacktestTradeRecord> = [
     {
-      title: t('backtest.detail.orders.closeTime'),
-      dataIndex: 'close_time_utc',
-      key: 'close_time_utc',
-      width: 155,
+      title: '#',
+      dataIndex: 'ticket',
+      key: 'ticket',
+      width: 60,
     },
     {
       title: t('backtest.detail.orders.type'),
@@ -40,58 +43,38 @@ const OrdersModal: FC<OrdersModalProps> = ({
       width: 70,
     },
     {
+      title: t('backtest.detail.orders.openTime'),
+      dataIndex: 'entry_time',
+      key: 'entry_time',
+      width: 170,
+    },
+    {
+      title: t('backtest.detail.orders.closeTime'),
+      dataIndex: 'exit_time',
+      key: 'exit_time',
+      width: 170,
+    },
+    {
       title: t('backtest.detail.orders.openPrice'),
-      dataIndex: 'open_price',
-      key: 'open_price',
-      width: 95,
-      align: 'right',
-      render: (v: number) => (v != null ? v.toFixed(2) : '—'),
-    },
-    {
-      title: t('backtest.detail.orders.closePrice'),
-      dataIndex: 'close_price',
-      key: 'close_price',
-      width: 95,
-      align: 'right',
-      render: (v: number) => (v != null ? v.toFixed(2) : '—'),
-    },
-    {
-      title: t('backtest.detail.orders.targetPrice'),
-      dataIndex: 'target_price',
-      key: 'target_price',
-      width: 95,
-      align: 'right',
-      render: (v: number) => (v != null ? v.toFixed(2) : '—'),
-    },
-    {
-      title: t('backtest.detail.orders.lostPrice'),
-      dataIndex: 'lost_price',
-      key: 'lost_price',
-      width: 90,
-      align: 'right',
-      render: (v: number) => (v != null ? v.toFixed(2) : '—'),
-    },
-    {
-      title: t('backtest.detail.orders.size'),
-      dataIndex: 'size',
-      key: 'size',
-      width: 80,
+      dataIndex: 'entry_price',
+      key: 'entry_price',
+      width: 100,
       align: 'right',
       render: (v: number) => (v != null ? v.toFixed(4) : '—'),
     },
     {
-      title: t('backtest.detail.orders.marginUsed'),
-      dataIndex: 'margin_used',
-      key: 'margin_used',
+      title: t('backtest.detail.orders.closePrice'),
+      dataIndex: 'exit_price',
+      key: 'exit_price',
       width: 100,
       align: 'right',
-      render: (v: number) => (v != null ? v.toFixed(2) : '—'),
+      render: (v: number) => (v != null ? v.toFixed(4) : '—'),
     },
     {
       title: t('backtest.detail.orders.pnl'),
       dataIndex: 'pnl',
       key: 'pnl',
-      width: 95,
+      width: 100,
       align: 'right',
       render: (v: number) =>
         v != null ? (
@@ -103,38 +86,60 @@ const OrdersModal: FC<OrdersModalProps> = ({
         ),
     },
     {
-      title: t('backtest.detail.orders.liquidated'),
-      dataIndex: 'is_liquidated',
-      key: 'is_liquidated',
+      title: t('backtest.detail.results.pnlPct'),
+      dataIndex: 'pnl_pct',
+      key: 'pnl_pct',
       width: 90,
-      align: 'center',
-      render: (v: boolean) =>
-        v ? (
-          <Typography.Text type="danger">
-            {t('backtest.detail.orders.yes')}
+      align: 'right',
+      render: (v: number) =>
+        v != null ? (
+          <Typography.Text type={v >= 0 ? 'success' : 'danger'}>
+            {v.toFixed(2)}%
           </Typography.Text>
         ) : (
           '—'
         ),
     },
+    {
+      title: t('backtest.detail.results.exitReason'),
+      dataIndex: 'exit_reason',
+      key: 'exit_reason',
+      width: 100,
+    },
   ];
+
+  const handleTableChange = (pagination: TablePaginationConfig) => {
+    setPage(pagination.current ?? 1);
+    setPageSize(pagination.pageSize ?? 50);
+  };
+
+  const titleLabel = result
+    ? `${result.pair} ${result.timeframe} (#${result.subtaskIndex})`
+    : '';
 
   return (
     <Modal
-      title={t('backtest.detail.ordersModalTitle', {
-        index: resultIndex != null ? resultIndex + 1 : 0,
-      })}
+      title={t('backtest.detail.ordersModalTitle', { label: titleLabel })}
       open={open}
       onCancel={onClose}
       footer={null}
-      width={960}
+      width={1100}
+      destroyOnClose
     >
-      <Table
+      <Table<BacktestTradeRecord>
         columns={columns}
-        dataSource={orders}
-        rowKey={(_, i) => String(i)}
-        loading={loading}
-        pagination={{ pageSize: 10, size: 'small' }}
+        dataSource={data?.items ?? []}
+        rowKey={(row) => String(row.ticket)}
+        loading={isLoading || isFetching}
+        pagination={{
+          current: data?.page ?? page,
+          pageSize: data?.limit ?? pageSize,
+          total: data?.total ?? 0,
+          showSizeChanger: true,
+          pageSizeOptions: ['20', '50', '100', '200'],
+          showTotal: (total) => t('backtest.detail.results.tradesTotal', { total }),
+        }}
+        onChange={handleTableChange}
         size="small"
         scroll={{ x: 'max-content' }}
       />

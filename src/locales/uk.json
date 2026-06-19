@@ -197,6 +197,25 @@
       "notAvailable": "Деталі запуску недоступні. Бекенд не надає цей ендпоінт.",
       "failedIterationsLabel": "Невдалі ітерації",
       "resultsSection": "Результати",
+      "results": {
+        "strategyType": "Стратегія",
+        "strategyTypes": {
+          "trend_following": "Trend Following",
+          "breakout": "Breakout"
+        },
+        "slTp": "SL/TP",
+        "roi": "ROI",
+        "sharpe": "Sharpe",
+        "maxDrawdown": "Max DD",
+        "statusCompleted": "Успішні",
+        "statusFailed": "Помилки",
+        "statusAll": "Усі",
+        "total": "Всього: {{total}}",
+        "failed": "Помилка",
+        "pnlPct": "P&L %",
+        "exitReason": "Причина",
+        "tradesTotal": "Угод: {{total}}"
+      },
       "errorsSection": "Помилки",
       "resultName": "Назва",
       "pair": "Пара",
@@ -209,7 +228,7 @@
       "winRate": "Винрейт",
       "actions": "Дії",
       "viewOrders": "Ордери",
-      "ordersModalTitle": "Ордери (результат #{{index}})",
+      "ordersModalTitle": "Угоди — {{label}}",
       "orders": {
         "openTime": "Час відкриття",
         "closeTime": "Час закриття",

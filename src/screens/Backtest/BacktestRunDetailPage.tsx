@@ -9,14 +9,20 @@ import {
   OrdersModal,
   ConfigTab,
   LogsTab,
+  ResultsTab,
 } from './components';
+import {
+  useGetTaskByIdQuery,
+  useUpdateTaskMutation,
+  useRunTaskMutation,
+  type BacktestTask,
+  type BacktestTaskResultItem,
+  type UpdateBacktestTaskRequest,
+} from '../../modules/backtest';
 import {
   buildBacktestTaskConfigUpdateRequest,
   isBacktestTaskConfigDirty,
 } from './components/ConfigTab/configTab.utils';
-import { useGetTaskByIdQuery, useUpdateTaskMutation, useRunTaskMutation, type BacktestTask, type UpdateBacktestTaskRequest } from '../../modules/backtest';
-
-
 
 const BacktestRunDetailPage: FC = () => {
   const { t } = useTranslation();
@@ -29,7 +35,7 @@ const BacktestRunDetailPage: FC = () => {
 
   const [updateTask, { isLoading: isUpdatingTask }] = useUpdateTaskMutation();
   const [runTask, { isLoading: isRunningTask }] = useRunTaskMutation();
-  const [ordersModalResultIndex, setOrdersModalResultIndex] = useState<number | null>(null);
+  const [selectedResult, setSelectedResult] = useState<BacktestTaskResultItem | null>(null);
   
   const navigate = useNavigate();
 
@@ -194,6 +200,17 @@ const BacktestRunDetailPage: FC = () => {
                 //   ),
                 // },
                 {
+                  key: 'results',
+                  label: t('backtest.detail.tabs.results'),
+                  children: (
+                    <ResultsTab
+                      taskId={runId}
+                      isRunning={currentTask.status === 'running'}
+                      onViewTrades={setSelectedResult}
+                    />
+                  ),
+                },
+                {
                   key: 'logs',
                   label: t('backtest.detail.tabs.logs'),
                   children: (
@@ -227,11 +244,10 @@ const BacktestRunDetailPage: FC = () => {
 
 
       <OrdersModal
-        open={ordersModalResultIndex !== null}
-        resultIndex={ordersModalResultIndex}
-        orders={[]}
-        loading={false}
-        onClose={() => setOrdersModalResultIndex(null)}
+        open={selectedResult !== null}
+        taskId={runId}
+        result={selectedResult}
+        onClose={() => setSelectedResult(null)}
       />
     </>
   );
