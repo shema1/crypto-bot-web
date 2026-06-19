@@ -23,6 +23,7 @@ import {
   useBacktestTaskLiveEvents,
   formatRunDuration,
   computeRunDurationSeconds,
+  estimateSubtasksRemainingSeconds,
   type BacktestTask,
   type BacktestTaskOverviewTopResult,
   type BacktestTaskResultItem,
@@ -177,6 +178,30 @@ const OverviewTab: FC<OverviewTabProps> = ({
   const finishedDurationSeconds =
     overview?.timing?.durationSeconds
     ?? computeRunDurationSeconds(runStartedAt, runFinishedAt);
+
+  const subtasksProcessed = backtestProgress
+    ? backtestProgress.completed + backtestProgress.failed
+    : 0;
+  const subtasksTotal = backtestProgress?.total ?? 0;
+
+  /** Recalculated when a subtask completes or fails (not on every elapsed second). */
+  const subtasksRemainingEstimate = useMemo(() => {
+    if (!isRunningSubtasks || !subtasksStartedAt || subtasksTotal === 0) {
+      return null;
+    }
+
+    const remaining = subtasksTotal - subtasksProcessed;
+    const elapsedSeconds = computeRunDurationSeconds(
+      subtasksStartedAt,
+      new Date().toISOString(),
+    );
+
+    return estimateSubtasksRemainingSeconds({
+      processed: subtasksProcessed,
+      remaining,
+      elapsedSeconds,
+    });
+  }, [isRunningSubtasks, subtasksStartedAt, subtasksProcessed, subtasksTotal]);
 
   const topColumns: ColumnsType<BacktestTaskOverviewTopResult> = [
     {
@@ -402,11 +427,22 @@ const OverviewTab: FC<OverviewTabProps> = ({
               })
             }
           />
-          {(backtestProgress.skipped > 0 || isRunningSubtasks) && (
+          {(backtestProgress.skipped > 0 || subtasksRemainingEstimate != null) && (
             <div className="overview-tab__progress-meta">
-              <Typography.Text type="secondary">
-                {t('backtest.detail.overview.skipped', { count: backtestProgress.skipped })}
-              </Typography.Text>
+              <Space direction="vertical" size={2}>
+                {backtestProgress.skipped > 0 && (
+                  <Typography.Text type="secondary">
+                    {t('backtest.detail.overview.skipped', { count: backtestProgress.skipped })}
+                  </Typography.Text>
+                )}
+                {subtasksRemainingEstimate != null && (
+                  <Typography.Text type="secondary">
+                    {t('backtest.detail.overview.estimatedRemaining', {
+                      duration: formatRunDuration(subtasksRemainingEstimate),
+                    })}
+                  </Typography.Text>
+                )}
+              </Space>
             </div>
           )}
         </section>

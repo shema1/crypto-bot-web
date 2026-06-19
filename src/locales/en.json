@@ -270,6 +270,7 @@
         "phaseDurationFinished": "Duration: {{duration}}",
         "progressFormat": "{{completed}} ok, {{failed}} failed / {{total}}",
         "skipped": "Skipped: {{count}}",
+        "estimatedRemaining": "Approx. remaining: ≈ {{duration}}",
         "taskInfo": "General information",
         "plannedSubtasks": "Planned subtasks",
         "pairs": "Pairs",
@@ -356,6 +357,7 @@
           "maxDrawdownLimitPct": "Max drawdown limit",
           "closeOnReverseTrendFollowing": "TF: exit on reverse signal",
           "closeOnReverseBreakout": "Breakout: exit on reverse break",
+          "timingLogs": "Performance timing logs",
           "tooltips": {
             "section": "These settings simulate Bybit Linear Perpetual conditions: capital, fees, slippage, and exit rules. They apply to every subtask in the run and affect net profit, ROI, and trade count, but do not change indicator signal logic.",
             "initialCash": "Starting account balance in USDT. Affects ROI % and absolute dollar PnL. Does not change when entries/exits trigger (MA, Donchian, etc.). Example: +$500 on $10,000 = +5% ROI.",
@@ -365,7 +367,8 @@
             "slippagePct": "Models worse execution price vs. ideal (spread, latency). Applied on every entry/exit. Reduces win rate and profit factor, especially on short timeframes with many trades. 0.02% is moderate for liquid pairs.",
             "maxDrawdownLimitPct": "If equity falls this % from its peak, trading stops: no new entries and open positions are closed. Limits catastrophic runs but may reduce trade count and change final PnL.",
             "closeOnReverseTrendFollowing": "For Trend Following: close long on death cross (short MA crosses below long MA). On = classic crossover behavior. Off = exits only via SL/TP; behaves differently (often more trades with fixed stops).",
-            "closeOnReverseBreakout": "For Breakout: close long when the previous close breaks below the Donchian lower channel. On = exit on false breakout. Off = hold until SL/TP; trades may last longer with more intra-trade drawdown."
+            "closeOnReverseBreakout": "For Breakout: close long when the previous close breaks below the Donchian lower channel. On = exit on false breakout. Off = hold until SL/TP; trades may last longer with more intra-trade drawdown.",
+            "timingLogs": "When enabled, each subtask writes perf_timing logs (step durations in ms) to the task log. Useful for profiling slow runs; adds a small MongoDB overhead when on."
           }
         }
       },

@@ -199,6 +199,18 @@ const ExecutionConfig: FC<ExecutionConfigProps> = ({
           ),
           true,
         )}
+        {renderField(
+          'backtest.config.dataSelection.execution.timingLogs',
+          'backtest.config.dataSelection.execution.tooltips.timingLogs',
+          (
+            <Switch
+              checked={executionSettings.timingLogs}
+              disabled={disabled}
+              onChange={(checked) => updateField('timingLogs', checked)}
+            />
+          ),
+          true,
+        )}
       </div>
     </section>
   );

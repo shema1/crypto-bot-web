@@ -46,7 +46,8 @@ function areExecutionSettingsEqual(
     a.maxDrawdownLimitPct === b.maxDrawdownLimitPct &&
     a.leverageOverride === b.leverageOverride &&
     a.closeOnReverseSignalTrendFollowing === b.closeOnReverseSignalTrendFollowing &&
-    a.closeOnReverseSignalBreakout === b.closeOnReverseSignalBreakout
+    a.closeOnReverseSignalBreakout === b.closeOnReverseSignalBreakout &&
+    a.timingLogs === b.timingLogs
   );
 }
 

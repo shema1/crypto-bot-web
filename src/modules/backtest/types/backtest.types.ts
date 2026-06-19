@@ -94,6 +94,8 @@ export interface BacktestExecutionSettings {
   leverageOverride: number | null;
   closeOnReverseSignalTrendFollowing: boolean;
   closeOnReverseSignalBreakout: boolean;
+  /** When true, emit per-step perf_timing logs for this task run. */
+  timingLogs: boolean;
 }
 
 export const DEFAULT_BACKTEST_EXECUTION_SETTINGS: BacktestExecutionSettings = {
@@ -105,6 +107,7 @@ export const DEFAULT_BACKTEST_EXECUTION_SETTINGS: BacktestExecutionSettings = {
   leverageOverride: null,
   closeOnReverseSignalTrendFollowing: true,
   closeOnReverseSignalBreakout: true,
+  timingLogs: false,
 };
 /** Backtest task (matches backend BacktestTask schema). API returns id (not _id). */
 export interface BacktestTask {
