@@ -5,9 +5,6 @@ import { TrendFollowingStrategiesTab, BreakoutStrategiesTab } from './tabs';
 import './SelectStrategiesModal.css';
 import type { SelectStrategiesModalOnConfirmParams } from '../StrategiesTab';
 
-
-
-
 export interface SelectStrategiesModalProps {
   open: boolean;
   onClose: () => void;
@@ -27,7 +24,6 @@ const SelectStrategiesModal: FC<SelectStrategiesModalProps> = ({ open, onClose, 
   const [selectedBreakoutStrategiesState, setSelectedBreakoutStrategiesState] = useState<string[]>([]);
 
 
-console.log("selectedTrendFollowingStrategiesState", selectedTrendFollowingStrategiesState)
   const handleSelectedTrendFollowingStrategiesChange = useCallback(
     (keys: React.Key[], _rows: unknown[]) => {
       setSelectedTrendFollowingStrategiesState(keys.map((k) => String(k)));

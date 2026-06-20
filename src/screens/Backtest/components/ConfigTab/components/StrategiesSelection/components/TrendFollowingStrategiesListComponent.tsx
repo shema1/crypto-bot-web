@@ -8,6 +8,8 @@ import type {
   TrendFollowingTableSortOrder,
 } from '../../../../../../../components/core';
 import type { BacktestTask } from '../../../../../../../modules/backtest';
+import { getTrendFollowingMinBars } from '../../../../../../../modules/backtest/utils/strategyCandles.utils';
+import StrategyCandleRequirementsPopover from '../../../../StrategyCandleRequirements/StrategyCandleRequirementsPopover';
 import {
   TREND_FOLLOWING_STRATEGY_LIST_DEFAULTS,
   useGetTrendFollowingStrategiesQuery,
@@ -145,6 +147,19 @@ const TrendFollowingStrategiesList: FC<TrendFollowingStrategiesListProps> = ({
     setPage(1);
   }, []);
 
+  const renderCandleRequirements = useCallback(
+    (record: TrendFollowingStrategyItem) => (
+      <StrategyCandleRequirementsPopover
+        minBars={getTrendFollowingMinBars({
+          long_ma: record.long_ma,
+          adx_period: record.adx_period,
+        })}
+        strategyName={record.name}
+      />
+    ),
+    [],
+  );
+
   const renderActions = useCallback(
     (record: TrendFollowingStrategyItem) => {
       const isAdded = selectedIds.has(record.id);
@@ -196,6 +211,8 @@ const TrendFollowingStrategiesList: FC<TrendFollowingStrategiesListProps> = ({
         }}
         renderActions={renderActions}
         hiddenColumns={['timeframe', 'stop_loss', 'take_profit']}
+        showCandleRequirements
+        renderCandleRequirements={renderCandleRequirements}
       />
     </div>
   );

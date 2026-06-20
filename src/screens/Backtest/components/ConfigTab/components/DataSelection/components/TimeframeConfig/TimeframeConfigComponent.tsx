@@ -1,6 +1,11 @@
 import { Button, Typography } from 'antd';
-import { useCallback, type FC } from 'react';
+import { useCallback, useMemo, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { BacktestDateRange } from '../../../../../../../../modules/backtest';
+import {
+  countCandlesInDateRange,
+  formatApproxCandleCount,
+} from '../../../../../../../../modules/bybit/utils/timeframeCandles.utils';
 import {
   BYBIT_TIMEFRAME_LABELS,
   BYBIT_TIMEFRAMES,
@@ -10,16 +15,31 @@ import {
 
 export interface TimeframeConfigProps {
   timeframes: BybitTimeframe[];
+  dateRange?: BacktestDateRange;
   disabled?: boolean;
   onChange: (timeframes: BybitTimeframe[]) => void;
 }
 
 const TimeframeConfig: FC<TimeframeConfigProps> = ({
   timeframes,
+  dateRange,
   disabled = false,
   onChange,
 }) => {
   const { t } = useTranslation();
+
+  const candleCountsByTimeframe = useMemo(() => {
+    const counts = new Map<BybitTimeframe, string>();
+
+    for (const tf of BYBIT_TIMEFRAMES) {
+      const formatted = formatApproxCandleCount(
+        countCandlesInDateRange(dateRange?.startDate, dateRange?.endDate, tf)
+      );
+      if (formatted) counts.set(tf, formatted);
+    }
+
+    return counts;
+  }, [dateRange?.endDate, dateRange?.startDate]);
 
   const toggleTimeframe = useCallback(
     (tf: BybitTimeframe) => {
@@ -45,6 +65,7 @@ const TimeframeConfig: FC<TimeframeConfigProps> = ({
       <div className="data-selection__timeframes">
         {BYBIT_TIMEFRAMES.map((tf) => {
           const active = timeframes.includes(tf);
+          const candleCount = candleCountsByTimeframe.get(tf);
           return (
             <Button
               key={tf}
@@ -54,8 +75,19 @@ const TimeframeConfig: FC<TimeframeConfigProps> = ({
               ghost={active}
               onClick={() => toggleTimeframe(tf)}
               aria-pressed={active}
+              aria-label={
+                candleCount
+                  ? t('backtest.config.dataSelection.timeframes.buttonAriaLabel', {
+                      timeframe: BYBIT_TIMEFRAME_LABELS[tf],
+                      candles: candleCount,
+                    })
+                  : BYBIT_TIMEFRAME_LABELS[tf]
+              }
             >
-              {BYBIT_TIMEFRAME_LABELS[tf]}
+              <span className="data-selection__timeframe-btn-label">{BYBIT_TIMEFRAME_LABELS[tf]}</span>
+              {candleCount ? (
+                <span className="data-selection__timeframe-btn-candles">{candleCount}</span>
+              ) : null}
             </Button>
           );
         })}

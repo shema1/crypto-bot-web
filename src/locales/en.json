@@ -193,6 +193,19 @@
       "footer": {
         "cancel": "Cancel",
         "addSelected": "Add selected"
+      },
+      "candleRequirements": {
+        "columnTitle": "Candles",
+        "triggerAriaLabel": "Candle count requirements for backtest",
+        "triggerAriaLabelFor": "Candle requirements for strategy {{name}}",
+        "intro": "Minimum {{min}} candles on the selected timeframe are required for indicator warmup (same bar count on every timeframe). Optimal count is recommended for a reliable backtest.",
+        "introForStrategy": "Strategy \"{{name}}\": minimum {{min}} candles per timeframe for indicator warmup. Optimal counts are recommended for a reliable backtest.",
+        "introForCategory": "Type \"{{category}}\": minimum {{min}} candles with typical parameters. Exact values per strategy are in the table icon below.",
+        "oneMinuteHint": "≈1m: min / opt — equivalent 1-minute candles (time coverage; DB stores 1m data).",
+        "timeframe": "TF",
+        "min": "Min",
+        "optimal": "Opt.",
+        "oneMinuteEq": "≈1m"
       }
     },
     "detail": {
@@ -268,7 +281,7 @@
         "backtestProgress": "Backtest progress",
         "preparationProgress": "Historical data preparation",
         "preparationFormat": "{{completed}} / {{total}} pairs",
-        "preparationCurrentSymbol": "Current: {{symbol}}",
+        "preparationCurrentSymbols": "Syncing: {{symbols}}",
         "phaseDurationRunning": "Running: {{duration}}",
         "phaseDurationFinished": "Duration: {{duration}}",
         "progressFormat": "{{completed}} ok, {{failed}} failed / {{total}}",
@@ -334,7 +347,8 @@
         },
         "timeframes": {
           "title": "Timeframes",
-          "hint": "Select one or more intervals"
+          "hint": "Select one or more intervals. Each button shows the approximate candle count for the selected date range.",
+          "buttonAriaLabel": "{{timeframe}}, approximately {{candles}} candles"
         },
         "dateRange": {
           "title": "Historical date range",
@@ -382,7 +396,11 @@
         "add": "Add",
         "remove": "Remove",
         "addAll": "Add all",
-        "removeAll": "Remove all"
+        "removeAll": "Remove all",
+        "candleRequirements": {
+          "trendFollowing": "Candle requirements for trend-following strategies",
+          "breakout": "Candle requirements for breakout strategies"
+        }
       },
       "summary": {
         "title": "Configuration Summary & Run",

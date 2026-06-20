@@ -47,6 +47,7 @@ export interface BreakoutStrategyTableColumnTitles {
   min_volume_ratio?: string;
   leverage?: string;
   actions?: string;
+  candles?: string;
 }
 
 /** Search input above the table (controlled by parent). */

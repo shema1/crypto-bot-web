@@ -8,6 +8,8 @@ import type {
   BreakoutStrategyTableSortOrder,
 } from '../../../../../../../components/core';
 import type { BacktestTask } from '../../../../../../../modules/backtest';
+import { getBreakoutMinBars } from '../../../../../../../modules/backtest/utils/strategyCandles.utils';
+import StrategyCandleRequirementsPopover from '../../../../StrategyCandleRequirements/StrategyCandleRequirementsPopover';
 import {
   BREAKOUT_STRATEGY_LIST_DEFAULTS,
   useGetBreakoutStrategiesQuery,
@@ -146,6 +148,16 @@ const BreakoutStrategiesList: FC<BreakoutStrategiesListProps> = ({
     setPage(1);
   }, []);
 
+  const renderCandleRequirements = useCallback(
+    (record: BreakoutStrategyItem) => (
+      <StrategyCandleRequirementsPopover
+        minBars={getBreakoutMinBars({ lookback_period: record.lookback_period })}
+        strategyName={record.name}
+      />
+    ),
+    [],
+  );
+
   const renderActions = useCallback(
     (record: BreakoutStrategyItem) => {
       const isAdded = selectedIds.has(record.id);
@@ -196,6 +208,8 @@ const BreakoutStrategiesList: FC<BreakoutStrategiesListProps> = ({
           onClearSort: handleClearSort,
         }}
         renderActions={renderActions}
+        showCandleRequirements
+        renderCandleRequirements={renderCandleRequirements}
       />
     </div>
   );

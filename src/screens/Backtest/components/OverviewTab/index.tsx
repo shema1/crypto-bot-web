@@ -377,11 +377,11 @@ const OverviewTab: FC<OverviewTabProps> = ({
               })
             }
           />
-          {preparation?.currentSymbol && isPreparingData && (
+          {preparation?.currentSymbols && preparation.currentSymbols.length > 0 && isPreparingData && (
             <div className="overview-tab__progress-meta">
               <Typography.Text type="secondary">
-                {t('backtest.detail.overview.preparationCurrentSymbol', {
-                  symbol: preparation.currentSymbol,
+                {t('backtest.detail.overview.preparationCurrentSymbols', {
+                  symbols: preparation.currentSymbols.join(', '),
                 })}
               </Typography.Text>
             </div>

@@ -67,6 +67,7 @@ const DataSelection: FC<DataSelectionProps> = ({
 
         <TimeframeConfig
           timeframes={backtestTask.selectedTimeframes}
+          dateRange={backtestTask.dateRange}
           disabled={loading}
           onChange={handleTimeframesChange}
         />

@@ -12,6 +12,8 @@ import type {
   BreakoutStrategySortField,
   BreakoutStrategySortOrder,
 } from '../../../../../modules/strategies/breakoutStrategy';
+import { getBreakoutMinBars } from '../../../../../modules/backtest/utils/strategyCandles.utils';
+import StrategyCandleRequirementsPopover from '../../StrategyCandleRequirements/StrategyCandleRequirementsPopover';
 import type { Key } from 'react';
 
 const BATCH_SIZE = 100;
@@ -129,6 +131,16 @@ const BreakoutStrategiesTab: FC<BreakoutStrategiesTabProps> = ({ selection }) =>
     setSortOrder('asc');
   }, []);
 
+  const renderCandleRequirements = useCallback(
+    (record: BreakoutStrategyTableRow) => (
+      <StrategyCandleRequirementsPopover
+        minBars={getBreakoutMinBars({ lookback_period: record.lookback_period })}
+        strategyName={record.name ?? record.id}
+      />
+    ),
+    [],
+  );
+
   return (
     <div style={{ padding: '8px 0' }}>
       <BreakoutStrategyTable
@@ -151,6 +163,8 @@ const BreakoutStrategiesTab: FC<BreakoutStrategiesTabProps> = ({ selection }) =>
           onClearSort: handleClearSort,
         }}
         selection={selection}
+        showCandleRequirements
+        renderCandleRequirements={renderCandleRequirements}
       />
     </div>
   );

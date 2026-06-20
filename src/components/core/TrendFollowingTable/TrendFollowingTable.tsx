@@ -61,6 +61,10 @@ export interface TrendFollowingTableProps {
   hiddenColumns?: (keyof TrendFollowingStrategyTableRow)[];
   /** Optional row selection (checkboxes). When provided, a checkbox column is shown. */
   selection?: TrendFollowingTableSelection;
+  /** Show per-strategy candle requirements info column. */
+  showCandleRequirements?: boolean;
+  /** Render candle requirements popover for a row. */
+  renderCandleRequirements?: (record: TrendFollowingStrategyTableRow) => ReactNode;
 }
 
 const TrendFollowingTable: FC<TrendFollowingTableProps> = ({
@@ -76,6 +80,8 @@ const TrendFollowingTable: FC<TrendFollowingTableProps> = ({
   rowKey = 'id',
   hiddenColumns = [],
   selection,
+  showCandleRequirements = false,
+  renderCandleRequirements,
 }) => {
   const { t } = useTranslation();
   const titles = { ...DEFAULT_COLUMN_TITLES, ...columnTitles };
@@ -214,8 +220,21 @@ const TrendFollowingTable: FC<TrendFollowingTableProps> = ({
   ];
 
   const hasActions = renderActions != null || onDelete != null;
+  const hasCandleRequirements = showCandleRequirements && renderCandleRequirements != null;
   const columns: ColumnsType<TrendFollowingStrategyTableRow> = [
     ...baseColumns,
+    ...(hasCandleRequirements
+      ? [
+          {
+            title: titles.candles ?? t('backtest.selectStrategiesModal.candleRequirements.columnTitle'),
+            key: 'candleRequirements',
+            width: 56,
+            align: 'center' as const,
+            render: (_: unknown, record: TrendFollowingStrategyTableRow) =>
+              renderCandleRequirements(record),
+          },
+        ]
+      : []),
     ...(hasActions
       ? [
           {

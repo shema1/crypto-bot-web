@@ -193,6 +193,19 @@
       "footer": {
         "cancel": "Скасувати",
         "addSelected": "Додати обрані"
+      },
+      "candleRequirements": {
+        "columnTitle": "Свічки",
+        "triggerAriaLabel": "Вимоги до кількості свічок для бектесту",
+        "triggerAriaLabelFor": "Вимоги до свічок для стратегії {{name}}",
+        "intro": "Мінімум {{min}} свічок на обраному таймфреймі потрібно для прогріву індикаторів (однаково для всіх таймфреймів). Оптимальна кількість — рекомендація для надійного бектесту.",
+        "introForStrategy": "Стратегія «{{name}}»: мінімум {{min}} свічок на таймфреймі для прогріву індикаторів. Оптимум — рекомендація для надійного бектесту.",
+        "introForCategory": "Тип «{{category}}»: мінімум {{min}} свічок при типових параметрах. Точне значення для кожної стратегії — в іконці в таблиці нижче.",
+        "oneMinuteHint": "≈1m: мін. / опт. — еквівалент у 1-хвилинних свічках (покриття часу; дані в БД зберігаються як 1m).",
+        "timeframe": "ТФ",
+        "min": "Мін.",
+        "optimal": "Опт.",
+        "oneMinuteEq": "≈1m"
       }
     },
     "detail": {
@@ -268,7 +281,7 @@
         "backtestProgress": "Прогрес бектестів",
         "preparationProgress": "Підготовка історичних даних",
         "preparationFormat": "{{completed}} / {{total}} пар",
-        "preparationCurrentSymbol": "Зараз: {{symbol}}",
+        "preparationCurrentSymbols": "Зараз: {{symbols}}",
         "phaseDurationRunning": "Триває: {{duration}}",
         "phaseDurationFinished": "Тривалість: {{duration}}",
         "progressFormat": "{{completed}} успішних, {{failed}} помилок / {{total}}",
@@ -334,7 +347,8 @@
         },
         "timeframes": {
           "title": "Таймфрейми",
-          "hint": "Оберіть один або кілька інтервалів"
+          "hint": "Оберіть один або кілька інтервалів. Під кожним інтервалом — приблизна кількість свічок для обраного діапазону дат.",
+          "buttonAriaLabel": "{{timeframe}}, приблизно {{candles}} свічок"
         },
         "dateRange": {
           "title": "Історичний діапазон дат",
@@ -382,7 +396,11 @@
         "add": "Додати",
         "remove": "Прибрати",
         "addAll": "Додати всі",
-        "removeAll": "Прибрати всі"
+        "removeAll": "Прибрати всі",
+        "candleRequirements": {
+          "trendFollowing": "Вимоги до свічок для тренд-фолловінг стратегій",
+          "breakout": "Вимоги до свічок для брейкаут стратегій"
+        }
       },
       "summary": {
         "title": "Підсумок конфігурації та запуск",

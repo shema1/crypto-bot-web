@@ -53,6 +53,10 @@ export interface BreakoutStrategyTableProps {
   hiddenColumns?: (keyof BreakoutStrategyTableRow)[];
   /** Optional row selection (checkboxes). */
   selection?: BreakoutStrategyTableSelection;
+  /** Show per-strategy candle requirements info column. */
+  showCandleRequirements?: boolean;
+  /** Render candle requirements popover for a row. */
+  renderCandleRequirements?: (record: BreakoutStrategyTableRow) => ReactNode;
 }
 
 const BreakoutStrategyTable: FC<BreakoutStrategyTableProps> = ({
@@ -68,6 +72,8 @@ const BreakoutStrategyTable: FC<BreakoutStrategyTableProps> = ({
   rowKey = 'id',
   hiddenColumns = [],
   selection,
+  showCandleRequirements = false,
+  renderCandleRequirements,
 }) => {
   const { t } = useTranslation();
   const titles = { ...DEFAULT_COLUMN_TITLES, ...columnTitles };
@@ -189,8 +195,21 @@ const BreakoutStrategyTable: FC<BreakoutStrategyTableProps> = ({
   ];
 
   const hasActions = renderActions != null || onDelete != null;
+  const hasCandleRequirements = showCandleRequirements && renderCandleRequirements != null;
   const columns: ColumnsType<BreakoutStrategyTableRow> = [
     ...baseColumns,
+    ...(hasCandleRequirements
+      ? [
+          {
+            title: titles.candles ?? t('backtest.selectStrategiesModal.candleRequirements.columnTitle'),
+            key: 'candleRequirements',
+            width: 56,
+            align: 'center' as const,
+            render: (_: unknown, record: BreakoutStrategyTableRow) =>
+              renderCandleRequirements(record),
+          },
+        ]
+      : []),
     ...(hasActions
       ? [
           {

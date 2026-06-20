@@ -14,6 +14,8 @@ import type {
   TrendFollowingStrategySortField,
   TrendFollowingStrategySortOrder,
 } from '../../../../../modules/strategies/trendFollowingStrategy';
+import { getTrendFollowingMinBars } from '../../../../../modules/backtest/utils/strategyCandles.utils';
+import StrategyCandleRequirementsPopover from '../../StrategyCandleRequirements/StrategyCandleRequirementsPopover';
 import type { Key } from 'react';
 
 const BATCH_SIZE = 100;
@@ -132,6 +134,19 @@ const TrendFollowingStrategiesTab: FC<AllStrategiesTabProps> = ({ selection }) =
     setSortOrder('asc');
   }, []);
 
+  const renderCandleRequirements = useCallback(
+    (record: TrendFollowingStrategyTableRow) => (
+      <StrategyCandleRequirementsPopover
+        minBars={getTrendFollowingMinBars({
+          long_ma: record.long_ma,
+          adx_period: record.adx_period,
+        })}
+        strategyName={record.name ?? record.id}
+      />
+    ),
+    [],
+  );
+
   return (
     <div style={{ padding: '8px 0' }}>
       <TrendFollowingTable
@@ -155,6 +170,8 @@ const TrendFollowingStrategiesTab: FC<AllStrategiesTabProps> = ({ selection }) =
         }}
         selection={selection}
         hiddenColumns={['timeframe', 'stop_loss', 'take_profit']}
+        showCandleRequirements
+        renderCandleRequirements={renderCandleRequirements}
       />
     </div>
   );

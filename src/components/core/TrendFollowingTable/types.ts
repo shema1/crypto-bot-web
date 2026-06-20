@@ -56,6 +56,7 @@ export interface TrendFollowingTableColumnTitles {
   take_profit?: string;
   leverage?: string;
   actions?: string;
+  candles?: string;
 }
 
 /** Search input above the table (controlled by parent). */

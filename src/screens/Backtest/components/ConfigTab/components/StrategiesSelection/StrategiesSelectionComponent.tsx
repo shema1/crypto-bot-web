@@ -2,6 +2,11 @@ import { Button, Collapse, type CollapseProps } from 'antd';
 import { useMemo, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { BacktestTask } from '../../../../../../modules/backtest';
+import {
+  getBreakoutMinBars,
+  getTrendFollowingMinBars,
+} from '../../../../../../modules/backtest/utils/strategyCandles.utils';
+import StrategyCandleRequirementsPopover from '../../../StrategyCandleRequirements/StrategyCandleRequirementsPopover';
 import { BreakoutStrategiesList, TrendFollowingStrategiesList } from './components';
 import { useBreakoutBulkActions, useTrendFollowingBulkActions } from './useStrategyBulkActions';
 import '../../ConfigTabPanel.css';
@@ -36,7 +41,16 @@ const StrategiesSelection: FC<StrategiesSelectionProps> = ({
     () => [
       {
         key: 'trendFollowing',
-        label: t('nav.trendFollowing'),
+        label: (
+          <span className="strategies-selection__accordion-label">
+            {t('nav.trendFollowing')}
+            <StrategyCandleRequirementsPopover
+              minBars={getTrendFollowingMinBars({})}
+              categoryLabel={t('nav.trendFollowing')}
+              ariaLabel={t('backtest.config.strategyManager.candleRequirements.trendFollowing')}
+            />
+          </span>
+        ),
         extra: (
           <Button
             type="link"
@@ -61,7 +75,16 @@ const StrategiesSelection: FC<StrategiesSelectionProps> = ({
       },
       {
         key: 'breakout',
-        label: t('nav.breakout'),
+        label: (
+          <span className="strategies-selection__accordion-label">
+            {t('nav.breakout')}
+            <StrategyCandleRequirementsPopover
+              minBars={getBreakoutMinBars({})}
+              categoryLabel={t('nav.breakout')}
+              ariaLabel={t('backtest.config.strategyManager.candleRequirements.breakout')}
+            />
+          </span>
+        ),
         extra: (
           <Button
             type="link"

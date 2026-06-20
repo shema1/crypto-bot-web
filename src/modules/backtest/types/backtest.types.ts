@@ -317,7 +317,7 @@ export interface BacktestTaskOverviewProgress {
 export interface BacktestTaskOverviewPreparation {
   totalSymbols: number;
   completedSymbols: number;
-  currentSymbol?: string;
+  currentSymbols?: string[];
   percent: number;
   isActive: boolean;
   startedAt?: string;

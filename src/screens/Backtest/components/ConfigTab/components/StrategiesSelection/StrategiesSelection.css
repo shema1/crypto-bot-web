@@ -19,6 +19,12 @@
   font-weight: 600;
 }
 
+.strategies-selection__accordion-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .strategies-selection__bulk-action {
   margin-right: 8px;
   font-weight: 500;
