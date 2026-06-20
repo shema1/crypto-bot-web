@@ -132,11 +132,14 @@
     },
     "actions": {
       "add": "Add task",
+      "copy": "Copy",
       "delete": "Delete"
     },
     "messages": {
       "taskCreated": "Task created",
       "createError": "Failed to create task",
+      "taskCopied": "Task copied",
+      "copyError": "Failed to copy task",
       "taskDeleted": "Task deleted",
       "deleteError": "Failed to delete task"
     },

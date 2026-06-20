@@ -141,6 +141,14 @@ export const backtestApi = createApi({
       invalidatesTags: [{ type: 'BacktestTask', id: 'LIST' }],
       transformResponse: (response: BacktestTask): BacktestTask => normalizeBacktestTask(response),
     }),
+    copyTask: builder.mutation<BacktestTask, string>({
+      query: (taskId) => ({
+        url: backtestUrls.taskCopyById(taskId),
+        method: 'POST',
+      }),
+      invalidatesTags: [{ type: 'BacktestTask', id: 'LIST' }],
+      transformResponse: (response: BacktestTask): BacktestTask => normalizeBacktestTask(response),
+    }),
     updateTask: builder.mutation<BacktestTask, { taskId: string; body: UpdateBacktestTaskRequest }>({
       query: ({ taskId, body }) => ({
         url: backtestUrls.taskById(taskId),
@@ -229,6 +237,7 @@ export const {
   useGetTasksQuery,
   useGetTaskByIdQuery,
   useCreateTaskMutation,
+  useCopyTaskMutation,
   useUpdateTaskMutation,
   useDeleteTaskMutation,
   useRunTaskMutation,

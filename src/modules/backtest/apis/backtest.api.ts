@@ -3,6 +3,7 @@ const BASE = 'backtest';
 export const backtestUrls = {
   tasks: `${BASE}/tasks`,
   taskById: (taskId: string) => `${BASE}/tasks/${taskId}`,
+  taskCopyById: (taskId: string) => `${BASE}/tasks/${taskId}/copy`,
   taskRunById: (taskId: string) => `${BASE}/tasks/${taskId}/run`,
   taskStopById: (taskId: string) => `${BASE}/tasks/${taskId}/stop`,
   taskOverviewById: (taskId: string) => `${BASE}/tasks/${taskId}/overview`,

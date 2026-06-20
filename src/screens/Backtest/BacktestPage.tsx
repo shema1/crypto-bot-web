@@ -2,7 +2,7 @@ import { useCallback, useState, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Alert, Button, Input, message, Popconfirm, Table, Tag } from 'antd';
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, CopyOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { format } from 'date-fns';
 import AppContainer from '../../components/layout/AppContainer';
@@ -11,6 +11,7 @@ import { AddBacktestModal } from './components';
 import {
   useGetTasksQuery,
   useCreateTaskMutation,
+  useCopyTaskMutation,
   useDeleteTaskMutation,
   type BacktestTask,
   type BacktestTaskStatus,
@@ -44,6 +45,7 @@ const BacktestPage: FC = () => {
     limit,
   });
   const [createTask, { isLoading: isCreating }] = useCreateTaskMutation();
+  const [copyTask, { isLoading: isCopying, originalArgs: copyingTaskId }] = useCopyTaskMutation();
   const [deleteTask, { isLoading: isDeleting }] = useDeleteTaskMutation();
 
   const errorMessage = isError && error && 'message' in error ? String(error.message) : null;
@@ -60,6 +62,18 @@ const BacktestPage: FC = () => {
       }
     },
     [deleteTask, t],
+  );
+
+  const handleCopy = useCallback(
+    async (record: BacktestTask) => {
+      try {
+        await copyTask(record.id).unwrap();
+        message.success(t('backtest.messages.taskCopied'));
+      } catch {
+        message.error(t('backtest.messages.copyError'));
+      }
+    },
+    [copyTask, t],
   );
 
   const columns: ColumnsType<BacktestTask> = [
@@ -135,28 +149,41 @@ const BacktestPage: FC = () => {
     {
       title: t('backtest.tasks.columns.actions'),
       key: 'actions',
-      width: 80,
+      width: 100,
       align: 'center',
       fixed: 'right',
       render: (_: unknown, record: BacktestTask) => (
-        <Popconfirm
-          title={t('backtest.deleteConfirm.title')}
-          description={t('backtest.deleteConfirm.description')}
-          onConfirm={() => handleDelete(record)}
-          okText={t('common.delete')}
-          cancelText={t('common.cancel')}
-          okButtonProps={{ danger: true }}
-        >
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 4 }}>
           <Button
             type="text"
-            danger
-            icon={<DeleteOutlined />}
+            icon={<CopyOutlined />}
             size="small"
-            loading={isDeleting}
-            onClick={(e) => e.stopPropagation()}
-            aria-label={t('backtest.actions.delete')}
+            loading={isCopying && copyingTaskId === record.id}
+            onClick={(e) => {
+              e.stopPropagation();
+              void handleCopy(record);
+            }}
+            aria-label={t('backtest.actions.copy')}
           />
-        </Popconfirm>
+          <Popconfirm
+            title={t('backtest.deleteConfirm.title')}
+            description={t('backtest.deleteConfirm.description')}
+            onConfirm={() => handleDelete(record)}
+            okText={t('common.delete')}
+            cancelText={t('common.cancel')}
+            okButtonProps={{ danger: true }}
+          >
+            <Button
+              type="text"
+              danger
+              icon={<DeleteOutlined />}
+              size="small"
+              loading={isDeleting}
+              onClick={(e) => e.stopPropagation()}
+              aria-label={t('backtest.actions.delete')}
+            />
+          </Popconfirm>
+        </div>
       ),
     },
   ];
@@ -221,7 +248,7 @@ const BacktestPage: FC = () => {
             columns={columns}
             dataSource={items}
             rowKey="id"
-            loading={isLoading || isCreating || isDeleting}
+            loading={isLoading || isCreating || isCopying || isDeleting}
             onRow={(record) => ({
               onClick: () => navigate(`/backtest/${record.id}`),
               style: { cursor: 'pointer' },
