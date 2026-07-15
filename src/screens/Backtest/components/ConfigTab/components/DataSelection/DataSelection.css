@@ -19,6 +19,18 @@
   margin-bottom: 4px;
 }
 
+.data-selection__recommended-pairs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.data-selection__recommended-pairs-label {
+  font-size: 13px;
+}
+
 .data-selection__section-title-icon {
   color: rgba(0, 0, 0, 0.45);
   font-size: 14px;
@@ -138,6 +150,10 @@
 }
 
 @media (max-width: 640px) {
+  .data-selection__recommended-pairs-button {
+    width: 100%;
+  }
+
   .data-selection__sltp-fields {
     grid-template-columns: 1fr;
   }

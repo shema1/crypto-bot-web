@@ -351,7 +351,10 @@
           "title": "Futures pairs",
           "hint": "Search and select trading pairs",
           "searchPlaceholder": "Search pairs",
-          "empty": "No pairs selected"
+          "empty": "No pairs selected",
+          "recommendedCount": "Number of pairs",
+          "selectRecommended": "Select recommended",
+          "recommendedError": "Failed to load recommended futures pairs"
         },
         "timeframes": {
           "title": "Timeframes",

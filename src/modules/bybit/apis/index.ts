@@ -2,6 +2,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import createMainBaseQuery from '../../core/baseQueries/mainBaseQuery';
 import type {
   CandleData,
+  GetFuturesPairsParams,
   GetKlineParams,
   GetInstrumentsParams,
   GetSymbolsParams,
@@ -55,6 +56,12 @@ export const bybitApi = createApi({
         },
       ],
     }),
+    getFuturesPairs: builder.query<string[], GetFuturesPairsParams | void>({
+      query: (params) => ({
+        url: bybitUrls.futuresPairs,
+        params: params?.limit ? { limit: params.limit } : undefined,
+      }),
+    }),
   }),
 });
 
@@ -63,4 +70,5 @@ export const {
   useGetInstrumentsQuery,
   useGetSymbolsQuery,
   useLazyGetSymbolsQuery,
+  useLazyGetFuturesPairsQuery,
 } = bybitApi;

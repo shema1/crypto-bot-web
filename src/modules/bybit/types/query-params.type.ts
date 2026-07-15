@@ -21,3 +21,8 @@ export interface GetSymbolsParams {
   category?: InstrumentCategory;
   search?: string;
 }
+
+/** Query params for GET bybit/futures-pairs */
+export interface GetFuturesPairsParams {
+  limit?: number;
+}

@@ -1,11 +1,25 @@
-import { CloseOutlined, SearchOutlined } from '@ant-design/icons';
-import { AutoComplete, Input, Tag, Typography, theme } from 'antd';
+import { CloseOutlined, SearchOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import {
+  AutoComplete,
+  Button,
+  Input,
+  InputNumber,
+  Tag,
+  Typography,
+  message,
+  theme,
+} from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyGetSymbolsQuery } from '../../../../../../../../modules/bybit/apis';
+import {
+  useLazyGetFuturesPairsQuery,
+  useLazyGetSymbolsQuery,
+} from '../../../../../../../../modules/bybit/apis';
 
 const SEARCH_DEBOUNCE_MS = 300;
 const MAX_SUGGESTIONS = 12;
+const DEFAULT_RECOMMENDED_PAIRS_LIMIT = 20;
+const MAX_RECOMMENDED_PAIRS_LIMIT = 1000;
 
 export interface SymbolConfigProps {
   symbols: string[];
@@ -24,7 +38,12 @@ const SymbolConfig: FC<SymbolConfigProps> = ({
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [recommendedPairsLimit, setRecommendedPairsLimit] = useState<number | null>(
+    DEFAULT_RECOMMENDED_PAIRS_LIMIT
+  );
   const [fetchSymbols] = useLazyGetSymbolsQuery();
+  const [fetchFuturesPairs, { isLoading: isLoadingFuturesPairs }] =
+    useLazyGetFuturesPairsQuery();
   const abortRef = useRef(false);
   const allSymbolsCacheRef = useRef<string[] | null>(null);
 
@@ -106,6 +125,19 @@ const SymbolConfig: FC<SymbolConfigProps> = ({
     [symbols, onChange]
   );
 
+  const selectRecommendedPairs = useCallback(async () => {
+    if (recommendedPairsLimit === null) return;
+
+    try {
+      const recommendedPairs = await fetchFuturesPairs({
+        limit: recommendedPairsLimit,
+      }).unwrap();
+      onChange(recommendedPairs);
+    } catch {
+      message.error(t('backtest.config.dataSelection.futuresPairs.recommendedError'));
+    }
+  }, [fetchFuturesPairs, onChange, recommendedPairsLimit, t]);
+
   return (
     <section className="data-selection__section" aria-labelledby="data-selection-pairs-title">
       <div className="data-selection__section-header">
@@ -116,6 +148,32 @@ const SymbolConfig: FC<SymbolConfigProps> = ({
       <Typography.Text type="secondary" className="data-selection__section-hint">
         {t('backtest.config.dataSelection.futuresPairs.hint')}
       </Typography.Text>
+      <div className="data-selection__recommended-pairs">
+        <label
+          className="data-selection__recommended-pairs-label"
+          htmlFor="recommended-futures-pairs-limit"
+        >
+          {t('backtest.config.dataSelection.futuresPairs.recommendedCount')}
+        </label>
+        <InputNumber
+          id="recommended-futures-pairs-limit"
+          min={1}
+          max={MAX_RECOMMENDED_PAIRS_LIMIT}
+          precision={0}
+          value={recommendedPairsLimit}
+          disabled={disabled || isLoadingFuturesPairs}
+          onChange={setRecommendedPairsLimit}
+        />
+        <Button
+          className="data-selection__recommended-pairs-button"
+          icon={<ThunderboltOutlined />}
+          loading={isLoadingFuturesPairs}
+          disabled={disabled || recommendedPairsLimit === null}
+          onClick={selectRecommendedPairs}
+        >
+          {t('backtest.config.dataSelection.futuresPairs.selectRecommended')}
+        </Button>
+      </div>
       <AutoComplete
         className="data-selection__suggestions"
         options={searchOptions}
