@@ -17,6 +17,7 @@ import type {
   GetTaskResultsResponse,
   GetTaskResultTradesQuery,
   GetTaskResultTradesResponse,
+  TaskResultFilterOptions,
   BacktestTaskOverview,
   StopBacktestTaskResponse,
   DEFAULT_BACKTEST_EXECUTION_SETTINGS,
@@ -38,6 +39,28 @@ function normalizeUpdateBacktestTaskRequest(body: UpdateBacktestTaskRequest): Up
     ...body,
     dateRange: normalizeBacktestDateRangeOptional(body.dateRange),
   };
+}
+
+function buildTaskResultsParams(query?: GetTaskResultsQuery): Record<string, string | number | boolean> {
+  const params: Record<string, string | number | boolean> = {
+    sortBy: query?.sortBy ?? 'roi_pct',
+    sortOrder: query?.sortOrder ?? 'desc',
+    status: query?.status ?? 'completed',
+    page: query?.page ?? 1,
+    limit: query?.limit ?? 20,
+  };
+
+  if (query?.pair) params.pair = query.pair;
+  if (query?.timeframe) params.timeframe = query.timeframe;
+  if (query?.strategyType && query.strategyType !== 'all') params.strategyType = query.strategyType;
+  if (query?.strategyName) params.strategyName = query.strategyName;
+  if (query?.stopLossPct != null) params.stopLossPct = query.stopLossPct;
+  if (query?.takeProfitPct != null) params.takeProfitPct = query.takeProfitPct;
+  if (query?.minRoiPct != null) params.minRoiPct = query.minRoiPct;
+  if (query?.minTrades != null) params.minTrades = query.minTrades;
+  if (query?.profitableOnly) params.profitableOnly = true;
+
+  return params;
 }
 
 function normalizeTaskOverview(response: BacktestTaskOverview): BacktestTaskOverview {
@@ -204,15 +227,13 @@ export const backtestApi = createApi({
     getTaskResults: builder.query<GetTaskResultsResponse, { taskId: string; query?: GetTaskResultsQuery }>({
       query: ({ taskId, query }) => ({
         url: backtestUrls.taskResultsById(taskId),
-        params: {
-          sortBy: query?.sortBy ?? 'roi_pct',
-          sortOrder: query?.sortOrder ?? 'desc',
-          status: query?.status ?? 'completed',
-          page: query?.page ?? 1,
-          limit: query?.limit ?? 20,
-        },
+        params: buildTaskResultsParams(query),
       }),
       providesTags: (_result, _error, { taskId }) => [{ type: 'BacktestTaskResults', id: taskId }],
+    }),
+    getTaskResultFilterOptions: builder.query<TaskResultFilterOptions, string>({
+      query: (taskId) => ({ url: backtestUrls.taskResultFilterOptionsById(taskId) }),
+      providesTags: (_result, _error, taskId) => [{ type: 'BacktestTaskResults', id: taskId }],
     }),
     getTaskResultTrades: builder.query<
       GetTaskResultTradesResponse,
@@ -245,5 +266,6 @@ export const {
   useGetTaskOverviewQuery,
   useGetTaskLogsQuery,
   useGetTaskResultsQuery,
+  useGetTaskResultFilterOptionsQuery,
   useGetTaskResultTradesQuery,
 } = backtestApi;

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Select, Space, Table, Tag, Typography } from 'antd';
+import { Button, Space, Table, Tag, Typography } from 'antd';
 import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import type { FilterValue, SorterResult } from 'antd/es/table/interface';
 import {
@@ -11,6 +11,7 @@ import {
 } from '../../../../modules/backtest';
 import { API_BASE_URL } from '../../../../modules/core/baseQueries/mainBaseQuery';
 import { backtestUrls } from '../../../../modules/backtest/apis/backtest.api';
+import ResultsFilters from './ResultsFilters';
 import './ResultsTab.css';
 
 export interface ResultsTabProps {
@@ -26,6 +27,7 @@ const SORT_FIELD_MAP: Record<string, TaskResultSortField> = {
   sharpeRatio: 'sharpe_ratio',
   profitFactor: 'profit_factor',
   totalTrades: 'total_trades',
+  tradesPerMonth: 'trades_per_month',
   maxDrawdownPct: 'max_drawdown_pct',
   subtaskIndex: 'subtask_index',
 };
@@ -212,6 +214,23 @@ const ResultsTab: FC<ResultsTabProps> = ({ taskId, isRunning, onViewTrades }) =>
       render: (_, row) => row.summary?.totalTrades ?? '—',
     },
     {
+      title: t('backtest.detail.results.tradesPerMonth'),
+      key: 'tradesPerMonth',
+      width: 90,
+      align: 'right',
+      sorter: true,
+      sortOrder:
+        query.sortBy === 'trades_per_month'
+          ? query.sortOrder === 'asc'
+            ? 'ascend'
+            : 'descend'
+          : undefined,
+      render: (_, row) =>
+        row.summary?.tradesPerMonth != null
+          ? row.summary.tradesPerMonth.toFixed(1)
+          : '—',
+    },
+    {
       title: t('backtest.detail.winningOrders'),
       key: 'winningTrades',
       width: 90,
@@ -292,18 +311,15 @@ const ResultsTab: FC<ResultsTabProps> = ({ taskId, isRunning, onViewTrades }) =>
         </Typography.Title>
         <Space>
           {isRunning && <Tag color="processing">{t('backtest.detail.logs.live')}</Tag>}
-          <Select
-            value={query.status ?? 'completed'}
-            style={{ width: 160 }}
-            onChange={(status) => setQuery((prev) => ({ ...prev, status, page: 1 }))}
-            options={[
-              { value: 'completed', label: t('backtest.detail.results.statusCompleted') },
-              { value: 'failed', label: t('backtest.detail.results.statusFailed') },
-              { value: 'all', label: t('backtest.detail.results.statusAll') },
-            ]}
-          />
         </Space>
       </div>
+
+      <ResultsFilters
+        taskId={taskId}
+        query={query}
+        onChange={setQuery}
+        onReset={() => setQuery(DEFAULT_QUERY)}
+      />
 
       <Table<BacktestTaskResultItem>
         rowKey="id"

@@ -206,6 +206,7 @@ export type TaskResultSortField =
   | 'sharpe_ratio'
   | 'profit_factor'
   | 'total_trades'
+  | 'trades_per_month'
   | 'max_drawdown_pct'
   | 'subtask_index';
 
@@ -221,6 +222,7 @@ export interface BacktestTaskResultSummary {
   totalTrades: number;
   winningTrades?: number;
   losingTrades?: number;
+  tradesPerMonth?: number;
   initialCash: number;
   finalValue: number;
 }
@@ -248,6 +250,28 @@ export interface GetTaskResultsQuery {
   status?: BacktestSubtaskStatus | 'all';
   page?: number;
   limit?: number;
+  pair?: string;
+  timeframe?: string;
+  strategyType?: BacktestSubtaskStrategyType | 'all';
+  strategyName?: string;
+  stopLossPct?: number;
+  takeProfitPct?: number;
+  minRoiPct?: number;
+  minTrades?: number;
+  profitableOnly?: boolean;
+}
+
+export interface TaskResultSlTpCombination {
+  stopLossPct: number;
+  takeProfitPct: number;
+}
+
+export interface TaskResultFilterOptions {
+  pairs: string[];
+  timeframes: string[];
+  strategyTypes: BacktestSubtaskStrategyType[];
+  strategyNames: string[];
+  slTpCombinations: TaskResultSlTpCombination[];
 }
 
 export interface GetTaskResultsResponse {

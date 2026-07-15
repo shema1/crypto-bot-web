@@ -10,6 +10,7 @@ export const backtestUrls = {
   taskEventsById: (taskId: string) => `${BASE}/tasks/${taskId}/events`,
   taskLogsById: (taskId: string) => `${BASE}/tasks/${taskId}/logs`,
   taskResultsById: (taskId: string) => `${BASE}/tasks/${taskId}/results`,
+  taskResultFilterOptionsById: (taskId: string) => `${BASE}/tasks/${taskId}/results/filter-options`,
   taskResultTradesById: (taskId: string, resultId: string) =>
     `${BASE}/tasks/${taskId}/results/${resultId}/trades`,
 } as const;
